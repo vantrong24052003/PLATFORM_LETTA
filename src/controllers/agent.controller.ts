@@ -5,8 +5,8 @@ import { AgentOptions } from '@/types/index.js';
 
 export const createAgent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { name, system, model, embedding, tools, memory_blocks } = req.body as AgentOptions;
-    const agent = await lettaService.createAgent({ name, system, model, embedding, tools, memory_blocks });
+    const { name, system, model, embedding, tools, tool_rules, include_base_tool_rules, memory_blocks } = req.body as AgentOptions;
+    const agent = await lettaService.createAgent({ name, system, model, embedding, tools, tool_rules, include_base_tool_rules, memory_blocks });
     renderSuccess(res, { agent }, 'Agent created successfully', 201);
   } catch (error) {
     renderError(res, error as Error);
@@ -45,6 +45,24 @@ export const deleteBlock = async (req: Request, res: Response, next: NextFunctio
     const { blockId } = req.params;
     const result = await lettaService.deleteBlock(blockId);
     renderSuccess(res, result, 'Block deleted successfully');
+  } catch (error) {
+    renderError(res, error as Error);
+  }
+};
+
+export const createTool = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const tool = await lettaService.upsertTool(req.body);
+    renderSuccess(res, { tool }, 'Tool registered successfully', 201);
+  } catch (error) {
+    renderError(res, error as Error);
+  }
+};
+
+export const listTools = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const tools = await lettaService.listTools();
+    renderSuccess(res, { tools }, 'Tools retrieved successfully');
   } catch (error) {
     renderError(res, error as Error);
   }

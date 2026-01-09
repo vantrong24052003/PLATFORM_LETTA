@@ -1,56 +1,51 @@
-# Phase 0: Chuẩn bị DB tại Client App (Project 2)
+# Phase 0: Chuẩn bị thực thi tại Client App (Project 2)
 
 ## Mục tiêu
-Client App của bạn (Rails, Go, Python...) cần có sẵn các hàm để query dữ liệu.
+Project 2 của bạn (Rails/Go...) phải đóng vai trò là "Cơ bắp" - nơi thực hiện các công việc nặng nhọc như truy vấn Database.
 
-**Thực hiện tại:** Project 2 (Client Application).
+---
 
-## Logic Yêu Cầu
-Bạn cần viết các hàm (Function/Service) có khả năng nhận tham số đầu vào và trả về dữ liệu thô (Array/Object).
+## 1. Logic vận hành
 
-## Ví dụ Implementation
+Dù bạn dùng công nghệ gì, logic phải tuân thủ:
+1. Nhận **Tên Tool** và **Tham số** từ Project 1.
+2. Tự xử lý bằng code backend của bạn.
+3. Trả về kết quả thô (Dạng String/JSON).
 
-Dưới đây là ví dụ logic. Hãy implement tương tự bằng ngôn ngữ của bạn.
+---
 
-### Node.js (Reference)
+## 2. Ví dụ logic thực thi (Agnostic)
 
-```typescript
-// project2/src/services/product.service.ts
-import { db } from '../config/db';
-
-export async function queryProductLocal(category: string, maxPrice?: number) {
-  // Logic: Chạy SQL query trực tiếp vào DB của Project 2
-  const query = `SELECT * FROM products WHERE category = $1`;
-  const result = await db.query(query, [category]);
-  return result.rows; 
-}
+### Concept (Mọi ngôn ngữ)
+```text
+Hàm thực thi(arguments):
+   kết_quả = DB.Execute("SELECT * FROM ... WHERE ...", arguments.query)
+   trả_về JSON_STRINGIFY(kết_quả)
 ```
 
-### Ruby on Rails (Reference)
-
+### Ruby on Rails (Example)
 ```ruby
-# project2/app/services/product_service.rb
-class ProductService
-  def self.query_local_db(category, max_price = nil)
-    # Logic: Dùng ActiveRecord
-    products = Product.where(category: category)
-    products = products.where('price <= ?', max_price) if max_price
-    products.as_json(only: [:name, :price, :stock])
-  end
+def execute_query_db(args)
+  # Logic lấy từ Database thật của App Rails
+  results = Product.where("name LIKE ?", "%#{args['query']}%").limit(5)
+  results.to_json
 end
 ```
 
-### Golang (Reference)
-
+### Golang (Example)
 ```go
-// project2/internal/service/product.go
-func (s *Service) QueryProducts(category string, maxPrice float64) ([]Product, error) {
-    // Logic: Dùng GORM hoặc sqlx
-    var products []Product
-    err := db.Where("category = ? AND price <= ?", category, maxPrice).Find(&products).Error
-    return products, err
+func ExecuteQuery(args map[string]interface{}) string {
+    // Logic dùng GORM hoặc SQL driver
+    products := []Product{}
+    db.Where("name LIKE ?", args["query"]).Find(&products)
+    b, _ := json.Marshal(products)
+    return string(b)
 }
 ```
 
+---
+
 ## Checkpoint
-Đảm bảo function của bạn chạy tốt khi gọi trực tiếp từ code (Unit Test), trước khi tích hợp vào AI.
+Bạn hãy viết hoàn thiện các hàm truy vấn này trước. Đảm bảo chúng có thể chạy độc lập và trả về dữ liệu đúng trước khi gắn vào flow AI.
+
+Sau khi xong, hãy sang [Bước 1: Đăng ký Tool](../01-configuration/04-tool-definition.md) để khai báo khung của hàm này lên Server.

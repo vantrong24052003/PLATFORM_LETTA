@@ -3,6 +3,8 @@ import * as agentController from '@/controllers/agent.controller.js';
 
 const router = Router();
 
+router.post('/tools', agentController.createTool);
+router.get('/tools', agentController.listTools);
 router.post('/', agentController.createAgent);
 router.get('/:agentId', agentController.getAgent);
 router.post('/:agentId/messages', agentController.chatWithAgent);

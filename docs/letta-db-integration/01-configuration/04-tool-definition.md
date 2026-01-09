@@ -1,63 +1,41 @@
-# Phase 1: Define Tool & Register (Project 2 -> Project 1)
+# Phase 1: Register Tool (Tránh lỗi Server)
 
-## Mục tiêu
-Client App (P2) cần cho Letta Server (P1) biết rằng: "Tôi có capability này, hãy gọi tôi khi cần".
+Việc đăng ký tool đôi khi có thể gây lỗi `NameError: DynamicModel` trên Server Letta nếu định dạng JSON Schema không chuẩn. 
 
-**Thực hiện tại:** Code tại Project 2, nhưng gọi API sang Project 1 để đăng ký.
+---
 
-## Tool Definition
+## 1. Cách đăng ký "An Toàn" (Khuyên dùng)
 
-Tool này chỉ là **interface** (vỏ bọc) để Agent nhìn thấy. Agent không chạy code này, code thật nằm ở P2.
+Để tránh lỗi, Letta khuyên bạn hãy để nó **tự động suy luận** (Auto-infer) cấu trúc tool từ Python Docstring. 
 
-```typescript
-// project2/src/tools/definitions.ts
+- **Body (JSON)**: Không cần truyền `jsonSchema`.
 
-export const productToolDef = {
-  name: "query_local_db",
-  description: "Query product database via client app. Use when user asks about products.",
-  parameters: {
-    type: "object",
-    properties: {
-      category: { type: "string" },
-      max_price: { type: "number" }
-    },
-    required: ["category"]
-  }
-};
-```
-
-## Register Script
-
-Client App chạy script này 1 lần để push tool lên Server.
-
-```typescript
-// project2/scripts/register-tool.ts
-import { LettaClient } from '@letta-ai/letta-client';
-
-const client = new LettaClient({ 
-  baseUrl: 'http://project1-letta-server.com', // URL của Project 1
-  apiKey: 'p1-api-key' 
-});
-
-async function register() {
-  await client.tools.upsert({
-    name: "query_local_db",
-    description: productToolDef.description,
-    jsonSchema: { 
-      type: "function", 
-      function: productToolDef 
-    },
-    // Source code giả, chỉ để trigger return
-    sourceCode: `def query_local_db(**kwargs): return "CLIENT_SIDE_EXECUTION"`,
-    // QUAN TRỌNG: Tool này cần approval/client execution
-    defaultRequiresApproval: true 
-  });
-  console.log('Tool registered on Letta Server');
+```json
+{
+  "sourceCode": "def query_local_db(query, category=None):\n    \"\"\"\n    Tìm kiếm sản phẩm trong database local của khách hàng.\n\n    Args:\n        query (str): Từ khóa tìm kiếm.\n        category (str): Danh mục (tùy chọn).\n    \"\"\"\n    # Code python này SẼ KHÔNG CHẠY nếu bạn bật requires_approval\n    return \"WAITING_FOR_CLIENT_EXECUTION\"",
+  "description": "Tool dùng để truy vấn database local của Client App.",
+  "defaultRequiresApproval": true
 }
 ```
 
-## Checkpoint
+### Tại sao cách này an toàn hơn?
+- Letta Server tự dùng thư viện Python để parse docstring thành JSON Schema chuẩn của nó.
+- Bạn không cần lo lắng về việc viết JSON Schema sai định dạng gây crash server.
 
-- Login vào Dashboard của Project 1.
-- Kiểm tra mục Tools.
-- Thấy tool `query_local_db` xuất hiện -> **PASS**.
+---
+
+## 2. Lưu ý về Execution (Thực thi)
+
+Nếu boss thấy Server tự động trả về kết quả `"WAITING_FOR_CLIENT_EXECUTION"` mà không dừng lại hỏi:
+1. Đảm bảo `defaultRequiresApproval` luôn là `true`.
+2. Trong Project 2 (Rails/Go), code của bạn phải **không được tiếp tục chat** nếu nhận thấy message có `tool_calls`. Bạn phải ngắt flow, chạy DB, rồi mới gửi kết quả ngược lại.
+
+---
+
+## 3. Khắc phục lỗi Crash (422/500)
+
+Nếu boss gặp lỗi `NameError: DynamicModel`:
+- **Nguyên nhân**: Do trường `jsonSchema` bạn gửi lên có cấu trúc mà Pydantic (phía Server) không hiểu được.
+- **Giải pháp**: Xóa trường `jsonSchema` trong request Postman và sử dụng định dạng docstring `Args:` như ví dụ ở Mục 1.
+
+Tiếp theo: [Agent Setup](./05-agent-setup.md)
