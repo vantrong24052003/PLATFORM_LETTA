@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import agentRoutes from '@/routes/agent.routes.js';
+import lettaRouter from '@/routes/letta/index.js';
 
 const router: Router = Router();
 
@@ -7,14 +7,13 @@ router.get('/', (req: Request, res: Response) => {
   res.json({
     message: 'Letta API Server is running',
     endpoints: {
-      createAgent: 'POST /api/agents',
-      getAgent: 'GET /api/agents/:agentId',
-      chatWithAgent: 'POST /api/agents/:agentId/messages',
-      deleteBlock: 'DELETE /api/agents/blocks/:blockId',
+      agents: '/api/letta/agents',
+      agentTools: '/api/letta/agents/tools',
+      agentBlocks: '/api/letta/agents/blocks',
     },
   });
 });
 
-router.use('/agents', agentRoutes);
+router.use('/letta', lettaRouter);
 
 export default router;

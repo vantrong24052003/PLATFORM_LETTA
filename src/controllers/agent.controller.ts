@@ -13,6 +13,15 @@ export const createAgent = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+export const listAgents = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const agents = await lettaService.listAgents();
+    renderSuccess(res, { agents }, 'Agents retrieved successfully');
+  } catch (error) {
+    renderError(res, error as Error);
+  }
+};
+
 export const getAgent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { agentId } = req.params;
@@ -37,7 +46,6 @@ export const chatWithAgent = async (req: Request, res: Response, next: NextFunct
     if (params.messages) {
       response = await lettaService.sendMessages(agentId, params.messages);
     } else {
-      // Pass the whole body as params to support type, approve, approval_request_id
       response = await lettaService.sendMessage(agentId, params);
     }
 

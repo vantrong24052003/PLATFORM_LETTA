@@ -3,16 +3,18 @@ import { config } from '@/config/letta.config.js';
 import { AgentOptions } from '@/types/index.js';
 import { randomUUID } from 'crypto';
 
-export enum MessageRole {
-  User = 'user',
-  System = 'system',
-}
+enum MESSSAGE_ROLE { User = 'user', System = 'system' }
+enum TOOL_TYPE { RequiresApproval = 'requires_approval' }
 
 class LettaService {
   private client: Letta;
 
   constructor() {
-    this.client = new Letta({ apiKey: config.letta.apiKey, timeout: 600000 });
+    this.client = new Letta({
+      apiKey: config.letta.apiKey,
+      baseURL: config.letta.baseUrl,
+      timeout: 600000
+    });
   }
 
   async createAgent(options: AgentOptions): Promise<any> {
@@ -20,22 +22,33 @@ class LettaService {
 
     const final_tool_rules = tool_rules || [];
 
-    // Force HITL for query_local_db to ensure Project 2 can intercept it
-    if (tools && tools.includes('query_local_db')) {
-      const hasRule = final_tool_rules.some(r => r.tool_name === 'query_local_db' && r.type === 'requires_approval');
-      if (!hasRule) {
-        final_tool_rules.push({
-          type: 'requires_approval',
-          tool_name: 'query_local_db'
-        });
-      }
+    if (tools && tools.length > 0) {
+      tools.forEach(toolName => {
+        const hasRule = final_tool_rules.some(r => r.tool_name === toolName && r.type === TOOL_TYPE.RequiresApproval);
+        if (!hasRule) {
+          final_tool_rules.push({
+            type: TOOL_TYPE.RequiresApproval,
+            tool_name: toolName
+          });
+        }
+      });
     }
 
     const agentState = await this.client.agents.create({
       name: `${name} ${randomUUID()}`,
       system: system,
-      model: model || 'anthropic/claude-sonnet-4-5-20250929',
-      embedding: embedding || 'openai/text-embedding-3-small',
+      llm_config: {
+        model: 'GLM-4.7',
+        model_endpoint_type: 'openai',
+        model_endpoint: config.letta.openaiApiBase,
+        context_window: 128000
+      },
+      embedding_config: {
+        embedding_model: 'text-embedding-3-small',
+        embedding_endpoint_type: 'openai',
+        embedding_endpoint: config.letta.openaiApiBase,
+        embedding_dim: 1536
+      },
       memory_blocks: memory_blocks,
       tools: tools,
       tool_rules: final_tool_rules.length > 0 ? final_tool_rules : undefined,
@@ -49,6 +62,10 @@ class LettaService {
     return await this.client.agents.retrieve(agentId);
   }
 
+  async listAgents(): Promise<any> {
+    return await this.client.agents.list();
+  }
+
   async sendMessage(agentId: string, params: any): Promise<any> {
     try {
       // Construct message payload dynamically
@@ -60,9 +77,8 @@ class LettaService {
       if (params.approve !== undefined) payload.approve = params.approve;
       if (params.approval_request_id) payload.approval_request_id = params.approval_request_id;
 
-      // Default to user role if only message is provided and no role
       if (payload.content && !payload.role) {
-        payload.role = 'user';
+        payload.role = MESSSAGE_ROLE.User;
       }
 
       console.log(`[DEBUG] Calling Letta SDK create with payload: ${JSON.stringify({ messages: [payload] })}`);
