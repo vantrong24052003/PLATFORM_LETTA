@@ -6,10 +6,11 @@ export const renderSuccess = <T>(res: Response, data: T, message: string, status
   res.status(statusCode).json(response);
 };
 
-export const renderError = (res: Response, error: Error, statusCode: number = 500): void => {
+export const renderError = (res: Response, error: any, statusCode: number = 500): void => {
+  const status = error.statusCode || error.status || statusCode;
   const response: ApiResponse = {
-    error: error.message,
-    stack: error.stack,
+    error: error.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
   };
-  res.status(statusCode).json(response);
+  res.status(status).json(response);
 };

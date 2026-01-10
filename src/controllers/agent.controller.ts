@@ -26,14 +26,21 @@ export const getAgent = async (req: Request, res: Response, next: NextFunction):
 export const chatWithAgent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { agentId } = req.params;
-    const { message, role } = req.body;
-    console.log(`[DEBUG] chatWithAgent called. agentId: ${agentId}, message: ${message}, role: ${role}`);
+    const params = req.body;
+    console.log(`[DEBUG] chatWithAgent called. agentId: ${agentId}, params: ${JSON.stringify(params)}`);
 
-    if (!message) {
-      throw { statusCode: 400, message: 'Message content is required' };
+    if (!params.message && !params.messages && !params.approve) {
+      throw { statusCode: 400, message: 'Message content or approval is required' };
     }
 
-    const response = await lettaService.sendMessage(agentId, message, role);
+    let response;
+    if (params.messages) {
+      response = await lettaService.sendMessages(agentId, params.messages);
+    } else {
+      // Pass the whole body as params to support type, approve, approval_request_id
+      response = await lettaService.sendMessage(agentId, params);
+    }
+
     renderSuccess(res, { response }, 'Message sent successfully');
   } catch (error) {
     renderError(res, error as Error);
@@ -54,6 +61,16 @@ export const createTool = async (req: Request, res: Response, next: NextFunction
   try {
     const tool = await lettaService.upsertTool(req.body);
     renderSuccess(res, { tool }, 'Tool registered successfully', 201);
+  } catch (error) {
+    renderError(res, error as Error);
+  }
+};
+
+export const listMessages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { agentId } = req.params;
+    const messages = await lettaService.listMessages(agentId);
+    renderSuccess(res, { messages }, 'Messages retrieved successfully');
   } catch (error) {
     renderError(res, error as Error);
   }

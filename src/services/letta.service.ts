@@ -12,7 +12,7 @@ class LettaService {
   private client: Letta;
 
   constructor() {
-    this.client = new Letta({ apiKey: config.letta.apiKey });
+    this.client = new Letta({ apiKey: config.letta.apiKey, timeout: 600000 });
   }
 
   async createAgent(options: AgentOptions): Promise<any> {
@@ -49,22 +49,43 @@ class LettaService {
     return await this.client.agents.retrieve(agentId);
   }
 
-  async sendMessage(agentId: string, message: string, role: MessageRole = MessageRole.User): Promise<any> {
-    console.log(`[DEBUG] Service sendMessage. agentId: ${agentId}, role: ${role}`);
+  async sendMessage(agentId: string, params: any): Promise<any> {
     try {
-      const response = await this.client.agents.messages.create(agentId, {
-        messages: [
-          {
-            role,
-            content: message,
-          },
-        ],
-      });
+      // Construct message payload dynamically
+      const payload: any = {};
+
+      if (params.role) payload.role = params.role;
+      if (params.message) payload.content = params.message;
+      if (params.type) payload.type = params.type;
+      if (params.approve !== undefined) payload.approve = params.approve;
+      if (params.approval_request_id) payload.approval_request_id = params.approval_request_id;
+
+      // Default to user role if only message is provided and no role
+      if (payload.content && !payload.role) {
+        payload.role = 'user';
+      }
+
+      console.log(`[DEBUG] Calling Letta SDK create with payload: ${JSON.stringify({ messages: [payload] })}`);
+      const response = await this.client.agents.messages.create(agentId, { messages: [payload] });
       return response;
     } catch (error) {
       console.error('[DEBUG] helper sendMessage error:', error);
       throw error;
     }
+  }
+
+  async sendMessages(agentId: string, messages: any[]): Promise<any> {
+    try {
+      const response = await this.client.agents.messages.create(agentId, { messages });
+      return response;
+    } catch (error) {
+      console.error('[DEBUG] helper sendMessages error:', error);
+      throw error;
+    }
+  }
+
+  async listMessages(agentId: string): Promise<any> {
+    return await this.client.agents.messages.list(agentId);
   }
 
   async deleteBlock(blockId: string): Promise<any> {

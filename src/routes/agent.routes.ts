@@ -8,5 +8,6 @@ router.get('/tools', agentController.listTools);
 router.post('/', agentController.createAgent);
 router.get('/:agentId', agentController.getAgent);
 router.post('/:agentId/messages', agentController.chatWithAgent);
+router.get('/:agentId/messages', agentController.listMessages);
 router.delete('/blocks/:blockId', agentController.deleteBlock);
 export default router;
