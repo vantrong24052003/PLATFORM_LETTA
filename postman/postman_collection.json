@@ -1,0 +1,519 @@
+{
+	"info": {
+		"_postman_id": "letta-platform-api-v2",
+		"name": "Letta Platform API",
+		"description": "Complete API collection for Letta Platform (Multi-tenant Chatbot System)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Bots (Chatbot Templates)",
+			"item": [
+				{
+					"name": "Create Bot",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"bot-uuid-123\",\n  \"name\": \"Customer Support Bot\",\n  \"greeting\": \"Hello! How can I help you today?\",\n  \"system\": \"You are a helpful customer support assistant. Be polite and professional.\",\n  \"organization_id\": \"org-123\",\n  \"llm_config\": {\n    \"model\": \"gpt-4\",\n    \"temperature\": 0.7\n  },\n  \"knowledge_base_ids\": [],\n  \"theme_config\": {\n    \"primaryColor\": \"#007bff\",\n    \"position\": \"bottom-right\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots"]
+						},
+						"description": "Create a new chatbot template with configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "List Bots",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots"]
+						},
+						"description": "Get all chatbot templates"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bot by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots/{{BOT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots", "{{BOT_ID}}"]
+						},
+						"description": "Get a specific bot by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Bot",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Support Bot\",\n  \"greeting\": \"Hi there! How may I assist you?\",\n  \"system\": \"You are an expert customer support agent.\",\n  \"knowledge_base_ids\": [\"kb-uuid-456\"]\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots/{{BOT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots", "{{BOT_ID}}"]
+						},
+						"description": "Update bot configuration (name, greeting, system, knowledge_base_ids)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bot",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots/{{BOT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots", "{{BOT_ID}}"]
+						},
+						"description": "Delete a chatbot template"
+					},
+					"response": []
+				},
+				{
+					"name": "Get or Create Agent for Bot (User-specific)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"user-456\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots/{{BOT_ID}}/agents",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots", "{{BOT_ID}}", "agents"]
+						},
+						"description": "Get existing agent or create new agent for a specific user interacting with this bot"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Agent Mapping by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/bots/{{BOT_ID}}/agents?userId=user-456",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "bots", "{{BOT_ID}}", "agents"],
+							"query": [
+								{
+									"key": "userId",
+									"value": "user-456"
+								}
+							]
+						},
+						"description": "Get the agent ID for a specific user and bot"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Knowledge Bases",
+			"item": [
+				{
+					"name": "Create Knowledge Base",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Product Documentation\",\n  \"description\": \"Complete product information and FAQs\",\n  \"content\": \"Q: What are your working hours?\\nA: We work from 9 AM to 6 PM, Monday to Friday.\\n\\nQ: Where is your office?\\nA: 123 Nguyen Hue St, District 1, Ho Chi Minh City.\",\n  \"organization_id\": \"org-123\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/knowledge-bases",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "knowledge-bases"]
+						},
+						"description": "Create a new knowledge base. Status will be 'processing' initially, then 'success' when indexed."
+					},
+					"response": []
+				},
+				{
+					"name": "List Knowledge Bases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/knowledge-bases?organization_id=org-123",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "knowledge-bases"],
+							"query": [
+								{
+									"key": "organization_id",
+									"value": "org-123",
+									"description": "Filter by organization (multi-tenant support)"
+								}
+							]
+						},
+						"description": "Get all knowledge bases for an organization"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Knowledge Base by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/knowledge-bases/{{KB_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "knowledge-bases", "{{KB_ID}}"]
+						},
+						"description": "Get a specific knowledge base by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Knowledge Base",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Product Docs\",\n  \"description\": \"Updated FAQs\",\n  \"content\": \"New content here...\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/knowledge-bases/{{KB_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "knowledge-bases", "{{KB_ID}}"]
+						},
+						"description": "Update knowledge base. If content is updated, status becomes 'processing' again."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Knowledge Base",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/knowledge-bases/{{KB_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "knowledge-bases", "{{KB_ID}}"]
+						},
+						"description": "Delete a knowledge base and its associated Letta source"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Tools",
+			"item": [
+				{
+					"name": "List Tools",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/tools",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "tools"]
+						},
+						"description": "Get all available tools (for UI to display)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tool - Search Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"search_product\",\n  \"description\": \"Search products in database by name or category\",\n  \"sourceCode\": \"def search_product(query: str, category: str = None):\\n    \\\"\\\"\\\"\\n    Search for products in the database.\\n    \\n    Args:\\n        query (str): Search query\\n        category (str): Optional category filter\\n    \\\"\\\"\\\"\\n    pass\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/tools",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "tools"]
+						},
+						"description": "Register a new tool. User can create custom tools on UI."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tool - Post Finder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"post_finder\",\n  \"description\": \"Find posts by author name, keyword, or status.\",\n  \"sourceCode\": \"def post_finder(author_name: str = None, keyword: str = None, limit: int = 10, status: str = None):\\n    \\\"\\\"\\\"\\n    Find posts by author name, keyword, or status. Returns a list of posts with title, status, and author.\\n    \\n    Args:\\n        author_name (str): Name of the author to filter by\\n        keyword (str): Keyword to search in post title\\n        status (str): Status of the post (e.g. published, draft)\\n        limit (int): Max number of results to return\\n    \\\"\\\"\\\"\\n    pass\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/tools",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "tools"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tool - Calculator",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"calculator\",\n  \"description\": \"Perform basic arithmetic calculations.\",\n  \"sourceCode\": \"def calculator(expression: str):\\n    \\\"\\\"\\\"\\n    Perform basic arithmetic calculations.\\n    \\n    Args:\\n        expression (str): Mathematical expression (e.g. 50 * 10)\\n    \\\"\\\"\\\"\\n    pass\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/tools",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "tools"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tool",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/tools/{{TOOL_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "tools", "{{TOOL_ID}}"]
+						},
+						"description": "Delete a tool (not implemented yet)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Agents (Direct - for Testing)",
+			"item": [
+				{
+					"name": "Create Agent Directly",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Agent\",\n  \"system\": \"You are a helpful AI assistant. Be polite and professional.\",\n  \"model\": \"gpt-4\",\n  \"tools\": [\"search_product\", \"calculator\"],\n  \"memory_blocks\": [\n    {\n      \"label\": \"human\",\n      \"value\": \"User is a premium customer\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/agents",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "agents"]
+						},
+						"description": "Create agent directly (for testing). Production flow should use Bot Agent Mapping."
+					},
+					"response": []
+				},
+				{
+					"name": "List Agents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/agents",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "agents"]
+						},
+						"description": "List all agents (for testing)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Agent by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/agents/{{AGENT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "agents", "{{AGENT_ID}}"]
+						},
+						"description": "Get agent details"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Messages (Chat)",
+			"item": [
+				{
+					"name": "Send Message to Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Hello! Can you help me find a product?\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/messages/{{AGENT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "messages", "{{AGENT_ID}}"]
+						},
+						"description": "Send a message to agent. Used by widget to chat."
+					},
+					"response": []
+				},
+				{
+					"name": "Send Message with Tool Approval",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"approve\": true\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/messages/{{AGENT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "messages", "{{AGENT_ID}}"]
+						},
+						"description": "Approve a pending tool call (auto-handled in widget)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/api/letta/messages?agentId={{AGENT_ID}}",
+							"host": ["{{BASE_URL}}"],
+							"path": ["api", "letta", "messages"],
+							"query": [
+								{
+									"key": "agentId",
+									"value": "{{AGENT_ID}}"
+								}
+							]
+						},
+						"description": "Get message history for an agent"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Widget Embed",
+			"item": [
+				{
+					"name": "Get Widget Script",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/embed.js",
+							"host": ["{{BASE_URL}}"],
+							"path": ["embed.js"]
+						},
+						"description": "Get the widget embed script to include in customer website"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "BOT_ID",
+			"value": "bot-uuid-123",
+			"type": "string"
+		},
+		{
+			"key": "KB_ID",
+			"value": "kb-uuid-456",
+			"type": "string"
+		},
+		{
+			"key": "TOOL_ID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "AGENT_ID",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

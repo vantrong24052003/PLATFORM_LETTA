@@ -1,0 +1,25 @@
+{
+  "name": "widget",
+  "version": "1.0.0",
+  "description": "MGPT Chatbot Widget - TypeScript",
+  "main": "dist/embed.js",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["chatbot", "widget", "letta"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.3",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

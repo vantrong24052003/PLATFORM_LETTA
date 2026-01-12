@@ -9,9 +9,10 @@ export const renderSuccess = <T>(res: Response, data: T, message: string, status
 
 export const renderError = (res: Response, error: any, statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR): void => {
   const status = error.statusCode || error.status || statusCode;
+  const errorMessage = error.message || error.error || String(error);
   const response: ApiResponse = {
-    error: error.message,
-    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    error: errorMessage,
+    stack: error.stack ?? undefined,
   };
   res.status(status).json(response);
 };
