@@ -6,7 +6,7 @@ services:
       - "8283:8283"
       - "5433:5432"
     environment:
-      - OPENAI_API_BASE=https://api.z.ai/api/coding/paas/v4
+      - OPENAI_API_BASE=${OPENAI_API_BASE}
       - ZHIPUAI_API_KEY=${ZHIPUAI_API_KEY}
       - DEFAULT_LLM_MODEL=glm-4.7
       - DEFAULT_EMBEDDING_MODEL=text-embedding-3-small

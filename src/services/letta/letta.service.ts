@@ -80,11 +80,9 @@ class LettaService {
         payload.role = MESSSAGE_ROLE.User;
       }
 
-      console.log(`[DEBUG] Calling Letta SDK create with payload: ${JSON.stringify({ messages: [payload] })}`);
       const response = await this.client.agents.messages.create(agentId, { messages: [payload] });
       return response;
     } catch (error) {
-      console.error('[DEBUG] helper sendMessage error:', error);
       throw error;
     }
   }
@@ -94,7 +92,6 @@ class LettaService {
       const response = await this.client.agents.messages.create(agentId, { messages });
       return response;
     } catch (error) {
-      console.error('[DEBUG] helper sendMessages error:', error);
       throw error;
     }
   }

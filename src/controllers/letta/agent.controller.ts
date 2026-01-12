@@ -28,7 +28,6 @@ export const chatWithAgent = async (req: Request, res: Response, next: NextFunct
   try {
     const { agentId } = req.params;
     const params = req.body;
-    console.log(`[DEBUG] chatWithAgent called. agentId: ${agentId}, params: ${JSON.stringify(params)}`);
 
     if (!params.message && !params.messages && !params.approve) {
       throw { statusCode: HttpStatus.BAD_REQUEST, message: 'Message content or approval is required' };
