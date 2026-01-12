@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import * as agentController from '@/controllers/agent.controller.js';
+import * as toolController from '@/controllers/letta/tool.controller.js';
 
 const router = Router();
 
-router.post('/', agentController.createTool);
-router.get('/', agentController.listTools);
+router.post('/', toolController.createTool);
 
 export default router;

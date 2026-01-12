@@ -8,8 +8,8 @@ router.get('/', (req: Request, res: Response) => {
     message: 'Letta API Server is running',
     endpoints: {
       agents: '/api/letta/agents',
-      agentTools: '/api/letta/agents/tools',
-      agentBlocks: '/api/letta/agents/blocks',
+      tools: '/api/letta/tools',
+      blocks: '/api/letta/blocks',
     },
   });
 });

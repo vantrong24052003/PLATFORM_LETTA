@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import * as agentController from '@/controllers/agent.controller.js';
+import * as blockController from '@/controllers/letta/block.controller.js';
 
 const router = Router();
 
-router.delete('/:blockId', agentController.deleteBlock);
+router.delete('/:blockId', blockController.deleteBlock);
 
 export default router;

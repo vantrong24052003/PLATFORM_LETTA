@@ -68,7 +68,6 @@ class LettaService {
 
   async sendMessage(agentId: string, params: any): Promise<any> {
     try {
-      // Construct message payload dynamically
       const payload: any = {};
 
       if (params.role) payload.role = params.role;
@@ -127,7 +126,6 @@ class LettaService {
       toolData.default_requires_approval = options.default_requires_approval;
     }
 
-    console.log('[DEBUG] upsertTool payload:', JSON.stringify(toolData, null, 2));
     return await this.client.tools.upsert(toolData);
   }
 
