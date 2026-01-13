@@ -83,7 +83,6 @@ export interface AgentResponse {
 
 export interface ChatbotWidgetAPI {
   setAgent: (agentId: string) => void;
-  createAgent: (userId?: string) => Promise<string>;
   getOrCreateAgent: (userId?: string) => Promise<string>;
   openChat: () => void;
   closeChat: () => void;

@@ -64,9 +64,11 @@ class BotService {
   }
 
   async getOrCreateAgent(chatbotId: string, userId?: string): Promise<string> {
-    const whereClause = userId
-      ? { chatbot_id: chatbotId, user_id: userId }
-      : { chatbot_id: chatbotId, user_id: null };
+    const normalizedUserId = userId || null;
+    const whereClause = {
+      chatbot_id: chatbotId,
+      user_id: normalizedUserId
+    };
 
     const existingMapping = await AgentMapping.findOne({ where: whereClause });
     if (existingMapping) {
@@ -81,7 +83,7 @@ class BotService {
     const toolRules = typeof bot.tool_rules === 'string' ? JSON.parse(bot.tool_rules) : bot.tool_rules || [];
 
       const agent = await agentLettaService.createAgent({
-      name: `${bot.name} - ${userId || 'anonymous'}`,
+      name: `${bot.name} - ${normalizedUserId || 'anonymous'}`,
       system: bot.system,
       model: llmConfig.model || 'GLM-4.7',
       embedding: llmConfig.embedding,
@@ -111,19 +113,11 @@ class BotService {
 
     const newMapping = await AgentMapping.create({
       chatbot_id: chatbotId,
-      user_id: userId || '',
+      user_id: normalizedUserId,
       agent_id: agent.id,
     });
 
     return newMapping.agent_id;
-  }
-
-  async getAgentByUser(chatbotId: string, userId?: string): Promise<string> {
-    const whereClause = userId
-      ? { chatbot_id: chatbotId, user_id: userId }
-      : { chatbot_id: chatbotId, user_id: '' };
-    const mapping = await AgentMapping.findOne({ where: whereClause });
-    return mapping?.agent_id || '';
   }
 }
 

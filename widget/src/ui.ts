@@ -7,8 +7,8 @@ let messagesContainer: HTMLDivElement | null = null;
 let inputElement: HTMLInputElement | null = null;
 
 export function renderBubble(theme: ThemeConfig): void {
-  if (bubbleElement) return; // Already rendered
-  
+  if (bubbleElement) return;
+
   bubbleElement = document.createElement('div');
   bubbleElement.id = 'chatbot-bubble';
   bubbleElement.style.cssText = `
@@ -29,39 +29,38 @@ export function renderBubble(theme: ThemeConfig): void {
     z-index: 9998;
     transition: transform 0.2s;
   `;
-  
+
   if (theme.bubbleIconUrl) {
     bubbleElement.innerHTML = `<img src="${theme.bubbleIconUrl}" alt="Chat" style="width: 32px; height: 32px; border-radius: 50%;" />`;
   } else {
     bubbleElement.innerHTML = '💬';
   }
-  
+
   bubbleElement.addEventListener('mouseenter', () => {
     if (bubbleElement) {
       bubbleElement.style.transform = 'scale(1.1)';
     }
   });
-  
+
   bubbleElement.addEventListener('mouseleave', () => {
     if (bubbleElement) {
       bubbleElement.style.transform = 'scale(1)';
     }
   });
-  
+
   document.body.appendChild(bubbleElement);
 }
 
 export function renderChatbox(config: BotConfig): UIElements {
   if (chatboxElement && inputElement) {
-    // Already rendered, return existing elements
     const closeBtn = chatboxElement.querySelector('#close-btn') as HTMLElement;
     const sendBtn = chatboxElement.querySelector('#send-btn') as HTMLElement;
     return { closeBtn, sendBtn, inputElement };
   }
-  
+
   const theme = config.theme_config || {};
   const primaryColor = theme.primaryColor || '#1677ff';
-  
+
   chatboxElement = document.createElement('div');
   chatboxElement.id = 'chatbot-chatbox';
   chatboxElement.style.cssText = `
@@ -78,7 +77,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     z-index: 9999;
     overflow: hidden;
   `;
-  
+
   // Header
   const header = document.createElement('div');
   header.style.cssText = `
@@ -89,7 +88,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     align-items: center;
     justify-content: space-between;
   `;
-  
+
   const headerTitle = document.createElement('div');
   headerTitle.style.cssText = `
     display: flex;
@@ -97,7 +96,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     gap: 8px;
     font-weight: 600;
   `;
-  
+
   if (theme.botAvatarUrl) {
     headerTitle.innerHTML = `
       <img src="${theme.botAvatarUrl}" alt="Bot" style="width: 32px; height: 32px; border-radius: 50%;" />
@@ -106,7 +105,7 @@ export function renderChatbox(config: BotConfig): UIElements {
   } else {
     headerTitle.innerHTML = `<span>${config.name}</span>`;
   }
-  
+
   const closeBtn = document.createElement('button');
   closeBtn.id = 'close-btn';
   closeBtn.innerHTML = '✕';
@@ -120,11 +119,10 @@ export function renderChatbox(config: BotConfig): UIElements {
     width: 24px;
     height: 24px;
   `;
-  
+
   header.appendChild(headerTitle);
   header.appendChild(closeBtn);
-  
-  // Messages container
+
   messagesContainer = document.createElement('div');
   messagesContainer.id = 'chatbot-messages';
   messagesContainer.style.cssText = `
@@ -135,8 +133,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     flex-direction: column;
     gap: 12px;
   `;
-  
-  // Input area
+
   const inputArea = document.createElement('div');
   inputArea.style.cssText = `
     padding: 16px;
@@ -144,7 +141,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     display: flex;
     gap: 8px;
   `;
-  
+
   inputElement = document.createElement('input');
   inputElement.type = 'text';
   inputElement.placeholder = 'Type your message...';
@@ -156,7 +153,7 @@ export function renderChatbox(config: BotConfig): UIElements {
     font-size: 14px;
     outline: none;
   `;
-  
+
   const sendBtn = document.createElement('button');
   sendBtn.id = 'send-btn';
   sendBtn.innerHTML = '➤';
@@ -169,10 +166,10 @@ export function renderChatbox(config: BotConfig): UIElements {
     font-size: 16px;
     cursor: pointer;
   `;
-  
+
   inputArea.appendChild(inputElement);
   inputArea.appendChild(sendBtn);
-  
+
   // Footer
   if (theme.footerText) {
     const footer = document.createElement('div');
@@ -186,13 +183,13 @@ export function renderChatbox(config: BotConfig): UIElements {
     footer.textContent = theme.footerText;
     chatboxElement.appendChild(footer);
   }
-  
+
   chatboxElement.appendChild(header);
   chatboxElement.appendChild(messagesContainer);
   chatboxElement.appendChild(inputArea);
-  
+
   document.body.appendChild(chatboxElement);
-  
+
   return { closeBtn, sendBtn, inputElement };
 }
 
@@ -219,15 +216,15 @@ export function closeChat(): void {
 
 export function addMessage(content: string, role: 'user' | 'assistant'): void {
   if (!messagesContainer) return;
-  
+
   const messageDiv = document.createElement('div');
   messageDiv.style.cssText = `
     padding: 10px 14px;
     border-radius: 12px;
     max-width: 80%;
     word-wrap: break-word;
-    ${role === 'user' 
-      ? 'background-color: #1677ff; color: white; align-self: flex-end; margin-left: auto;' 
+    ${role === 'user'
+      ? 'background-color: #1677ff; color: white; align-self: flex-end; margin-left: auto;'
       : 'background-color: #f3f4f6; color: #111827; align-self: flex-start;'}
   `;
   messageDiv.textContent = content;
@@ -237,7 +234,7 @@ export function addMessage(content: string, role: 'user' | 'assistant'): void {
 
 export function showTypingIndicator(): void {
   if (!messagesContainer) return;
-  
+
   const typingDiv = document.createElement('div');
   typingDiv.id = 'typing-indicator';
   typingDiv.style.cssText = `

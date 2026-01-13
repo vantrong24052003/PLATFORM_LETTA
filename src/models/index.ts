@@ -48,7 +48,7 @@ BotTemplate.init(
       allowNull: true,
     },
     organization_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     status: {
@@ -142,7 +142,7 @@ KnowledgeBase.init(
       defaultValue: Status.PENDING,
     },
     organization_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     created_at: {

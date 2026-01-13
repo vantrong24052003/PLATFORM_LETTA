@@ -1,5 +1,5 @@
 import { loadBotConfig } from './bot';
-import { createAgent, setAgent, getCurrentAgent } from './agent';
+import { getOrCreateAgent, setAgent, getCurrentAgent } from './agent';
 import { renderBubble, renderChatbox, toggleChat, openChat, closeChat, addMessage, getInputElement } from './ui';
 import { sendMessage, displayMessages } from './chat';
 import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
@@ -37,14 +37,12 @@ import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
       renderBubble(theme);
       const { closeBtn, sendBtn, inputElement } = renderChatbox(botConfig);
 
-      // Add greeting message
       setTimeout(() => {
         if (!botConfig) return;
         const greeting = botConfig.greeting || 'Hello! How can I help you?';
         addMessage(greeting, 'assistant');
       }, 500);
 
-      // Event listeners
       const bubble = document.getElementById('chatbot-bubble');
       if (bubble) {
         bubble.addEventListener('click', async () => {
@@ -52,7 +50,7 @@ import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
             await onBubbleClickCallback();
           } else {
             if (!getCurrentAgent() && chatbotId) {
-              await createAgent(chatbotId);
+              await getOrCreateAgent(chatbotId);
             }
             toggleChat();
           }
@@ -72,7 +70,7 @@ import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
       });
 
     } catch (error) {
-      console.error('ChatbotWidget initialization failed:', error);
+      console.error('ChatbotWidget init failed:', error);
     }
   }
 
@@ -80,54 +78,34 @@ import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
     const message = inputElement.value.trim();
     if (!message) return;
 
-    // Add user message to UI
     addMessage(message, 'user');
     inputElement.value = '';
 
     try {
-      // Send to backend
       const response = await sendMessage(message);
-
-      // Display assistant response
-      if (response && response.messages) {
+      if (response?.messages) {
         displayMessages(response);
       }
     } catch (error) {
       addMessage('Sorry, something went wrong. Please try again.', 'assistant');
-      console.error('Error:', error);
     }
   }
 
-  // Wait for DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
-  // Create public API
   const API: ChatbotWidgetAPI = {
-    setAgent: (agentId: string) => {
-      setAgent(agentId);
-    },
-
-    createAgent: async (userId?: string) => {
-      if (!chatbotId) throw new Error('Chatbot ID not found');
-      return await createAgent(chatbotId, userId);
-    },
+    setAgent: (agentId: string) => setAgent(agentId),
 
     getOrCreateAgent: async (userId?: string) => {
       if (!chatbotId) throw new Error('Chatbot ID not found');
-      return await createAgent(chatbotId, userId);
+      return await getOrCreateAgent(chatbotId, userId);
     },
 
-    openChat: () => {
-      openChat();
-    },
-
-    closeChat: () => {
-      closeChat();
-    },
+    openChat: () => openChat(),
+    closeChat: () => closeChat(),
 
     sendMessage: async (message: string) => {
       const inputElement = getInputElement();
@@ -142,10 +120,8 @@ import type { BotConfig, ThemeConfig, ChatbotWidgetAPI } from './types';
     },
   };
 
-  // Expose to both window and return for webpack
   window.ChatbotWidget = API;
   return API;
 })();
 
-// Export for webpack
 export default window.ChatbotWidget;

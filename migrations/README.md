@@ -1,109 +1,48 @@
-# Migration: Tạo 2 Bảng Bot
+# Migrations
 
----
-
-## Vì Sao Cần?
-
-- **Vấn đề**: FE lưu bot config trong localStorage → Mất khi clear browser
-- **Giải pháp**: Lưu vào DB, tái sử dụng khi tạo agents
-
----
-
-## Tạo Bảng Gì?
-
-### 1. `bot_templates` - Lưu config bot
-
-| Cột | Map Từ | Ý Nghĩa |
-|-----|--------|---------|
-| `id` | FE: `AIAssistant.id` | Bot ID |
-| `name` | FE: `AIAssistant.name` | Tên bot |
-| `greeting` | FE: `AIAssistant.greeting` | Lời chào |
-| `system` | FE: `AIAssistant.systemPrompt` | System prompt |
-| `llm_config` | Letta: `agents.llm_config` | Model config (JSON) |
-| `tool_rules` | Letta: `agents.tool_rules` | Tool rules (JSON) |
-| `theme_config` | FE: `primaryColor`, avatars | Theme (JSON) |
-| `organization_id` | Letta: `agents.organization_id` | Org ID |
-| `status` | FE: `AIAssistant.status` | active/inactive |
-
-**Example**:
-```json
-{
-  "id": "bot_123",
-  "name": "Support Bot",
-  "system": "You are a support agent",
-  "llm_config": {"model": "GLM-4.7"}
-}
-```
-
----
-
-### 2. `agent_mappings` - Map user → agent
-
-| Cột | Ý Nghĩa |
-|-----|---------|
-| `chatbot_id` | Bot ID (FK to `bot_templates.id`) |
-| `user_id` | User ID (từ customer website) |
-| `agent_id` | Agent ID (trong `letta.agents`) |
-
-**Example**:
-```
-chatbot_id: "bot_123"
-user_id: "user_456"
-agent_id: "agent-xxx-yyy-zzz"
-```
-
-**Constraint**: 1 user chỉ có 1 agent per bot
-
----
-
-## Mapping Tổng Quan
-
-```
-FE localStorage: AIAssistant
-         ↓ (migrate)
-    bot_templates
-         ↓ (load config)
-    Platform BE
-         ↓ (call Letta API)
-    letta.agents (Letta tự tạo)
-         ↑ (reference)
-    agent_mappings
-```
-
-**FK duy nhất**: `agent_mappings.chatbot_id` → `bot_templates.id`
-
-**KHÔNG có FK** tới `letta.agents` (Letta tự quản lý)
-
----
-
-## Run Migration
+## Run migrations
 
 ```bash
-cat migrations/create_bot_tables.sql | docker exec -i letta_server psql -U letta -d letta
+# All custom tables (bot_templates, agent_mappings, knowledge_bases)
+cat 001_init_custom_tables.sql | docker exec -i letta_server psql -U letta -d letta
 ```
 
----
+## What's included
 
-## Flow Sử Dụng
+This migration creates **3 custom tables** in the `letta` schema:
 
-**Admin tạo bot**:
-```
-FE → POST /api/letta/bots {id, name, system, ...}
-BE → INSERT INTO bot_templates (...)
-```
+### 1. bot_templates
+- Store chatbot configurations from UI_MGPT
+- Fields: id, name, greeting, system, llm_config, tool_rules, knowledge_base_ids, theme_config
+- Indexes: organization_id, status, knowledge_base_ids (GIN)
 
-**Widget get agent**:
-```
-1. Check: SELECT * FROM agent_mappings WHERE chatbot_id=? AND user_id=?
-2. Nếu chưa có:
-   - Load: SELECT * FROM bot_templates WHERE id=?
-   - Call Letta: POST /v1/agents (với config từ bot_templates)
-   - Letta tạo: INSERT INTO letta.agents (...) [tự động]
-   - Save: INSERT INTO agent_mappings (chatbot_id, user_id, agent_id)
-3. Return: agent_id
-```
+### 2. agent_mappings
+- Map (bot + user) → agent_id in letta.agents
+- Fields: id, chatbot_id, user_id, agent_id
+- FK: chatbot_id → bot_templates.id (CASCADE delete)
+- Unique constraint: (chatbot_id, user_id)
 
-**Chat**:
-```
-POST /v1/agents/:agentId/messages
+### 3. knowledge_bases
+- Manage reusable knowledge bases
+- Fields: id, name, description, content, letta_source_id, status
+- Link to letta.sources via letta_source_id
+- Indexes: organization_id, status, letta_source_id
+
+## Features
+
+✅ Auto-update timestamp triggers for all tables
+✅ Proper indexes for query performance
+✅ Idempotent (safe to re-run with IF NOT EXISTS)
+✅ No FK to Letta internal tables (avoid conflicts)
+
+## Verify
+
+```bash
+# Check tables created
+docker exec letta_server psql -U letta -d letta -c "\dt letta.*" | grep -E "(bot_templates|agent_mappings|knowledge_bases)"
+
+# Check table structures
+docker exec letta_server psql -U letta -d letta -c "\d letta.bot_templates"
+docker exec letta_server psql -U letta -d letta -c "\d letta.agent_mappings"
+docker exec letta_server psql -U letta -d letta -c "\d letta.knowledge_bases"
 ```

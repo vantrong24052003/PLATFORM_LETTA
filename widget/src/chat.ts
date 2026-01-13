@@ -5,18 +5,15 @@ import type { MessageResponse, Message } from './types';
 
 export async function sendMessage(message: string): Promise<MessageResponse> {
   const agentId = getCurrentAgent();
-  if (!agentId) {
-    throw new Error('No agent available');
-  }
+  if (!agentId) throw new Error('No agent available');
 
+  showTypingIndicator();
   try {
-    showTypingIndicator();
     const result = await sendMessageWithAutoApproval(agentId, { message });
     hideTypingIndicator();
     return result;
   } catch (error) {
     hideTypingIndicator();
-    console.error('Error sending message:', error);
     throw error;
   }
 }
@@ -27,10 +24,10 @@ async function sendMessageWithAutoApproval(
   maxRetries: number = 10
 ): Promise<MessageResponse> {
   for (let i = 0; i < maxRetries; i++) {
-    const response = await fetch(`${API_BASE}/agents/${agentId}/messages`, {
+    const response = await fetch(`${API_BASE}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params),
+      body: JSON.stringify({ agentId, ...params }),
     });
 
     if (response.ok) {
@@ -40,19 +37,12 @@ async function sendMessageWithAutoApproval(
 
     if (response.status === 409) {
       const errorData = await response.json().catch(() => null);
-
       if (errorData?.error) {
-        const errorStr = typeof errorData.error === 'string'
-          ? errorData.error
-          : JSON.stringify(errorData.error);
-
+        const errorStr = typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error);
+        
         if (errorStr.includes('PENDING_APPROVAL')) {
-          let pendingId = errorData.error.match?.(/message-[a-f0-9-]+/)?.[0];
-          
-          if (!pendingId && errorData.error.includes('pending_request_id')) {
-            const match = errorStr.match(/"pending_request_id":\s*"([^"]+)"/);
-            pendingId = match ? match[1] : null;
-          }
+          const pendingId = errorData.error.match?.(/message-[a-f0-9-]+/)?.[0] || 
+                           errorStr.match(/"pending_request_id":\s*"([^"]+)"/)?.[1];
           
           if (pendingId) {
             params = { approval_request_id: pendingId, approve: true };
@@ -62,26 +52,16 @@ async function sendMessageWithAutoApproval(
       }
     }
 
-    throw new Error(`Failed to send message: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to send message: ${response.status}`);
   }
 
-  throw new Error('Max retries reached for auto-approval');
-}
-
-export function parseResponse(messagesResponse: MessageResponse): string {
-  const messages = messagesResponse.messages || [];
-  const assistantMessages = messages
-    .filter((msg: Message) => msg.message_type === 'assistant_message')
-    .map((msg: Message) => msg.content || '');
-
-  return assistantMessages.join('\n');
+  throw new Error('Max retries reached');
 }
 
 export function displayMessages(responseMessages: MessageResponse): void {
-  if (!responseMessages || !responseMessages.messages) return;
+  if (!responseMessages?.messages) return;
 
-  const messages = responseMessages.messages;
-  messages.forEach((msg: Message) => {
+  responseMessages.messages.forEach((msg: Message) => {
     if (msg.message_type === 'assistant_message' && msg.content) {
       addMessage(msg.content, 'assistant');
     }
