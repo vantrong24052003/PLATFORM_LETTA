@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  host: <%= ENV.fetch("LETTA_DB_HOST") %>
+  port: <%= ENV.fetch("LETTA_DB_PORT") %>
+  username: <%= ENV.fetch("LETTA_DB_USER") %>
+  password: <%= ENV.fetch("LETTA_DB_PASSWORD") %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("LETTA_DB_NAME") %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("LETTA_DB_NAME") %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch("LETTA_DB_NAME") %>

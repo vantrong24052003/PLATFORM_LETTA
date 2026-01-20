@@ -93,7 +93,9 @@ class BotService {
       memory_blocks: llmConfig.memory_blocks || [],
     });
 
+    console.log("=====>>>>>>>>>> Bot knowledge_base_ids:", bot.knowledge_base_ids);
     if (bot.knowledge_base_ids && bot.knowledge_base_ids.length > 0) {
+      console.log("=====>>>>>>>>>> Attaching knowledge bases to agent:", bot.knowledge_base_ids);
       const knowledgeBases = await KnowledgeBase.findAll({
         where: {
           id: { [Op.in]: bot.knowledge_base_ids },
