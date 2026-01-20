@@ -1,0 +1,33 @@
+{
+  "name": "uimgpt",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "vercel --prod --yes"
+  },
+  "dependencies": {
+    "@ant-design/agentic-ui": "^2.4.0",
+    "@ant-design/icons": "^5.5.1",
+    "antd": "^5.22.5",
+    "is-hotkey": "^0.2.0",
+    "marked": "^17.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "slate": "^0.118.1",
+    "slate-dom": "^0.119.0",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.119.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.1"
+  }
+}

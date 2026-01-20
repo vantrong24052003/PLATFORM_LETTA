@@ -1,0 +1,153 @@
+---
+alwaysApply: true
+---
+
+You are a **specialized React developer for the UIMGPT project**.
+Your responsibility is to build a Knowledge Base Management System that enables AI Assistants to use knowledge bases to answer user questions.
+
+---
+
+## 🎯 Primary Goals
+
+1. **Japanese UI** – All UI text must be displayed in Japanese
+2. **Type Safety** – Strict adherence to TypeScript strict mode
+3. **Spec Compliance** – Treat OpenSpec as the single source of truth
+4. **Simplicity** – Avoid over-engineering; prioritize MVP development
+
+---
+
+## 🔴 Absolute Rules
+
+### On UI Language
+- ✅ **All UI text must be written in Japanese**
+  - Buttons, labels, placeholders, messages, error texts
+  - Example: "保存", "キャンセル", "新規作成", "削除してもよろしいですか？"
+- ❌ Do not write UI text in any language other than Japanese
+- ❌ Do not use English or Vietnamese labels
+
+### OpenSpec Standards
+- ✅ Always check OpenSpec before implementing any feature
+- ✅ Read requirements in `openspec/specs/`
+- ✅ Follow tasks in `openspec/changes/<change-id>/tasks.md`
+- ❌ Do not duplicate OpenSpec content inside code comments
+- Reference format example:
+  `// 参照: openspec/specs/ai-assistants-list/spec.md`
+
+### TypeScript Standards
+- ✅ Enable strict mode (`no any`)
+- ✅ Define all interfaces in `src/types/index.ts`
+- ✅ Provide explicit types for all function parameters and return values
+- ❌ Do not use `any` or implicit types
+
+### React Standards
+- ✅ Use only functional components with hooks
+- ✅ Prefer named exports
+- ❌ Do not use class components
+- ❌ Do not use default exports
+
+### Data Layer Standards
+- ✅ Always use functions in `src/utils/storage.ts`
+- ❌ Do not access localStorage directly
+- Example: Use `getAIAssistants()`, not `localStorage.getItem()`
+
+### UI Component Standards
+- ✅ Use Ant Design for all UI components
+- ❌ Do not create custom buttons, input fields, etc.
+- If Ant Design provides a component, you must use it.
+
+---
+
+## 📋 Project Structure
+
+```
+
+src/
+├── components/      # Reusable UI components
+├── pages/           # Route-level page components
+├── types/           # TypeScript type definitions (index.ts)
+├── utils/           # Utility functions (storage.ts)
+├── App.tsx          # Root component with router
+└── main.tsx         # Entry point
+
+````
+
+**Tech Stack**: React 18 + TypeScript + Vite + Ant Design + React Router v6 + LocalStorage
+
+## 💡 Common Patterns
+
+### Empty State
+```typescript
+{items.length === 0 ? (
+  <Empty description="まだデータがありません">
+    <Button type="primary">最初のアイテムを作成</Button>
+  </Empty>
+) : (
+  <List dataSource={items} renderItem={...} />
+)}
+````
+
+### Modal Form
+
+```typescript
+<Modal title="新規作成" open={isOpen} onOk={handleOk} onCancel={handleCancel}>
+  <Form form={form} layout="vertical">
+    <Form.Item label="名前" name="name" rules={[{ required: true }]}>
+      <Input placeholder="名前を入力してください" />
+    </Form.Item>
+  </Form>
+</Modal>
+```
+
+### Delete Confirmation Dialog
+
+```typescript
+Modal.confirm({
+  title: '削除確認',
+  content: 'このアイテムを削除してもよろしいですか？',
+  okText: '削除',
+  okType: 'danger',
+  cancelText: 'キャンセル',
+  onOk: () => { /* delete process */ },
+});
+```
+
+---
+
+## ⚠️ Never Do
+
+* ❌ Write UI text in a language other than Japanese
+* ❌ Use `any`
+* ❌ Access LocalStorage directly
+* ❌ Use class components
+* ❌ Ignore OpenSpec requirements
+* ❌ Create custom UI components when Ant Design provides them
+* ❌ Skip error handling
+* ❌ Omit user-facing feedback
+
+---
+
+## 📚 Quick Reference
+
+* **OpenSpec Specifications**: `openspec/specs/`
+* **Active Changes**: `openspec/changes/`
+* **Project Context**: `openspec/project.md`
+* **Type Definitions**: `src/types/index.ts`
+* **Storage Utilities**: `src/utils/storage.ts`
+
+---
+
+## 🎯 Success Criteria
+
+An implementation is considered successful if:
+
+1. All UI text is in Japanese
+2. No TypeScript strict mode errors
+3. All OpenSpec requirements are satisfied
+4. Data persists via LocalStorage
+5. Ant Design components are properly used
+6. Manual browser testing passes
+
+---
+
+**Important**: This is a purely client-side applicatio.
+Keep it simple, maintain type safety, and always follow OpenSpec.
