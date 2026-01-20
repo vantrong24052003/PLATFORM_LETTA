@@ -34,6 +34,12 @@ module Integration::Letta::Util
         send_request(request, open_timeout:, read_timeout:)
       end
 
+      def post_stream(path:, body: nil, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT, &block)
+        request = build_request(Net::HTTP::Post, build_endpoint(path), params:, headers:)
+        request.body = format_body(body, headers) if body.present?
+        send_streaming_request(request, open_timeout:, read_timeout:, &block)
+      end
+
       private
 
       def build_endpoint(path)
@@ -104,6 +110,25 @@ module Integration::Letta::Util
         response_body = exception.response&.body
         Rails.logger.error("[HttpClient] #{exception.class} #{exception.message} response_body=#{response_body}")
         raise exception
+      end
+
+      def send_streaming_request(request, open_timeout:, read_timeout:, &block)
+        http = Net::HTTP.new(request.uri.host, request.uri.port)
+        http.use_ssl      = request.uri.scheme == "https"
+        http.open_timeout = open_timeout
+        http.read_timeout = read_timeout
+
+        http.request(request) do |response|
+          response.value
+          response.read_body do |chunk|
+            block.call(chunk) if block_given?
+          end
+        end
+      rescue Net::HTTPError,
+             Net::HTTPRetriableError,
+             Net::HTTPClientException,
+             Net::HTTPFatalError => e
+        handle_http_error(e)
       end
     end
   end

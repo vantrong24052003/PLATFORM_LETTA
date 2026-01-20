@@ -3,5 +3,7 @@ Rails.application.routes.draw do
 
   namespace :letta do
     resources :agents, only: [ :create ]
+    resources :messages, only: [ :create ]
+    resources :streaming_messages, only: [ :create ]
   end
 end

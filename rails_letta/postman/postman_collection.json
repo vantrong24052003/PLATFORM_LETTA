@@ -38,12 +38,83 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "messages",
+			"item": [
+				{
+					"name": "create_message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"{{AGENT_ID}}\",\n  \"input\": \"What do you know about me?\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/letta/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"letta",
+								"messages"
+							]
+						},
+						"description": "Send a message to a Letta agent"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "streaming_messages",
+			"item": [
+				{
+					"name": "create_streaming_message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"{{AGENT_ID}}\",\n  \"input\": \"Tell me a joke\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/letta/streaming_messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"letta",
+								"streaming_messages"
+							]
+						},
+						"description": "Send a streaming message to a Letta agent with real-time token streaming (SSE format)"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
 		{
 			"key": "BASE_URL",
 			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "AGENT_ID",
+			"value": "",
 			"type": "string"
 		}
 	]
