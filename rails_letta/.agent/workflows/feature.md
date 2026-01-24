@@ -46,17 +46,15 @@ Ask user for missing information:
 - Any specific constraints?
 
 ### 2. Create Implementation Plan
-Write plan to `.agent/plan/features/<feature-name>.md`:
-```markdown
-# Feature: [Name]
+Create a new folder `.agent/plan/letta/<feature-name>/` and add these 5 mandatory files:
 
-## Description
-[What this feature does]
+1. `00-overview.md`
+2. `01-database-schema.md`
+3. `02-api-design.md`
+4. `03-implementation.md`
+5. `04-testing.md`
 
-## Stack
-- Backend: [Rails API / Service / etc.]
-- Frontend: [React / Vanilla JS / etc.]
-- Database: [New tables / Migrations]
+**Reference**: Follow the template in `.agent/plan/letta/README.md`.
 
 ## Tasks
 - [ ] Task 1
@@ -90,6 +88,6 @@ bundle exec rspec
 ---
 
 ## Output Artifacts
-- `.agent/plan/features/<feature-name>.md` - Implementation plan
+- `.agent/plan/letta/<feature-name>/` (containing 00-04 files)
 - Code changes as specified in plan
 - Test files
