@@ -10,6 +10,7 @@ class Letta::Messages::Create < ApplicationService
     response = Integration::Letta::Util::HttpClient.post(
       path:,
       body:,
+      headers: { "Content-Type" => "application/json", "Accept" => "application/json" },
       read_timeout: TIMEOUT,
       open_timeout: TIMEOUT
     )

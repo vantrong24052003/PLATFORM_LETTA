@@ -56,7 +56,7 @@ class Letta::BotTemplatesController < ApplicationController
   end
 
   def template_params
-    scalars = [ :organization_id, :name, :greeting, :system_prompt, :status ]
+    scalars = [ :organization_id, :name, :greeting, :system_prompt, :status, :customer_domain ]
     params.require(:bot_template).permit(scalars, tools: [], source_ids: [], theme_config: {})
   end
 end

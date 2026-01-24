@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Streaming Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background: #0066CC;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0052A3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            border: 1px solid #e0e0e0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.streaming {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .event-content {
+            color: #28a745;
+            margin: 5px 0;
+        }
+        .event-done {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .event-error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SSE Streaming Test</h1>
+        
+        <div class="input-group">
+            <label for="agentId">Agent ID:</label>
+            <input type="text" id="agentId" value="agent-c3e0a08f-cb96-46ba-bdd2-e5e66ba48de3" placeholder="Enter agent ID">
+        </div>
+
+        <div class="input-group">
+            <label for="input">Message:</label>
+            <textarea id="input" rows="3" placeholder="Enter your message">Tell me a short story about AI</textarea>
+        </div>
+
+        <button id="startBtn" onclick="startStreaming()">▶️ Start Streaming</button>
+        <button id="stopBtn" onclick="stopStreaming()" disabled>⏹️ Stop</button>
+        <button onclick="clearResponse()">🗑️ Clear</button>
+
+        <div id="status"></div>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        let eventSource = null;
+        let fullResponse = '';
+
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        function appendResponse(text, className = '') {
+            const responseDiv = document.getElementById('response');
+            const span = document.createElement('div');
+            span.className = className;
+            span.textContent = text;
+            responseDiv.appendChild(span);
+            responseDiv.scrollTop = responseDiv.scrollHeight;
+        }
+
+        async function startStreaming() {
+            const agentId = document.getElementById('agentId').value;
+            const input = document.getElementById('input').value;
+
+            if (!agentId || !input) {
+                alert('Please enter both Agent ID and Message');
+                return;
+            }
+
+            // Clear previous response
+            fullResponse = '';
+            document.getElementById('response').innerHTML = '';
+
+            // Update UI
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            updateStatus('🔄 Connecting...', 'streaming');
+
+            try {
+                // Use fetch with streaming response
+                const response = await fetch('http://localhost:4000/letta/streaming_messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'text/event-stream'
+                    },
+                    body: JSON.stringify({
+                        agent_id: agentId,
+                        input: input
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                updateStatus('✅ Connected - Streaming...', 'connected');
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        updateStatus('✅ Stream completed', 'disconnected');
+                        document.getElementById('startBtn').disabled = false;
+                        document.getElementById('stopBtn').disabled = true;
+                        break;
+                    }
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                        if (line.trim() === '') continue;
+                        
+                        const eventMatch = line.match(/^event: (.+)$/m);
+                        const dataMatch = line.match(/^data: (.+)$/m);
+
+                        if (eventMatch && dataMatch) {
+                            const eventType = eventMatch[1];
+                            const data = JSON.parse(dataMatch[1]);
+
+                            if (eventType === 'content') {
+                                fullResponse += data.content;
+                                appendResponse(data.content, 'event-content');
+                            } else if (eventType === 'done') {
+                                appendResponse(`\n✅ Done! Usage: ${JSON.stringify(data.usage)}`, 'event-done');
+                            } else if (eventType === 'error') {
+                                appendResponse(`\n❌ Error: ${data.message}`, 'event-error');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'disconnected');
+                appendResponse(`\n❌ Connection Error: ${error.message}`, 'event-error');
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        }
+
+        function stopStreaming() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            updateStatus('⏹️ Stopped', 'disconnected');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+
+        function clearResponse() {
+            document.getElementById('response').innerHTML = '';
+            fullResponse = '';
+            updateStatus('', '');
+        }
+    </script>
+</body>
+</html>

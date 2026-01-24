@@ -4,7 +4,11 @@ require 'rails_helper'
 
 RSpec.describe 'Letta::StreamingMessages', type: :request do
   describe 'POST /letta/streaming_messages' do
-    let(:params) { { agent_id: 'agent-1', input: 'Stream me' } }
+    let(:organization) { Organization.create!(id: 'org-1', name: 'Test Org', privileged_tools: false) }
+    let(:bot_template) { BotTemplate.create!(name: 'Test', organization_id: organization.id, system_prompt: 'You are helpful') }
+    let(:agent) { Agent.create!(id: 'agent-1', name: 'Test Agent', organization_id: organization.id, message_buffer_autoclear: true) }
+    let(:agent_mapping) { AgentMapping.create!(bot_template:, organization_id: organization.id, user_id: 'user-1', agent: agent) }
+    let(:params) { { agent_id: agent_mapping.agent_id, input: 'Stream me' } }
 
     before do
       # Mock post_stream to yield chunks in upstream format (e.g. valid SSE with JSON)
