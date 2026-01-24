@@ -1,14 +1,16 @@
 # Custom DB Integration - Overview
 
-**Feature**: Custom Database Schema for Letta Bot Templates  
-**Status**: 🟡 In Progress  
+**Feature**: Custom Database Schema for Letta Bot Templates
+**Status**: ✅ **RESOLVED**
 **Parent**: [../00-execution-steps.md](../00-execution-steps.md)
 
 ---
 
 ## Overview
 
-This feature establishes the foundational database schema for managing Letta bot templates and agent mappings within the Rails application. Instead of relying solely on Letta's internal storage, we create custom Rails tables to support multi-tenancy, UI customization, and organization-level isolation.
+This feature establishes the foundational database schema for managing Letta bot templates and agent mappings within the Rails application. 
+**Context**: We are operating within an existing **Self-Hosted Letta Database** (Shared Schema). This database is already populated with core system tables.
+**Scope**: We are explicitly adding only 2 custom tables (`bot_templates`, `agent_mappings`) to support multi-tenancy without interfering with existing schema.
 
 ---
 
@@ -57,14 +59,14 @@ This feature establishes the foundational database schema for managing Letta bot
 
 ## Acceptance Criteria
 
-- [ ] Database migrations run successfully
-- [ ] Models have proper validations (presence, uniqueness)
-- [ ] API endpoints return correct HTTP status codes
-- [ ] Multi-org isolation is enforced (organization_id scoping)
-- [ ] Letta agents can be created via service layer
-- [ ] Agent mappings are stored after creation
-- [ ] RSpec tests pass with 80%+ coverage
-- [ ] No N+1 queries in list endpoints
+- [x] Database migrations run successfully
+- [x] Models have proper validations (presence, uniqueness)
+- [x] API endpoints return correct HTTP status codes
+- [x] Multi-org isolation is enforced (organization_id scoping)
+- [x] Letta agents can be created via service layer
+- [x] Agent mappings are stored after creation
+- [x] RSpec tests pass with 80%+ coverage
+- [x] No N+1 queries in list endpoints
 
 ---
 

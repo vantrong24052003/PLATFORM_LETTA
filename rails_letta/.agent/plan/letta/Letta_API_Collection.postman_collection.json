@@ -1,0 +1,328 @@
+{
+	"info": {
+		"_postman_id": "letta-platform-api",
+		"name": "Letta Platform API",
+		"description": "Complete API collection for Rails Letta Platform\n\n**Base URL:** http://localhost:4000\n**Frontend:** http://localhost:5173",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Phase 1: Agents",
+			"item": [
+				{
+					"name": "Create Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Customer Support Agent\",\n  \"system\": \"You are a helpful customer support assistant\",\n  \"llm_config\": {\n    \"model\": \"gpt-4\",\n    \"model_endpoint_type\": \"openai\",\n    \"model_endpoint\": \"https://api.openai.com/v1\",\n    \"context_window\": 8192\n  },\n  \"embedding_config\": {\n    \"embedding_model\": \"text-embedding-ada-002\",\n    \"embedding_endpoint_type\": \"openai\",\n    \"embedding_endpoint\": \"https://api.openai.com/v1\",\n    \"embedding_dim\": 1536\n  },\n  \"tools\": [\"web_search\"],\n  \"memory_blocks\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/agents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"agents"
+							]
+						},
+						"description": "Create a new AI agent with custom LLM and embedding configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Agent (Default Config)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Simple Agent\",\n  \"system\": \"You are a helpful assistant\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/agents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"agents"
+							]
+						},
+						"description": "Create agent with default LLM/embedding config"
+					},
+					"response": []
+				}
+			],
+			"description": "Agent creation and management endpoints"
+		},
+		{
+			"name": "Phase 1: Bot Templates",
+			"item": [
+				{
+					"name": "List Bot Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/letta/bot_templates?organization_id=org-123&page=1&limit=25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"bot_templates"
+							],
+							"query": [
+								{
+									"key": "organization_id",
+									"value": "org-123"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "25"
+								}
+							]
+						},
+						"description": "Get paginated list of bot templates for organization"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bot Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bot_template\": {\n    \"organization_id\": \"org-123\",\n    \"name\": \"Sales Assistant\",\n    \"system_prompt\": \"You are a friendly sales assistant who helps customers find the right products\",\n    \"greeting\": \"Hi! I'm here to help you find the perfect product. What are you looking for today?\",\n    \"tools\": [\"web_search\", \"product_catalog\"],\n    \"source_ids\": [\"source-1\", \"source-2\"],\n    \"theme_config\": {\n      \"primary_color\": \"#0066CC\",\n      \"font\": \"Inter\",\n      \"avatar\": \"sales-bot.png\"\n    },\n    \"status\": \"active\"\n  }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/bot_templates",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"bot_templates"
+							]
+						},
+						"description": "Create a new bot template configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bot Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/letta/bot_templates/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Get a specific bot template by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Bot Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bot_template\": {\n    \"name\": \"Updated Sales Assistant\",\n    \"system_prompt\": \"You are an expert sales assistant\",\n    \"greeting\": \"Welcome! How can I assist you today?\",\n    \"tools\": [\"web_search\", \"product_catalog\", \"calculator\"],\n    \"theme_config\": {\n      \"primary_color\": \"#FF6B35\",\n      \"font\": \"Roboto\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/bot_templates/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Update an existing bot template (cannot update id or organization_id)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bot Template",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:4000/letta/bot_templates/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Delete a bot template"
+					},
+					"response": []
+				}
+			],
+			"description": "Bot template CRUD operations"
+		},
+		{
+			"name": "Phase 1: Messages",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"agent-123\",\n  \"input\": \"Hello! Can you help me with product recommendations?\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"messages"
+							]
+						},
+						"description": "Send a message to an AI agent and get response (300s timeout)"
+					},
+					"response": []
+				}
+			],
+			"description": "Message sending endpoints"
+		},
+		{
+			"name": "Phase 2: Streaming Messages",
+			"item": [
+				{
+					"name": "Stream Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "text/event-stream"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"agent-123\",\n  \"input\": \"Tell me a story about AI\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:4000/letta/streaming_messages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"letta",
+								"streaming_messages"
+							]
+						},
+						"description": "Stream AI response in real-time using Server-Sent Events (SSE)\n\n**Note:** Use EventSource in browser or SSE client to properly handle streaming.\n\nResponse format:\n```\nevent: content\ndata: {\"content\":\"Hello\"}\n\nevent: content\ndata: {\"content\":\" world\"}\n\nevent: done\ndata: {\"usage\":{\"prompt_tokens\":10,\"completion_tokens\":50}}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Real-time streaming message endpoints (SSE)"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "frontend_url",
+			"value": "http://localhost:5173",
+			"type": "string"
+		}
+	]
+}

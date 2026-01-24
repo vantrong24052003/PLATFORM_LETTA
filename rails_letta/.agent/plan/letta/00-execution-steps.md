@@ -34,10 +34,10 @@ This is the **master implementation plan** for the entire Rails LeTTa Platform p
 - Memory-augmented conversations with RAG
 
 **Features**:
-- [Custom DB Integration](./letta/custom-db-integration/) - 🟡 Current focus
-- Streaming Workflow - 🔴 Planned
-- Tool Approval - 🔴 Planned
-- RAG Sources - 🔴 Planned
+- [Phase 1: Custom DB Integration](./Phase1_BE-custom-db-integration/) - ✅ **RESOLVED**
+- [Phase 2: Streaming Workflow](./Phase2_BE-streaming/) - ✅ **RESOLVED**
+- [Phase 3: Tool Approval](./Phase3_BE-tool-approval/) - 🔴 Planned
+- [Phase 4: RAG Sources](./Phase4_BE-rag-sources/) - 🔴 Planned
 
 ---
 
@@ -121,7 +121,7 @@ These components are **shared** across all AI engine integrations:
 **Timeline**: Weeks 5-6
 **Focus**: Enhance functionality
 
-- [ ] Streaming messages (SSE)
+- [x] Streaming messages (SSE)
 - [ ] Tool approval workflow
 - [ ] RAG sources management
 - [ ] Analytics dashboard
@@ -182,6 +182,6 @@ These components are **shared** across all AI engine integrations:
 ## Next Steps
 
 1. ✅ Review this master plan
-2. ➡️ **Current**: Work on [Letta Custom DB Integration](./letta/custom-db-integration/)
-3. Run `/setup` to initialize development environment
-4. Execute Phase 1 tasks
+2. ✅ **Completed**: [Letta Custom DB Integration](./letta/BE-custom-db-integration/)
+3. ✅ **Completed**: [Streaming Workflow](./letta/BE-streaming/)
+4. ➡️ **Next**: Plan & Implement Tool Approval Workflow

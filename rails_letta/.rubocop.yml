@@ -54,6 +54,8 @@ Style/Documentation:
   Enabled: false
 Style/GuardClause:
   Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: true
 Style/HashSyntax:
   EnforcedShorthandSyntax: always
 Style/IfUnlessModifier:

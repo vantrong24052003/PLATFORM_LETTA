@@ -2,15 +2,34 @@
 
 class Letta::AgentsController < ApplicationController
   def create
-      response = Letta::AgentService.new.create(permit_params)
-      render_success(response:, status: :created)
+    result = Letta::Agents::Create.new(permit_params).call
+
+    if result[:success]
+      render_success(response: result[:data], status: :created)
+    else
+      render_error(error: "Validation failed", response: result[:errors], status: :unprocessable_entity)
+    end
   end
 
   private
 
   def permit_params
-      # include_base_tool_rules is option boolean using letta init tools_rules "memory_insert", "conversation_search", "memory_replace"
-      # memory_blocks: https://docs.letta.com/guides/agents/memory-blocks/#what-are-memory-blocks
-      params.permit(:name, :system, :include_base_tool_rules, :model, :embedding, tools: [], memory_blocks: [ :label, :value ], tool_rules: [ :type, :tool_name ])
+    # system: agent system prompt
+    # include_base_tool_rules: include default memory tools; when true, it adds
+    #   => tools: ["memory_insert", "conversation_search", "memory_replace"]
+    # tools: user-defined available tools, e.g. ["websearch", "memory_insert"]
+    # tool_rules: allow / deny tools, e.g. [{ type: "allow", tool_name: "websearch" }], default is allow all tools
+    # memory_blocks: user-defined predefined agent memory
+    #   => reference: https://docs.letta.com/guides/agents/memory-blocks/#what-are-memory-blocks
+    params.permit(
+      :name,
+      :system,
+      :include_base_tool_rules,
+      tools: [],
+      memory_blocks: [ :label, :value ],
+      tool_rules: [ :type, :tool_name ],
+      llm_config: [ :model, :model_endpoint_type, :model_endpoint, :context_window ],
+      embedding_config: [ :embedding_model, :embedding_endpoint_type, :embedding_endpoint, :embedding_dim ]
+    )
   end
 end
