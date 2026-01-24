@@ -1,0 +1,315 @@
+{
+	"info": {
+		"_postman_id": "letta-platform-api",
+		"name": "Letta Platform API",
+		"description": "Complete API collection for Rails Letta Platform\n\n**Base URL:** http://localhost:4000\n**Frontend:** http://localhost:5173",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Phase 1: Agents",
+			"item": [
+				{
+					"name": "Create Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Organization-ID",
+								"value": "org-123",
+								"description": "Strategic Tenant ID"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Customer Support Agent\",\n  \"organization_id\": \"org-123\",\n  \"system\": \"You are a helpful customer support assistant\",\n  \"llm_config\": {\n    \"model\": \"GLM-4.7\",\n    \"model_endpoint_type\": \"openai\",\n    \"model_endpoint\": \"https://api.z.ai/api/coding/paas/v4\",\n    \"context_window\": 128000\n  },\n  \"embedding_config\": {\n    \"embedding_model\": \"text-embedding-3-small\",\n    \"embedding_endpoint_type\": \"openai\",\n    \"embedding_endpoint\": \"https://api.z.ai/api/coding/paas/v4\",\n    \"embedding_dim\": 1536\n  },\n  \"tools\": [\"memory_replace\"],\n  \"memory_blocks\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/agents",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"agents"
+							]
+						},
+						"description": "Create a new AI agent with custom LLM and embedding configuration. Required: organization_id."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Agent (Minimal)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Simple Agent\",\n  \"organization_id\": \"org-123\",\n  \"system\": \"You are a helpful assistant\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/agents",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"agents"
+							]
+						},
+						"description": "Create agent with default LLM/embedding config (GLM-4.7). Required: organization_id."
+					},
+					"response": []
+				}
+			],
+			"description": "Agent creation and management endpoints"
+		},
+		{
+			"name": "Phase 1: Bot Templates",
+			"item": [
+				{
+					"name": "List Bot Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/letta/bot_templates?organization_id=org-123&page=1&limit=25",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"bot_templates"
+							],
+							"query": [
+								{
+									"key": "organization_id",
+									"value": "org-123"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "25"
+								}
+							]
+						},
+						"description": "Get paginated list of bot templates for organization"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bot Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bot_template\": {\n    \"organization_id\": \"org-123\",\n    \"name\": \"Sales Assistant\",\n    \"system_prompt\": \"You are a friendly sales assistant who helps customers find the right products\",\n    \"greeting\": \"Hi! I'm here to help you find the perfect product. What are you looking for today?\",\n    \"tools\": [\"memory_replace\"],\n    \"source_ids\": [],\n    \"theme_config\": {\n      \"primary_color\": \"#0066CC\",\n      \"font\": \"Inter\",\n      \"bot_avatar_url\": \"\"\n    },\n    \"status\": \"active\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/bot_templates",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"bot_templates"
+							]
+						},
+						"description": "Create a new bot template configuration"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bot Template",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/letta/bot_templates/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Get a specific bot template by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Bot Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bot_template\": {\n    \"name\": \"Updated Sales Assistant\",\n    \"system_prompt\": \"You are an expert sales assistant\",\n    \"greeting\": \"Welcome! How can I assist you today?\",\n    \"theme_config\": {\n      \"primary_color\": \"#FF6B35\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/bot_templates/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Update an existing bot template (cannot update id or organization_id)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Bot Template",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/letta/bot_templates/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"bot_templates",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "template-uuid-here"
+								}
+							]
+						},
+						"description": "Delete a bot template"
+					},
+					"response": []
+				}
+			],
+			"description": "Bot template CRUD operations"
+		},
+		{
+			"name": "Phase 1: Messages",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"agent-c3e0a08f-cb96-46ba-bdd2-e5e66ba48de3\",\n  \"input\": \"Hello!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"messages"
+							]
+						},
+						"description": "Send a message to an AI agent (Non-streaming)"
+					},
+					"response": []
+				}
+			],
+			"description": "Message sending endpoints"
+		},
+		{
+			"name": "Phase 2: Streaming Messages",
+			"item": [
+				{
+					"name": "Stream Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "text/event-stream"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"agent_id\": \"agent-c3e0a08f-cb96-46ba-bdd2-e5e66ba48de3\",\n  \"input\": \"Tell me a short story about AI\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/letta/streaming_messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"letta",
+								"streaming_messages"
+							]
+						},
+						"description": "Stream AI responses using SSE.\n\nEvents:\n- `content`: Token chunks\n- `done`: Usage info\n- `error`: Error details"
+					},
+					"response": []
+				}
+			],
+			"description": "Real-time streaming message endpoints (SSE)"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:4000",
+			"type": "string"
+		},
+		{
+			"key": "frontend_url",
+			"value": "http://localhost:5173",
+			"type": "string"
+		}
+	]
+}

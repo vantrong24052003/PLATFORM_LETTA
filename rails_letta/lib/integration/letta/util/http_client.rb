@@ -49,6 +49,7 @@ module Integration::Letta::Util
       def build_request(request_class, endpoint, params:, headers:)
         uri = build_uri(endpoint, params)
         request = request_class.new(uri)
+
         set_headers(request, headers)
         request
       end
@@ -107,7 +108,12 @@ module Integration::Letta::Util
       end
 
       def handle_http_error(exception)
-        response_body = exception.response&.body
+        response_body = begin
+          exception.response&.body
+        rescue StandardError
+          "[Stream Body Unavailable]"
+        end
+
         Rails.logger.error("[HttpClient] #{exception.class} #{exception.message} response_body=#{response_body}")
         raise exception
       end

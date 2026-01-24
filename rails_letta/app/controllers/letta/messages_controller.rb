@@ -1,7 +1,14 @@
+# frozen_string_literal: true
+
 class Letta::MessagesController < ApplicationController
   def create
-    response = Letta::MessagesService.new.create_message(permit_params)
-    render_success(response:, status: :created)
+    result = Letta::Messages::Create.new(permit_params).call
+
+    if result[:success]
+      render_success(response: result[:data], status: :created)
+    else
+      render_error(error: "Message creation failed", response: result[:errors], status: :unprocessable_entity)
+    end
   end
 
   private
