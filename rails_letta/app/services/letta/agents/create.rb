@@ -20,7 +20,8 @@ class Letta::Agents::Create < ApplicationService
 
     response = Integration::Letta::Util::HttpClient.post(
       path: Integration::Letta::Endpoints::AGENTS[:CREATE_AGENT],
-      body: build_payload(agent)
+      body: build_payload(agent),
+      headers: { "Content-Type" => "application/json", "Accept" => "application/json" }
     )
     { success: true, data: response }
   rescue StandardError => e
