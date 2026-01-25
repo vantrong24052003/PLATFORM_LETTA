@@ -43,7 +43,7 @@ module Integration::Letta::Util
       private
 
       def build_endpoint(path, base_url: nil)
-        base = base_url.presence || ENV['LETTA_BASE_URL']
+        base = base_url.presence || ENV["LETTA_BASE_URL"]
         URI.join(base, path).to_s
       end
 

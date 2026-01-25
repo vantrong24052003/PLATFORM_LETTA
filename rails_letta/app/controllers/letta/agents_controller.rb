@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 class Letta::AgentsController < ApplicationController
+  include OrganizationAuthable
+
+  def index
+    result = Letta::Agents::List.new(
+      list_params.merge(organization_id: current_organization.id)
+    ).call
+
+    if result[:success]
+      render_success(response: { agents: result[:data], pagination: result[:pagination] })
+    else
+      render_error(error: result[:error], status: :internal_server_error)
+    end
+  end
+
   def create
     result = Letta::Agents::Create.new(permit_params).call
 
@@ -12,6 +26,10 @@ class Letta::AgentsController < ApplicationController
   end
 
   private
+
+  def list_params
+    params.permit(:organization_id, :page, :per, :name, :status)
+  end
 
   def permit_params
     # system: agent system prompt

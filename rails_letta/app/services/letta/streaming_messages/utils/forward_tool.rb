@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 class Letta::StreamingMessages::Utils::ForwardTool < ApplicationService
   CONTENT_TYPE = "application/json"
@@ -29,7 +30,7 @@ class Letta::StreamingMessages::Utils::ForwardTool < ApplicationService
     @build_payload ||= {
       tool_name: params[:tool_data].dig("function", "name"),
       arguments: JSON.parse(params[:tool_data].dig("function", "arguments") || "{}"),
-      context: { agent_id: params[:agent_id], user_id: find_agent_mapping.user_id }
+      context: { agent_id: params[:agent_id], user_id: find_agent_mapping.user_id },
     }
   end
 
@@ -37,7 +38,7 @@ class Letta::StreamingMessages::Utils::ForwardTool < ApplicationService
     {
       "Content-Type" => CONTENT_TYPE,
       "X-Letta-Signature" => OpenSSL::HMAC.hexdigest("SHA256", find_organization.secret_key, build_payload.to_json),
-      "X-Organization-ID" => params[:organization_id]
+      "X-Organization-ID" => params[:organization_id],
     }
   end
 
@@ -54,7 +55,7 @@ class Letta::StreamingMessages::Utils::ForwardTool < ApplicationService
   end
 
   def success(data)
-    { success: true, data: data }
+    { success: true, data: }
   end
 
   def failure(message)
