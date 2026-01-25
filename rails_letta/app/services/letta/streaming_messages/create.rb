@@ -1,18 +1,39 @@
 # frozen_string_literal: true
 
+# Service Flow Description:
+# User -> Rails API (StreamingMessagesController)
+# -> Create Service
+#    -> POST stream Letta Engine
+#       -> Receive Chunk
+#          -> StreamParser (Parse SSE/JSON)
+#             -> handle_event
+#                -> IF tool_call
+#                   -> ForwardTool Service
+#                      -> Request Customer Backend (HMAC Signed)
+#                      -> IF Success: send_tool_return (Back to Letta)
+#                      -> IF Fail/Skip: Yield tool_call to Frontend (Approval UI)
+#                -> IF content (text delta)
+#                   -> Yield to Frontend (Visual Stream)
+#                -> IF usage
+#                   -> Yield done
 class Letta::StreamingMessages::Create < ApplicationService
-  def call
-    mapping = AgentMapping.find_by(agent_id: params[:agent_id])
-    unless mapping
-      yield({ type: :error, payload: { message: "Agent not found or unauthorized" } })
-      return
-    end
+  TOOL_CALL_TYPE = "tool_call"
+  ERROR_TYPE = "error"
+  MESSAGE_TYPES_TO_PASS = %w[thought tool_call].freeze
+  CONTENT_TYPE = "application/json"
 
-    stream_path = Integration::Letta::Endpoints::MESSAGES[:STREAM_MESSAGE].call(params[:agent_id])
-    request_body = { input: params[:input], stream_tokens: true }
+  def call(&block)
 
-    buffer_and_yield_events(stream_path, request_body) do |event|
-      yield event
+    parser = Letta::StreamingMessages::Utils::StreamParser.new
+
+    Integration::Letta::Util::HttpClient.post_stream(
+      path: build_stream_path,
+      body: build_request_body,
+      headers: { "Content-Type" => CONTENT_TYPE, "Accept" => "text/event-stream" }
+    ) do |chunk|
+      parser.process_chunk(chunk) do |event|
+        handle_event(event, &block)
+      end
     end
   rescue StandardError => e
     Rails.logger.error("[Letta::StreamingMessages::Create] Error: #{e.message}")
@@ -21,59 +42,79 @@ class Letta::StreamingMessages::Create < ApplicationService
 
   private
 
-  def buffer_and_yield_events(path, body)
-    buffer = +""
-    current_event_type = :content
+  def handle_event(event, &block)
+    event_type = event[:type]
+    data = event[:data]
 
-    Integration::Letta::Util::HttpClient.post_stream(
-      path:,
-      body:,
-      headers: { "Content-Type" => "application/json", "Accept" => "application/json" }
-    ) do |chunk|
-      buffer << chunk
-
-      while (newline_index = buffer.index("\n"))
-        line = buffer.slice!(0, newline_index + 1).strip
-        next if line.empty?
-
-        if line.start_with?("event:")
-          current_event_type = line.delete_prefix("event:").strip.to_sym
-        elsif line.start_with?("data:")
-          data_string = line.delete_prefix("data:").strip
-          next if data_string == "[DONE]"
-
-          parse_json_and_yield_events(data_string, current_event_type) do |event|
-            yield event
-          end
-
-          current_event_type = :content
-        end
-      end
-    end
-  end
-
-  def parse_json_and_yield_events(json_string, event_type)
-    data = JSON.parse(json_string)
-
-    # If it's an error event from Letta, yield it directly
-    if event_type == :error || data["message_type"] == "error"
-      yield({ type: :error, payload: data })
-      return
+    # Phase1: if event_type is error or data["message_type"] is error, return error
+    if event_type == :error || data["message_type"] == ERROR_TYPE
+      return yield({ type: :error, payload: data })
     end
 
-    # Extract text content for delta updates
+    # Phase2: if event_type is tool_call, forward tool to customer backend
+    # Stop methods handle_event and handle process_tool_forwarding
+    return if data["message_type"] == TOOL_CALL_TYPE && process_tool_forwarding(data)
+
+    # Phase3: Get text delta to stream to UI.
     content = extract_text_content(data)
     yield({ type: :content, payload: { content: } }) if content.present?
 
-    # Check for usage/completion
-    yield({ type: :done, payload: { usage: data["usage"] } }) if data["usage"]
+    # Phase4: If has usage → done
+    yield({ type: :done, payload: { usage: data["usage"] } }) if data["usage"].present?
 
-    # Check for specific message types we might want to pass through
-    if %w[thought tool_call].include?(data["message_type"])
+    # Phase5: frontend can render chain-of-thought or tool-call.
+    if MESSAGE_TYPES_TO_PASS.include?(data["message_type"])
       yield({ type: data["message_type"].to_sym, payload: data })
     end
-  rescue JSON::ParserError => e
-    Rails.logger.warn("[Letta::StreamingMessages::Create] JSON Parse Error: #{e.message}")
+  end
+
+  def process_tool_forwarding(data)
+    result = Letta::StreamingMessages::Utils::ForwardTool.new(
+      agent_id: params[:agent_id],
+      organization_id: params[:organization_id] || "org-unknown",
+      tool_data: data
+    ).call
+
+    return false unless result[:success]
+
+    send_tool_return(data, result[:data])
+    true
+  end
+
+  def find_agent_mapping
+    AgentMapping.find_by(agent_id: params[:agent_id])
+  end
+
+  def build_stream_path
+    Integration::Letta::Endpoints::MESSAGES[:STREAM_MESSAGE].call(params[:agent_id])
+  end
+
+  def build_request_body
+    {
+      messages: [
+        { role: "user", content: params[:input] }
+      ],
+      stream: true
+    }
+  end
+
+  def build_error_payload(message)
+    { type: :error, payload: { message: message } }
+  end
+
+  def send_tool_return(tool_call_data, tool_result)
+    payload = {
+      role: "tool",
+      name: tool_call_data.dig("function", "name"),
+      tool_call_id: tool_call_data["tool_call_id"],
+      content: tool_result.to_json
+    }
+
+    Integration::Letta::Util::HttpClient.post(
+      path: Integration::Letta::Endpoints::MESSAGES[:CREATE_MESSAGE].call(params[:agent_id]),
+      body: payload.to_json,
+      headers: { "Content-Type" => CONTENT_TYPE }
+    )
   end
 
   def extract_text_content(data)

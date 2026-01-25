@@ -1,94 +1,76 @@
 # Tool Approval - Overview
 
-**Feature**: User Approval Workflow for Letta Agent Tool Execution  
-**Status**: 🔴 Not Started  
+**Feature**: User Approval Workflow & Bidirectional Tool Forwarding
+**Status**: 🔴 Not Started
 **Parent**: [../00-implementation-plan.md](../00-implementation-plan.md)
 
 ---
 
-## Overview
+## 1. Overview
 
-Implement a secure workflow where Letta agents must request user approval before executing sensitive tools (e.g., database writes, external API calls, file operations). This provides users with transparency and control over agent actions.
-
----
-
-## Business Goals
-
-1. **Security**: Prevent unauthorized or unintended tool executions
-2. **Transparency**: Users see exactly what the agent wants to do
-3. **Control**: Users can approve or reject tool calls
-4. **Audit Trail**: Track all approval decisions
+Implement a secure workflow where Letta agents must request user approval before executing sensitive tools. Additionally, implement the **Bidirectional Forwarding** mechanism to allow the platform to request tool execution from a customer's private backend using a registered domain.
 
 ---
 
-## Technical Goals
+## 2. Business Goals
 
-1. **Tool Registry**: Define which tools require approval (`letta_tools` table)
-2. **Approval Storage**: Store pending approvals (`letta_tool_approvals` table)
-3. **Approval API**: Expose endpoints for approve/reject actions
-4. **Widget UI**: Display approval requests to users
-5. **Timeout Mechanism**: Auto-reject approvals after 5 minutes
-
----
-
-## Dependencies
-
-**Infrastructure**:
-- PostgreSQL (existing)
-- Letta Engine with tool approval support
-
-**Previous Features**:
-- Custom DB Integration (required)
-- Streaming (optional, enhances UX)
+1. **Security**: Prevent unauthorized tool executions.
+2. **Transparency**: Users see exactly what the agent wants to do.
+3. **Connectivity**: Enable "RAG" and tool execution on private customer data.
+4. **Audit Trail**: Track all approval decisions.
 
 ---
 
-## Out of Scope
+## 3. Technical Goals & Mechanism
 
-- Custom tool development (use Letta's built-in tools)
-- Multi-step approval workflows
-- Role-based approval (all users can approve their own tools)
-- Tool execution history/replay
+### A. Human-in-the-Loop (HITL) Detection
+- Intercept `approval_request_message` in the Letta stream.
+- Halt current stream and notify the Chat Widget.
 
----
+### B. Bidirectional Forwarding (The "Domain" Requirement)
+To allow the Agent (running in our platform) to execute logic on the Customer's Backend (private infrastructure), we use the `customer_domain` registered in the Bot Template.
 
-## Acceptance Criteria
-
-- [ ] Tools can be marked as `requires_approval`
-- [ ] Approval requests are stored in database
-- [ ] Widget displays approval UI correctly
-- [ ] Approved tools execute successfully
-- [ ] Rejected tools are cancelled
-- [ ] Expired approvals are auto-rejected
-- [ ] Multi-org isolation is enforced
-- [ ] Tests pass with 80%+ coverage
+**Logic Flow**:
+1. Agent decides a tool (e.g., `check_order`) is needed.
+2. Platform detects this is an **External Tool**.
+3. Platform fetches `customer_domain` from `BotTemplate`.
+4. Platform forwards the call: `POST https://{customer_domain}/letta/tools/execute`.
+5. Customer Backend returns result -> Platform forwards back to Letta Engine.
 
 ---
 
-## Timeline Estimate
+## 4. Sequence Diagram (The Full Cycle)
 
-**Duration**: 3-4 days
+```mermaid
+sequenceDiagram
+    participant User as End User
+    participant Widget as Chat Widget
+    participant Rails as LeTTa Platform (Our BE)
+    participant Letta as LeTTa Engine
+    participant CustBE as Customer Backend
 
-**Breakdown**:
-- Day 1: Database schema & migrations
-- Day 2: API endpoints & approval logic
-- Day 3: Widget UI integration
-- Day 4: Testing & timeout mechanism
+    User->>Widget: "Check my order status"
+    Widget->>Rails: Stream Request
+    Rails->>Letta: Forward
+    
+    Letta-->>Rails: Tool Call: check_order(id: "123")
+    
+    Note over Rails: Mechanism: Tool Forwarding
+    Rails->>Rails: Look up customer_domain in BotTemplate
+    Rails->>CustBE: POST /letta/tools/execute
+    CustBE-->>Rails: Result: {"status": "shipped"}
+    
+    Rails->>Letta: Send Tool Return
+    Letta-->>Rails: Assistant Response
+    Rails-->>Widget: "Your order is shipped!"
+```
 
 ---
 
-## Tasks
+## 5. Acceptance Criteria
 
-See individual task files:
-- [01-database-schema.md](./01-database-schema.md) - Tables for tools & approvals
-- [02-api-design.md](./02-api-design.md) - Approval API endpoints
-- [03-implementation.md](./03-implementation.md) - Service & controller logic
-- [04-testing.md](./04-testing.md) - Testing strategy
-
----
-
-## References
-
-- [Letta Tool Approval Docs](http://localhost:8283/docs#tool-approval)
-- Skill: [../../../skills/04-api-design/](../../../skills/04-api-design/)
-- Skill: [../../../skills/05-database-migration/](../../../skills/05-database-migration/)
+- [ ] Detects `approval_request_message` in stream.
+- [ ] Correcty look up and use `customer_domain` for routing.
+- [ ] Forwarding request includes HMAC signature for security.
+- [ ] Captures new `run_id` upon approval and resumes stream.
+- [ ] Multi-org isolation is strictly enforced.

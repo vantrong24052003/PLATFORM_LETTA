@@ -1,147 +1,79 @@
-# Tool Approval - Workflow Implementation
+# Tool Forwarding - Database Schema
 
-**Feature**: User approval for Letta agent tool execution  
-**Status**: 🔴 Not Started  
-**Parent**: [../00-implementation-plan.md](../00-implementation-plan.md)
-
----
-
-## Overview
-
-Implement a workflow where Letta agents can request user approval before executing sensitive tools (e.g., database writes, external API calls, file operations).
+**Status**: 🟡 Planning
+**Convention**: Rails Migration & ActiveRecord
 
 ---
 
-## Goals
+## 1. Platform Schema Extensions (Public Schema)
 
-1. **Tool Registry**: Define which tools require approval
-2. **Approval Flow**: Implement request/approve/reject cycle
-3. **Widget UI**: Add approval interface to chat widget
-4. **Backend Logic**: Handle approval state management
+We extend existing platform tables to support automated tool forwarding. These fields are essential for routing and security.
 
----
+### 1.1. `BotTemplate` Extension
+- **Field**: `customer_domain` (`string`)
+- **Index**: Yes
+- **Rationale**: This defines the "WHERE" for tool forwarding. Since LeTTa Engine is agnostic of customer infrastructure, each template must specify where to route external tool requests.
 
-## Tasks
-
-### Task 1: Tool Registry & Configuration
-- [ ] Create `letta_tools` table (schema)
-- [ ] Add `requires_approval` boolean column
-- [ ] Seed common tools (search, calculate, etc.)
-- [ ] Create `Tool` model with validations
-
-### Task 2: Approval Request Flow
-- [ ] Detect tool approval requests from Letta
-- [ ] Store pending approvals in DB (`letta_tool_approvals` table)
-- [ ] Create API endpoint: `POST /letta/agents/:id/tools/approve`
-- [ ] Implement timeout mechanism (auto-reject after 5 minutes)
-
-### Task 3: Widget UI Components
-- [ ] Design approval modal/card UI
-- [ ] Show tool name, description, parameters
-- [ ] Add "Approve" / "Reject" buttons
-- [ ] Display approval status in chat
-
-### Task 4: Backend State Management
-- [ ] Service: `Letta::ToolApprovalService`
-- [ ] Handle approve action (send to Letta)
-- [ ] Handle reject action (send to Letta)
-- [ ] Clean up expired approvals (background job)
-
-### Task 5: Testing
-- [ ] Request specs for approval endpoints
-- [ ] Service specs for approval logic
-- [ ] E2E test: Trigger tool → Approve → Verify execution
-- [ ] E2E test: Trigger tool → Reject → Verify cancellation
+### 1.2. `Organization` Extension
+- **Field**: `secret_key` (`string`)
+- **Rationale**: This defines the "HOW" for security. Each organization requires a unique shared secret to sign (HMAC SHA-256) outbound requests. This allows the customer's backend to verify that the execution request is authentic and originated from our platform.
 
 ---
 
-## Database Schema
+## 2. Migrations (Ruby)
 
-### `letta_tools`
 ```ruby
-create_table :letta_tools do |t|
-  t.string :name, null: false
-  t.text :description
-  t.boolean :requires_approval, default: false
-  t.jsonb :schema
-  t.timestamps
+# Migration 1: Routing Support
+class AddCustomerDomainToBotTemplates < ActiveRecord::Migration[8.1]
+  def change
+    add_column :bot_templates, :customer_domain, :string
+    add_index :bot_templates, :customer_domain
+  end
 end
-```
 
-### `letta_tool_approvals`
-```ruby
-create_table :letta_tool_approvals do |t|
-  t.references :organization, null: false
-  t.string :agent_id, null: false
-  t.string :message_id, null: false
-  t.string :tool_call_id, null: false
-  t.string :tool_name, null: false
-  t.jsonb :arguments
-  t.string :status, default: 'pending' # pending, approved, rejected, expired
-  t.datetime :expires_at
-  t.timestamps
+# Migration 2: Security Support
+class AddSecretKeyToOrganizations < ActiveRecord::Migration[8.1]
+  def change
+    add_column :organizations, :secret_key, :string
+  end
 end
 ```
 
 ---
 
-## Approval Flow Sequence
+## 3. LeTTa System Tables (Internal Reference)
 
-```
-1. User sends message: "Create a new database entry"
-2. Letta → Rails: Tool approval request
-   {
-     "type": "tool_approval_request",
-     "tool_call_id": "call_abc123",
-     "tool_name": "create_record",
-     "arguments": {"table": "users", "data": {...}}
-   }
-3. Rails stores approval request (status: pending)
-4. Rails → Widget: SSE event with approval request
-5. Widget displays approval UI to user
-6. User clicks "Approve"
-7. Widget → Rails: POST /letta/agents/:id/tools/approve
-8. Rails → Letta: Send approval
-9. Letta executes tool
-10. Letta → Rails: Tool result
-11. Rails → Widget: Display result
+We interact with Letta's native tables using ActiveRecord models mapped to the existing schema. No new tables are created in the `letta` schema.
+
+### 3.1. `Message` Model
+Used to identify and intercept tool call events during orchestration.
+
+```ruby
+class Message < ApplicationRecord
+  # Mapping to existing table in the 'letta' schema
+  # self.table_name = "letta.messages"
+
+  belongs_to :agent
+
+  # Scope to find tool calls from the assistant
+  scope :pending_tools, -> { where(role: 'assistant').where.not(tool_calls: nil) }
+end
 ```
 
 ---
 
-## Widget UI Mock
+## 4. Data Flow & Lookup Logic
 
+When a tool call is detected, Rails must resolve both the **Destination** and the **Signature**:
+
+```ruby
+# Resolve Routing Context
+template = BotTemplate.joins(:agent_mappings)
+                      .find_by(agent_mappings: { agent_id: current_agent_id })
+
+organization = Organization.find(template.organization_id)
+
+# Execution Context
+target_url = "https://#{template.customer_domain}/letta/tools/execute"
+signature_key = organization.secret_key
 ```
-┌─────────────────────────────────┐
-│ 🤖 Agent wants to use a tool    │
-├─────────────────────────────────┤
-│ Tool: create_record             │
-│ Description: Create a database  │
-│   entry in the users table      │
-│                                 │
-│ Arguments:                      │
-│   table: "users"                │
-│   data: { name: "John" }        │
-│                                 │
-│  [Approve ✓]    [Reject ✗]     │
-└─────────────────────────────────┘
-```
-
----
-
-## Acceptance Criteria
-
-- [ ] Tools can be marked as requiring approval
-- [ ] Approval requests are stored and expire after timeout
-- [ ] Widget displays approval UI correctly
-- [ ] Approved tools execute successfully
-- [ ] Rejected tools are cancelled
-- [ ] All tests pass (80%+ coverage)
-
----
-
-## References
-
-- [Letta Tool Approval Docs](http://localhost:8283/docs#tool-approval)
-- Skill: `04-api-design` (RESTful principles)
-- Skill: `05-database-migration` (Safe schema changes)

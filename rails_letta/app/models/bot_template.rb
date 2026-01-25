@@ -7,6 +7,7 @@ class BotTemplate < ApplicationRecord
   validates :name, presence: true
   validates :system_prompt, presence: true
   validates :status, inclusion: { in: %w[active inactive] }
+  validates :customer_domain, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true
 
   scope :active, -> { where(status: "active") }
   scope :by_org, ->(org_id) { where(organization_id: org_id) }

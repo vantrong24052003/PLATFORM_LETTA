@@ -4,16 +4,18 @@ class Letta::StreamingMessagesController < ApplicationController
   include ActionController::Live
 
   def create
+    # SSE https://api.rubyonrails.org/classes/ActionController/Live/SSE.html
     response.headers["Content-Type"] = "text/event-stream"
     response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Accel-Buffering"] = "no"
 
+    sse = ActionController::Live::SSE.new(response.stream, retry: 300)
+
     Letta::StreamingMessages::Create.new(permit_params).call do |event|
-      response.stream.write("event: #{event[:type]}\n")
-      response.stream.write("data: #{event[:payload].to_json}\n\n")
+      sse.write(event[:payload], event: event[:type])
     end
   ensure
-    response.stream.close
+    sse.close
   end
 
   private

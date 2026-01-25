@@ -6,4 +6,5 @@ class Organization < ApplicationRecord
   has_many :agents
 
   validates :name, presence: true
+  validates :secret_key, length: { minimum: 16 }, allow_blank: true
 end

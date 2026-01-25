@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_094443) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_24_150022) do
   create_schema "letta"
 
   # These are extensions that must be enabled in order to support this database
@@ -215,6 +215,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_094443) do
 
   create_table "bot_templates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "customer_domain"
     t.text "greeting"
     t.string "name", null: false
     t.string "organization_id", null: false
@@ -224,6 +225,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_094443) do
     t.jsonb "theme_config", default: {}
     t.jsonb "tools", default: []
     t.datetime "updated_at", null: false
+    t.index ["customer_domain"], name: "index_bot_templates_on_customer_domain"
     t.index ["organization_id"], name: "index_bot_templates_on_organization_id"
   end
 
@@ -548,6 +550,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_094443) do
     t.boolean "is_deleted", default: false, null: false
     t.string "name", null: false
     t.boolean "privileged_tools", null: false
+    t.string "secret_key"
     t.timestamptz "updated_at", default: -> { "now()" }
   end
 

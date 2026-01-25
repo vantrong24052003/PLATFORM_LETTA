@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Project Rules – LeTTa Platform (Consolidated)
 
 ## MCP USAGE MANDATE (STRICT)

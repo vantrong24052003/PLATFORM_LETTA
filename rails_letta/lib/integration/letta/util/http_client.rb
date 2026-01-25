@@ -6,44 +6,45 @@ module Integration::Letta::Util
     DEFAULT_READ_TIMEOUT = 120
 
     class << self
-      def get(path:, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
-        request = build_request(Net::HTTP::Get, build_endpoint(path), params:, headers:)
+      def get(path:, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+        request = build_request(Net::HTTP::Get, build_endpoint(path, base_url:), params:, headers:)
         send_request(request, open_timeout:, read_timeout:)
       end
 
-      def post(path:, body: nil, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
-        request = build_request(Net::HTTP::Post, build_endpoint(path), params:, headers:)
+      def post(path:, body: nil, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+        request = build_request(Net::HTTP::Post, build_endpoint(path, base_url:), params:, headers:)
         request.body = format_body(body, headers) if body.present?
         send_request(request, open_timeout:, read_timeout:)
       end
 
-      def put(path:, body: nil, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
-        request = build_request(Net::HTTP::Put, build_endpoint(path), params:, headers:)
+      def put(path:, body: nil, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+        request = build_request(Net::HTTP::Put, build_endpoint(path, base_url:), params:, headers:)
         request.body = format_body(body, headers) if body.present?
         send_request(request, open_timeout:, read_timeout:)
       end
 
-      def patch(path:, body: nil, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
-        request = build_request(Net::HTTP::Patch, build_endpoint(path), params:, headers:)
+      def patch(path:, body: nil, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+        request = build_request(Net::HTTP::Patch, build_endpoint(path, base_url:), params:, headers:)
         request.body = format_body(body, headers) if body.present?
         send_request(request, open_timeout:, read_timeout:)
       end
 
-      def delete(path:, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
-        request = build_request(Net::HTTP::Delete, build_endpoint(path), params:, headers:)
+      def delete(path:, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+        request = build_request(Net::HTTP::Delete, build_endpoint(path, base_url:), params:, headers:)
         send_request(request, open_timeout:, read_timeout:)
       end
 
-      def post_stream(path:, body: nil, params: nil, headers: {}, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT, &block)
-        request = build_request(Net::HTTP::Post, build_endpoint(path), params:, headers:)
+      def post_stream(path:, body: nil, params: nil, headers: {}, base_url: nil, open_timeout: DEFAULT_OPEN_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT, &block)
+        request = build_request(Net::HTTP::Post, build_endpoint(path, base_url:), params:, headers:)
         request.body = format_body(body, headers) if body.present?
         send_streaming_request(request, open_timeout:, read_timeout:, &block)
       end
 
       private
 
-      def build_endpoint(path)
-        "#{ENV['LETTA_BASE_URL']}#{path}"
+      def build_endpoint(path, base_url: nil)
+        base = base_url.presence || ENV['LETTA_BASE_URL']
+        URI.join(base, path).to_s
       end
 
       def build_request(request_class, endpoint, params:, headers:)

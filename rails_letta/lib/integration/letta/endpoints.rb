@@ -7,6 +7,10 @@ module Integration
         CREATE_AGENT: "/v1/agents/",
       }.freeze
 
+      TOOLS = {
+        EXECUTE: "/letta/tools/execute"
+      }.freeze
+
       MESSAGES = {
         CREATE_MESSAGE: ->(agent_id) { "/v1/agents/#{agent_id}/messages" },
         STREAM_MESSAGE: ->(agent_id) { "/v1/agents/#{agent_id}/messages/stream" },
