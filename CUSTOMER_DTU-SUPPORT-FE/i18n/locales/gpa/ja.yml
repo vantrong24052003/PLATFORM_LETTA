@@ -1,0 +1,78 @@
+title: "スマートGPA計算ツール"
+subtitle: "GPA計算と結果予測"
+description: "学業結果を予測し、詳細なGPAを計算するか、AIに学習に関するスマートなアドバイスを求める"
+
+tabs:
+  target: "目標計算"
+  gpa: "GPA計算"
+  pe: "体育GPA"
+  pass: "合格点計算"
+  ai: "AIに質問"
+
+target:
+  title: "目標計算"
+  description: "目標を達成するために必要な最小GPAを計算"
+  form:
+    completedCredits:
+      label: "修了単位数"
+      placeholder: "修了単位数を入力"
+      unit: "単位"
+    currentGpa:
+      label: "現在のGPA"
+      placeholder: "現在のGPAを入力"
+      unit: "点"
+    targetGpa:
+      label: "目標GPA"
+      placeholder: "目標GPAを入力"
+      unit: "点"
+    remainingCredits:
+      label: "残り単位数"
+      placeholder: "残り単位数を入力"
+      unit: "単位"
+  button:
+    calculate: "目標達成可能性を計算"
+    reset: "リセット"
+  result:
+    title: "結果"
+    maxGpaIfAllA: "全Aの場合の最大GPA:"
+    isFeasible: "全Aで達成可能:"
+    yes: "はい"
+    no: "いいえ"
+  ready:
+    title: "計算準備完了"
+    description: "情報を入力するか質問して予測結果を確認"
+  classification:
+    title: "DTU卒業分類"
+    excellent: "優秀"
+    good: "良好"
+    fair: "普通"
+    average: "平均"
+  results:
+    title: "結果"
+    subtitle: "達成可能な最大GPA"
+    scale: "4.0スケール"
+    success:
+      title: "目標達成可能"
+      message: "残りの単位数で全Aを取れば、GPA {gpa} を達成できます。"
+    warning:
+      title: "目標達成困難"
+      message: "最大GPAは {gpa} で、目標達成には不十分な可能性があります。"
+  simulation:
+    distribution:
+      title: "成績配分"
+  pe:
+    results:
+      headline:
+        pass: "体育プログラムに合格"
+        fail: "体育プログラムに不合格"
+      scale: "4.0 スケールで"
+      pass: "合格"
+      fail: "不合格"
+      courses:
+        c1: "科目 1"
+        c2: "科目 2"
+        c3: "科目 3"
+      analysis:
+        title: "分析:"
+        pass: "合格！ 体育プログラムを GPA {gpa} で修了しました。"
+        fail: "不合格。 平均体育 GPA は {gpa} です。 もう少し頑張りましょう。"

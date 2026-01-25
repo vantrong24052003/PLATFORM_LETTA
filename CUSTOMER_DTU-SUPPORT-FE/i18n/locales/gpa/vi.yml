@@ -1,0 +1,79 @@
+title: "Công cụ tính GPA thông minh"
+subtitle: "Tính toán GPA & Dự đoán kết quả"
+description: "Dự đoán kết quả học tập, tính toán GPA chi tiết hoặc hỏi AI để có lời khuyên thông minh về việc học"
+
+tabs:
+  target: "Tính toán mục tiêu"
+  gpa: "Tính toán GPA"
+  pe: "GPA thể dục"
+  pass: "Tính điểm qua môn"
+  ai: "Hỏi AI"
+
+target:
+  title: "Tính toán mục tiêu"
+  description: "Tính toán GPA tối thiểu cần đạt để đạt được mục tiêu"
+  form:
+    completedCredits:
+      label: "Số tín đã học"
+      placeholder: "Nhập số tín đã học"
+      unit: "tín chỉ"
+    currentGpa:
+      label: "GPA hiện tại"
+      placeholder: "Nhập GPA hiện tại"
+      unit: "điểm"
+    targetGpa:
+      label: "GPA mục tiêu"
+      placeholder: "Nhập GPA mục tiêu"
+      unit: "điểm"
+    remainingCredits:
+      label: "Số tín còn lại"
+      placeholder: "Nhập số tín còn lại"
+      unit: "tín chỉ"
+  button:
+    calculate: "Tính toán mục tiêu có thể đạt được"
+    reset: "Đặt lại"
+  result:
+    title: "Kết quả"
+    maxGpaIfAllA: "GPA tối đa nếu full A:"
+    isFeasible: "Khả thi với full A:"
+    yes: "Có"
+    no: "Không"
+  ready:
+    title: "Sẵn sàng tính toán"
+    description: "Nhập thông tin hoặc đặt câu hỏi để xem kết quả dự đoán"
+  classification:
+    title: "Xếp loại tốt nghiệp Duy Tân"
+    excellent: "Xuất sắc"
+    good: "Giỏi"
+    fair: "Khá"
+    average: "Trung bình"
+  results:
+    title: "Kết quả"
+    subtitle: "GPA tối đa có thể đạt được"
+    scale: "Thang điểm 4.0"
+    success:
+      title: "Có thể đạt mục tiêu"
+      message: "Bạn có thể đạt GPA {gpa} nếu đạt toàn điểm A cho các tín chỉ còn lại."
+    warning:
+      title: "Khó đạt mục tiêu"
+      message: "GPA tối đa của bạn là {gpa}, có thể không đủ để đạt mục tiêu."
+  simulation:
+    distribution:
+      title: "Phân bố điểm"
+  pe:
+    results:
+      headline:
+        pass: "Đậu chương trình thể dục"
+        fail: "Rớt chương trình thể dục"
+      scale: "trên thang điểm 4.0"
+      pass: "Đậu"
+      fail: "Rớt"
+      courses:
+        c1: "Môn 1"
+        c2: "Môn 2"
+        c3: "Môn 3"
+      analysis:
+        title: "Phân tích:"
+        pass: "Đậu! Bạn đã hoàn thành chương trình thể dục với GPA {gpa}."
+        fail: "Rớt. GPA trung bình thể dục của bạn là {gpa}. Hãy cố gắng hơn."
+  

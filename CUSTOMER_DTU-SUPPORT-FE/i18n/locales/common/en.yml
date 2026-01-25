@@ -1,0 +1,77 @@
+common:
+  header:
+    menu:
+      home: "Home"
+      about: "About us"
+      whatWeDo: "What is DTU Helper?"
+      testimonials: "Testimonials"
+      faq: "FAQ"
+      tools: "Tools"
+      marketplace: "Marketplace"
+      services: "Services"
+      news: "News"
+  auth:
+    register: "Register"
+    login:
+      button: "Login"
+      title: "Login"
+      subtitle: "Sign in to your account to continue"
+      buttons:
+        google: "Sign in with Google"
+    logout:
+      button: "Logout"
+    errors:
+      unauthorized: "You need to log in to continue"
+      failed: "Authentication failed. Please try again."
+      occurred: "An error occurred during authentication"
+  ui:
+    language:
+      label: "Language"
+      selectLabel: "Select language"
+    theme:
+      label: "Theme"
+      selectLabel: "Select theme"
+      names:
+        red: "Red"
+        blue: "Blue"
+        green: "Green"
+        purple: "Purple"
+        orange: "Orange"
+        pink: "Pink"
+  loading:
+    title: "Loading DTU Support"
+    subtitle: "Preparing your study tools..."
+    progress: "Loading..."
+  brand:
+    titleFull: "DTU Study Support"
+    subtitle: "Duy Tân University"
+    titleShort: "DTU"
+  footer:
+    intro: "Supporting DTU students on their learning journey."
+    sections:
+      services: "Services"
+      support: "Support"
+      contact: "Contact"
+    links:
+      gpa: "GPA Calculator"
+      predict: "Degree Prediction"
+      schedule: "Credit Roadmap"
+      marketplace: "Marketplace"
+      tools: "Tools"
+      help: "Study Support"
+      faq: "FAQ"
+      privacy: "Privacy Policy"
+      terms: "Terms of Service"
+      about: "About us"
+      policy: "Policy"
+      contact: "Contact"
+    contact:
+      messenger: "Messenger 24/7"
+      facebook: "Facebook Page"
+      response: "Respond within 30 minutes"
+    copyright: "© {year} DTU Study Support. All rights reserved."
+    crafted: "Crafted with ❤️ for DTU students"
+  error:
+    subtitle: "It seems the page you're looking for doesn't exist"
+    suggestions: "You might be looking for:"
+    backHome: "Back to Home"

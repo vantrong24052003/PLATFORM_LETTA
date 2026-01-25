@@ -1,0 +1,16 @@
+chat:
+  placeholder: "Type your question..."
+  send: "Send"
+  sending: "Sending..."
+  empty:
+    title: "Hello! 👋"
+    description: "I can help you calculate grades, predict GPA, or answer questions about academic regulations. Let's start a conversation!"
+  error:
+    message: "Sorry, an error occurred. Please try again."
+  tones:
+    button: "Tone"
+    default: "Default"
+    anime: "Anime/Wibu"
+    banter: "Banter"
+    formal: "Formal"
+    friendly: "Friendly"

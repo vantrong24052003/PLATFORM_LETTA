@@ -1,0 +1,203 @@
+---
+description: RULE 3 - API & Backend Integration Rules, API endpoints, error handling, environment variables
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+alwaysApply: true
+---
+
+# RULE 3 - API & Backend Integration Rules
+
+## Mục đích
+Quy định cách tích hợp với backend API, định nghĩa API endpoints, error handling, environment variables, và cách truy cập backend.
+
+---
+
+## Environment Variables
+
+```bash
+NUXT_PUBLIC_BACKEND_URL=http://localhost:4000
+```
+
+```typescript
+// nuxt.config.ts
+runtimeConfig: {
+  public: {
+    backendUrl: process.env.NUXT_PUBLIC_BACKEND_URL || 'http://localhost:4000',
+  },
+}
+```
+
+**Rules**: Không hardcode API URLs, luôn dùng `useRuntimeConfig().public.backendUrl`, env vars phải có prefix `NUXT_PUBLIC_`
+
+---
+
+## API Structure
+
+### API Endpoints Definition
+
+**Location**: `app/constants/api/{feature}.api.ts`
+
+**Pattern**:
+```typescript
+export const FEATURE_API = {
+  list: () => '/api/feature/items',
+  getById: (id: number) => `/api/feature/items/${id}`,
+  create: () => '/api/feature/items',
+  update: (id: number) => `/api/feature/items/${id}`,
+  delete: (id: number) => `/api/feature/items/${id}`,
+} as const
+```
+
+**Ví dụ thực tế**:
+```typescript
+// app/constants/api/user.api.ts
+export const USER_API = {
+  me: () => '/users/me',
+  logout: () => '/users/logout',
+} as const
+
+// app/constants/api/chat.api.ts
+export const CHAT_API = {
+  chat: () => '/api/chat',
+} as const
+```
+
+### API Response Format
+
+Backend trả về response theo format chuẩn:
+
+```typescript
+interface ApiResponse<T> {
+  data: T
+  message?: string
+}
+
+interface ApiErrorResponse {
+  error: string
+  message: string
+  details?: unknown
+}
+```
+
+**Success Response**:
+```json
+{
+  "data": {
+    "content": "Response content",
+    "toolResult": { ... },
+    "metadata": { ... }
+  }
+}
+```
+
+**Error Response**:
+```json
+{
+  "error": "ErrorType",
+  "message": "Error message",
+  "details": { ... }
+}
+```
+
+---
+
+## API Utilities
+
+### useApiFetch
+**Location**: `app/lib/api.ts`
+**Purpose**: Reactive API fetch với Nuxt `useFetch`
+**Pattern**: Xem RULE 4 > Composable Pattern > API Composable
+
+### apiFetch
+**Location**: `app/lib/api.ts`
+**Purpose**: Non-reactive API fetch với `$fetch`
+**Pattern**: `const response = await apiFetch<T>(FEATURE_API.endpoint(), { method: 'GET' })`
+
+---
+
+## API Composable Pattern
+
+**Location**: `app/composables/{feature}/use{Feature}Api.ts`
+**Pattern**: Xem RULE 4 > Composable Pattern > API Composable
+
+---
+
+## Error Handling
+
+### Rules
+- ✅ Luôn check `apiError.value` trước khi sử dụng `response.value`
+- ✅ Throw error với message rõ ràng
+- ✅ Return `null` hoặc empty array nếu không có data
+- ✅ Log errors trong dev mode
+
+### Error Handling Pattern
+```typescript
+const fetchData = async (): Promise<FeatureType[]> => {
+  await executeRequest()
+  if (apiError.value) throw new Error(apiError.value.message || 'Failed to fetch data')
+  return response.value?.data || []
+}
+```
+
+---
+
+## API Types
+
+**Location**: `app/types/common.ts`
+**Pattern**: `ApiResponse<T>` với `data: T`, `ApiErrorResponse` với `error`, `message`
+
+---
+
+## API Request Examples
+
+### Query Parameters
+```typescript
+const response = await apiFetch<FeatureType>(FEATURE_API.list(), {
+  method: 'GET',
+  query: {
+    page: 1,
+    limit: 10,
+    search: 'keyword',
+  },
+})
+```
+
+### Request Body
+```typescript
+const response = await apiFetch<FeatureType>(FEATURE_API.create(), {
+  method: 'POST',
+  body: {
+    name: 'Feature Name',
+    description: 'Feature Description',
+  },
+})
+```
+
+---
+
+## Best Practices
+
+### API Calls
+- ✅ Luôn sử dụng composables (`use{Feature}Api`) thay vì gọi API trực tiếp trong components
+- ✅ Tách biệt API logic và business logic
+- ✅ Sử dụng TypeScript types cho request/response
+- ✅ Handle errors gracefully với user-friendly messages
+
+### Performance
+- ✅ Sử dụng `immediate: false` cho API calls không cần chạy ngay
+- ✅ Sử dụng `watch: false` để tránh auto-refetch không cần thiết
+- ✅ Cache API responses khi có thể
+- ✅ Lazy load API composables khi không cần thiết ngay
+
+### Security
+- ✅ Không expose sensitive data trong client-side code
+- ✅ Validate input trước khi gửi API request
+- ✅ Sanitize user input để tránh XSS
+- ✅ Sử dụng HTTPS trong production
+
+---
+
+**Last Updated**: 2025-01-XX
+**Maintained By**: DTU Support FE Team

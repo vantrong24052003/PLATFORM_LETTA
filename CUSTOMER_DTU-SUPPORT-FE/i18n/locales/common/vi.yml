@@ -1,0 +1,77 @@
+common:
+  header:
+    menu:
+      home: "Trang chủ"
+      about: "Về chúng tôi"
+      whatWeDo: "DTU Helper là gì?"
+      testimonials: "Sinh viên nói gì"
+      faq: "FAQ"
+      tools: "Công cụ"
+      marketplace: "Marketplace"
+      services: "Dịch vụ"
+      news: "Tin tức"
+  auth:
+    register: "Đăng ký"
+    login:
+      button: "Đăng nhập"
+      title: "Đăng nhập"
+      subtitle: "Đăng nhập vào tài khoản của bạn để tiếp tục"
+      buttons:
+        google: "Đăng nhập với Google"
+    logout:
+      button: "Đăng xuất"
+    errors:
+      unauthorized: "Bạn cần đăng nhập để tiếp tục"
+      failed: "Xác thực thất bại. Vui lòng thử lại."
+      occurred: "Đã xảy ra lỗi trong quá trình xác thực"
+  ui:
+    language:
+      label: "Ngôn ngữ"
+      selectLabel: "Chọn ngôn ngữ"
+    theme:
+      label: "Giao diện"
+      selectLabel: "Chọn giao diện"
+      names:
+        red: "Đỏ"
+        blue: "Xanh dương"
+        green: "Xanh lá"
+        purple: "Tím"
+        orange: "Cam"
+        pink: "Hồng"
+  loading:
+    title: "Đang tải DTU Support"
+    subtitle: "Chuẩn bị công cụ học tập..."
+    progress: "Đang tải..."
+  brand:
+    titleFull: "DTU Study Support"
+    subtitle: "Đại học Duy Tân"
+    titleShort: "DTU"
+  footer:
+    intro: "Hỗ trợ sinh viên DTU trên hành trình học tập."
+    sections:
+      services: "Dịch vụ"
+      support: "Hỗ trợ"
+      contact: "Liên hệ"
+    links:
+      gpa: "Máy tính GPA"
+      predict: "Dự đoán bằng cấp"
+      schedule: "Lộ trình tín chỉ"
+      marketplace: "Marketplace"
+      tools: "Công cụ"
+      help: "Hỗ trợ học tập"
+      faq: "FAQ"
+      privacy: "Chính sách bảo mật"
+      terms: "Điều khoản dịch vụ"
+      about: "Về chúng tôi"
+      policy: "Chính sách"
+      contact: "Liên hệ"
+    contact:
+      messenger: "Messenger 24/7"
+      facebook: "Trang Facebook"
+      response: "Phản hồi trong 30 phút"
+    copyright: "© {year} DTU Study Support. Tất cả quyền được bảo lưu."
+    crafted: "Được tạo với ❤️ cho sinh viên DTU"
+  error:
+    subtitle: "Có vẻ như trang bạn đang tìm không tồn tại"
+    suggestions: "Có thể bạn đang tìm:"
+    backHome: "Về trang chủ"

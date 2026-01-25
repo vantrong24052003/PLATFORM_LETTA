@@ -1,0 +1,244 @@
+---
+description: Claude Code Rules - Tổng quan dự án, tech stack, mục tiêu, workflow phát triển
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+  - "**/*.mdc"
+  - "**/*.yml"
+alwaysApply: true
+---
+
+# Claude Code Rules for DTU Support FE
+
+## Mục đích
+Rule này tổng hợp các quy tắc làm việc với Claude Code cho dự án DTU Support FE, đảm bảo tuân thủ kiến trúc, coding standards và workflow đã định.
+
+---
+
+## Project Overview
+
+### Thông tin dự án
+- **Project**: DTU Student Helper Website (DTU Help Center)
+- **Purpose**: Hỗ trợ sinh viên tính điểm, dự đoán loại bằng, và marketplace chia sẻ tài liệu
+- **Tech Stack**: Nuxt 4, Tailwind CSS 4, shadcn-vue, Radix Vue, Vue I18n
+- **Target**: Sinh viên Đại học Duy Tân
+
+### Tính năng chính
+1. **Công cụ miễn phí**:
+   - Tính điểm từng môn, GPA, và dự đoán xếp loại bằng (giỏi, khá, trung bình)
+   - Tư vấn lộ trình tín chỉ để qua môn hoặc đạt mục tiêu bằng
+
+2. **Dịch vụ nâng cao (tốn phí)**:
+   - Marketplace mua/bán tài liệu học tập, tài liệu ôn thi
+   - Hỗ trợ đăng ký tín chỉ, đăng ký học hộ, và các tiện ích hỗ trợ khác
+
+---
+
+## Communication Rules
+
+### Bắt buộc
+- **Mở đầu**: Mọi message luôn bắt đầu bằng **"Hi boss Trong"**
+- **Ngôn ngữ**: Tất cả báo cáo, câu hỏi, xác nhận phải bằng **Tiếng Việt**
+- **Code**: Khi tạo hoặc sửa file code — code phải viết bằng **tiếng Anh** và **không có comment** (trừ trường hợp bắt buộc)
+
+---
+
+## Development Workflow (5 Steps)
+
+### Step 1: Discovery
+Phải thực hiện discovery trước khi implement:
+- Đọc config files (`nuxt.config.ts`, `tailwind.config.js`, `package.json`)
+- Tìm và đọc components, composables, types, constants liên quan
+- Check i18n translations nếu cần
+- Output: Danh sách file đã đọc, tóm tắt, điểm mơ hồ, gợi ý bước tiếp theo
+
+### Step 2: Proposal
+- Liệt kê files sẽ được tạo/sửa với full path
+- Không tự ý thay đổi kiến trúc mà không hỏi user
+- Hỏi lại nếu requirements không rõ ràng
+
+### Step 3: Implement
+- Tuân thủ naming conventions và coding standards
+- TypeScript strict mode, không dùng `any`
+- Error handling bắt buộc
+
+### Step 4: Self-Review
+- Test cho code mới (target 100% coverage)
+- Check linting errors
+- Verify TypeScript types
+
+### Step 5: Documentation
+- Update docs khi có thay đổi architecture
+- Comment chỉ khi logic phức tạp
+
+---
+
+## Code Rules Summary
+
+### Naming Conventions
+- **Components**: PascalCase (`UserProfile.vue`, `GpaCalculator.vue`)
+- **Files**: kebab-case (`user-profile.vue`, `gpa-calculator.ts`)
+- **Types/Interfaces**: PascalCase (`User`, `GpaResult`, `CourseGrade`)
+- **Composables**: `use` + PascalCase (`useGpaCalculator`, `useAuth`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_CREDITS`, `API_BASE_URL`)
+- **Functions/vars**: camelCase (`calculateGpa`, `isUserLoggedIn`)
+
+### Vue Component Structure
+1. Imports
+2. Props & Emits
+3. Composables
+4. Reactive state
+5. Computed properties
+6. Methods
+7. Lifecycle hooks
+
+---
+
+## Folder Structure Rules
+
+### Cấu trúc chính
+- `app/components/{feature}/` - Feature components với `index.vue` là main
+- `app/form/{feature}/` - Form components: `index.vue` (main), `ui/`, `common/`
+- `app/pages/{feature}/index.vue` - Chỉ import từ `@/form/{feature}/index.vue`
+- `app/composables/{feature}/` - API và business logic composables
+- `app/constants/api/{feature}.api.ts` - API endpoints
+- `i18n/locales/{feature}/` - Translations theo feature
+
+### Import Rules
+✅ **ĐÚNG**: `pages/tools/gpa/index.vue` chỉ import `@/form/gpa/index.vue`
+❌ **SAI**: Import trực tiếp UI components từ pages
+
+---
+
+## API Rules
+
+### Environment
+- Không hardcode URLs, dùng `useRuntimeConfig().public.backendUrl`
+- Env vars phải có prefix `NUXT_PUBLIC_`
+
+### API Pattern
+```typescript
+// Constants
+export const FEATURE_API = {
+  list: () => '/api/feature/items',
+  getById: (id: number) => `/api/feature/items/${id}`,
+  create: () => '/api/feature/items',
+} as const
+
+// Composable
+export const useFeatureApi = () => {
+  const { pending: isLoading, error: apiError, data: response, execute } = useApiFetch<Feature>(FEATURE_API.create(), {
+    method: 'POST', immediate: false, watch: false,
+  })
+
+  const createFeature = async (data: FeatureData): Promise<Feature> => {
+    await execute()
+    if (apiError.value) throw new Error(apiError.value.message || 'Failed to create')
+    return response.value?.data
+  }
+
+  return { isLoading, apiError, createFeature }
+}
+```
+
+---
+
+## Color System
+
+### Brand Colors (HSL tokens)
+- **Primary (DTU Red)**: `350 85% 42%` (`#C8102E`)
+- **Primary Foreground**: `210 40% 98%`
+- **Accent**: `352 77% 57%` (`#E63946`)
+- **Accent Foreground**: `210 40% 98%`
+
+### Color Rules
+- ❌ Không hardcode màu trực tiếp (`text-[#ff0000]`)
+- ✅ Luôn dùng token Tailwind (`text-primary`, `bg-accent`)
+
+---
+
+## Internationalization
+
+### Structure
+```
+i18n/locales/
+├── common/          # Common translations
+├── home/            # Homepage translations
+├── tools/           # Tools page translations
+└── {feature}/       # Feature-specific translations
+```
+
+### Usage
+```typescript
+const { t } = useI18n()
+const SCOPE = 'feature'
+t(`${SCOPE}.title`)
+```
+
+---
+
+## Best Practices
+
+### Component Development
+- Sử dụng composition API với `<script setup>`
+- Props và emits với TypeScript types
+- Loading và error states bắt buộc
+
+### File Operations
+- Khi đổi tên/di chuyển file → dùng `mv` command để giữ git history
+- Không tự ý define file mới bằng tay
+
+### Error Handling
+- Luôn check `apiError.value` trước khi dùng `response.value`
+- Throw error với message rõ ràng
+- Return `null` hoặc empty array nếu không có data
+
+---
+
+## Quick Reference
+
+### Component Template
+```vue
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { Feature } from '@/types/feature'
+
+interface Props { featureId: string }
+const props = defineProps<Props>()
+const emit = defineEmits<{ update: [feature: Feature] }>()
+
+const { t } = useI18n()
+const SCOPE = 'feature'
+</script>
+
+<template>
+  <div class="rounded-xl border border-border/20 bg-card p-4">
+    <h2 class="text-lg font-bold text-foreground mb-2">{{ t(`${SCOPE}.title`) }}</h2>
+  </div>
+</template>
+```
+
+### API Composable Template
+```typescript
+import { useApiFetch } from '@/lib/api'
+import { FEATURE_API } from '@/constants/api/feature.api'
+
+export const useFeatureApi = () => {
+  const { pending: isLoading, error: apiError, data: response, execute } = useApiFetch<Feature>(FEATURE_API.list())
+
+  const fetchFeatures = async (): Promise<Feature[]> => {
+    await execute()
+    if (apiError.value) throw new Error(apiError.value.message || 'Failed to fetch')
+    return response.value?.data || []
+  }
+
+  return { isLoading, apiError, fetchFeatures }
+}
+```
+
+---
+
+**Last Updated**: 2025-12-19
+**Maintained By**: DTU Support FE Team

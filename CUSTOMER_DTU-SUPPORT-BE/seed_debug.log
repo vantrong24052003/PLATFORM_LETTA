@@ -1,0 +1,68 @@
+** Invoke db:seed (first_time)
+** Invoke db:load_config (first_time)
+** Invoke environment (first_time)
+** Execute environment
+** Execute db:load_config
+** Execute db:seed
+** Invoke db:abort_if_pending_migrations (first_time)
+** Invoke db:load_config 
+** Execute db:abort_if_pending_migrations
+bin/rails aborted!
+NameError: uninitialized constant AiScheduleResult (NameError)
+
+  AiScheduleResult.destroy_all
+  ^^^^^^^^^^^^^^^^
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/db/seeds.rb:23:in `block in <main>'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_adapters/abstract/transaction.rb:626:in `block in within_new_transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/concurrency/null_lock.rb:9:in `synchronize'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_adapters/abstract/transaction.rb:623:in `within_new_transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_adapters/abstract/database_statements.rb:367:in `within_new_transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_adapters/abstract/database_statements.rb:359:in `transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/transactions.rb:233:in `block in transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_adapters/abstract/connection_pool.rb:418:in `with_connection'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/connection_handling.rb:310:in `with_connection'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/transactions.rb:232:in `transaction'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/db/seeds.rb:22:in `<main>'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/engine.rb:562:in `load'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/engine.rb:562:in `block in load_seed'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/callbacks.rb:120:in `block in run_callbacks'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/reloader.rb:77:in `block in wrap'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/execution_wrapper.rb:91:in `wrap'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/reloader.rb:74:in `wrap'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/engine.rb:652:in `block (2 levels) in <class:Engine>'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/callbacks.rb:129:in `instance_exec'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/callbacks.rb:129:in `block in run_callbacks'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activesupport-8.0.2/lib/active_support/callbacks.rb:140:in `run_callbacks'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/engine.rb:562:in `load_seed'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/tasks/database_tasks.rb:492:in `load_seed'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/activerecord-8.0.2/lib/active_record/railties/databases.rake:390:in `block (2 levels) in <main>'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:281:in `block in execute'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:281:in `each'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:281:in `execute'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:219:in `block in invoke_with_call_chain'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:199:in `synchronize'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:199:in `invoke_with_call_chain'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/task.rb:188:in `invoke'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:188:in `invoke_task'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:138:in `block (2 levels) in top_level'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:138:in `each'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:138:in `block in top_level'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:147:in `run_with_threads'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:132:in `top_level'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands/rake/rake_command.rb:27:in `block (2 levels) in perform'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/application.rb:214:in `standard_exception_handling'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands/rake/rake_command.rb:27:in `block in perform'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands/rake/rake_command.rb:44:in `block in with_rake'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/rake-13.3.0/lib/rake/rake_module.rb:59:in `with_application'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands/rake/rake_command.rb:41:in `with_rake'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands/rake/rake_command.rb:20:in `perform'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/command.rb:150:in `invoke_rake'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/command.rb:67:in `block in invoke'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/command.rb:143:in `with_argv'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/command.rb:63:in `invoke'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/railties-8.0.2/lib/rails/commands.rb:18:in `<main>'
+/home/vantrong/.rvm/rubies/ruby-3.3.9/lib/ruby/3.3.0/bundled_gems.rb:69:in `require'
+/home/vantrong/.rvm/rubies/ruby-3.3.9/lib/ruby/3.3.0/bundled_gems.rb:69:in `block (2 levels) in replace_require'
+/home/vantrong/Documents/PLATFORM_LETTA/CUSTOMER_DTU-SUPPORT-BE/vendor/bundle/ruby/3.3.0/gems/bootsnap-1.18.6/lib/bootsnap/load_path_cache/core_ext/kernel_require.rb:30:in `require'
+bin/rails:6:in `<main>'
+Tasks: TOP => db:seed

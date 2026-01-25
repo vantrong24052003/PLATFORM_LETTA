@@ -1,0 +1,8 @@
+services:
+  web:
+    image: dtu-support-fe
+    build: .
+    ports:
+      - "4000:3000"
+    env_file:
+      - ${ENV_FILE}

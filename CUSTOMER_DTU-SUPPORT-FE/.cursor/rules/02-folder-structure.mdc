@@ -1,0 +1,236 @@
+---
+description: RULE 2 - Cấu trúc thư mục chuẩn Nuxt 4, naming conventions, file organization
+globs:
+  - "**/*.vue"
+  - "**/*.ts"
+  - "**/*.js"
+  - "**/*.mdc"
+  - "**/*.yml"
+alwaysApply: true
+---
+
+# RULE 2 - Folder Structure & Conventions
+
+## Mục đích
+Xác định rõ cấu trúc thư mục chuẩn Nuxt 4, coding style, naming conventions, file layout, và quy tắc tổ chức code.
+
+---
+
+## Cấu trúc thư mục chuẩn
+
+```
+DTU-SUPPORT-FE/
+├── .nuxt/                          # Build artifacts (auto-generated)
+├── .output/                        # Build output (auto-generated)
+├── .cursor/                        # Cursor AI rules
+│   └── rules/
+│       ├── 01-project-overview.mdc
+│       ├── 02-folder-structure.mdc
+│       ├── 03-api-backend-rules.mdc
+│       ├── 04-example-patterns.mdc
+│       └── 05-llm-usage.mdc
+├── app/                            # Nuxt 4 app directory (main source)
+│   ├── assets/                     # Local assets (bundled)
+│   │   ├── css/
+│   │   │   └── tailwind.css        # CSS variables, themes, utilities
+│   │   └── images/
+│   │       └── logo-dtu.png        # DTU logo
+│   ├── components/                 # Vue components (auto-import)
+│   │   ├── common/                 # Shared components
+│   │   │   ├── Header.vue
+│   │   │   ├── Footer.vue
+│   │   │   ├── Hero.vue
+│   │   │   ├── LocaleSwitcher.vue
+│   │   │   └── ScrollToTop.vue
+│   │   ├── {feature}/              # Feature-specific components
+│   │   │   ├── FeatureList.vue
+│   │   │   ├── FeatureForm.vue
+│   │   │   ├── FeatureDetail.vue
+│   │   │   └── index.vue           # Main component (imports các component con)
+│   │   └── ui/                     # shadcn-vue components
+│   │       ├── accordion/
+│   │       ├── button/
+│   │       ├── card/
+│   │       └── input/
+│   ├── composables/                # Auto-import composables
+│   │   ├── {feature}/
+│   │   │   ├── use{Feature}Api.ts  # API calls
+│   │   │   └── use{Feature}Logic.ts # Business logic
+│   │   ├── useLocaleLogic.ts
+│   │   └── useThemeLogic.ts
+│   ├── constants/                  # Application constants
+│   │   ├── api/                    # API endpoints
+│   │   │   └── {feature}.api.ts
+│   │   ├── common/
+│   │   │   └── ui.ts               # THEMES, LOCALES constants
+│   │   └── features/
+│   │       └── {feature}.ts        # Feature constants
+│   ├── form/                       # Form components (feature-specific forms)
+│   │   └── {feature}/              # Feature form directory
+│   │       ├── index.vue           # Main form page (tabs, layout, imports UI components)
+│   │       ├── ui/                 # Form UI components
+│   │       │   ├── FormComponent1.vue
+│   │       │   └── FormComponent2.vue
+│   │       └── common/              # Shared components for this feature form
+│   │           └── SharedComponent.vue
+│   ├── lib/                        # Internal utilities
+│   │   ├── api.ts                  # useApiFetch, apiFetch
+│   │   └── utils.ts                # cn() function for class merging
+│   ├── pages/                      # File-based routing
+│   │   ├── index.vue               # Homepage
+│   │   ├── {feature}/
+│   │   │   └── index.vue           # Feature page (chỉ import @/form/{feature}/index.vue)
+│   │   └── tools/
+│   │       └── gpa/
+│   │           └── index.vue        # Page chỉ import @/form/gpa/index.vue
+│   ├── plugins/                    # Nuxt plugins
+│   │   ├── 01.{name}.ts            # Plugin với thứ tự nạp
+│   │   ├── {name}.client.ts        # Client-only plugin
+│   │   └── {name}.server.ts        # Server-only plugin
+│   ├── schemas/                    # Zod schemas (validation)
+│   │   └── {feature}/
+│   │       └── {feature}.ts
+│   ├── types/                      # TypeScript definitions
+│   │   ├── common.ts               # Common types
+│   │   └── {feature}.ts            # Feature-specific types
+│   ├── router.options.ts           # Router configuration
+│   └── app.vue                     # Root app shell
+├── i18n/                           # Internationalization
+│   └── locales/
+│       ├── common/                 # Common translations
+│       │   ├── en.yml
+│       │   ├── vi.yml
+│       │   └── ja.yml
+│       ├── {feature}/              # Feature translations
+│       │   ├── en.yml
+│       │   ├── vi.yml
+│       │   └── ja.yml
+├── public/                         # Static assets (not bundled)
+│   ├── favicon.ico
+│   └── robots.txt
+├── nuxt.config.ts                  # Nuxt configuration
+├── tailwind.config.js              # Tailwind configuration
+├── package.json                    # Dependencies & scripts
+└── tsconfig.json                   # TypeScript configuration
+```
+
+---
+
+## Vai trò thư mục chính
+
+- `app/components/` - Vue components (auto-import), tổ chức theo feature
+- `app/form/{feature}/` - Form components: `index.vue` (main), `ui/` (form components), `common/` (shared)
+- `app/composables/` - Auto-import composables, tổ chức theo feature
+- `app/constants/api/` - API endpoints definition
+- `app/pages/` - File-based routing, chỉ import từ `@/form/{feature}/index.vue`
+- `app/plugins/` - Nuxt plugins, dùng tiền tố số (`01.`, `02.`) cho thứ tự nạp
+- `app/lib/` - Internal utilities (`api.ts`, `utils.ts`)
+- `i18n/locales/` - i18n translations, tổ chức theo feature
+
+---
+
+## Component Organization Rules
+
+### Feature-based Organization
+```
+app/components/
+├── common/               # Shared across features
+│   ├── Header.vue
+│   ├── Footer.vue
+│   └── ScrollToTop.vue
+├── {feature}/            # Feature-specific components
+│   ├── FeatureList.vue
+│   ├── FeatureForm.vue
+│   ├── FeatureDetail.vue
+│   └── index.vue         # Main component (imports các component con)
+└── ui/                   # shadcn-vue components
+    ├── accordion/
+    ├── button/
+    └── card/
+```
+
+### Component Naming Rules
+- **Components**: PascalCase (`UserProfile.vue`, `GpaCalculator.vue`)
+- **Files**: PascalCase cho components, kebab-case cho utilities
+- **Props**: camelCase (`userId`, `isLoading`)
+- **Events**: kebab-case (`@user-updated`, `@form-submitted`)
+
+### Page Import Rules
+**QUAN TRỌNG**: Page `index.vue` chỉ import form `index.vue` từ `app/form/{feature}/`, không import component con.
+
+```vue
+<!-- ✅ ĐÚNG: pages/tools/gpa/index.vue -->
+<script setup lang="ts">
+import GpaPage from '@/form/gpa/index.vue'
+</script>
+
+<!-- ❌ SAI: pages/tools/gpa/index.vue -->
+<script setup lang="ts">
+import GpaCalculator from '@/form/gpa/ui/GpaCalculator.vue'
+import TargetCalculator from '@/form/gpa/ui/TargetCalculator.vue'
+</script>
+```
+
+**Form `index.vue` trong `app/form/{feature}/` sẽ import các UI components:**
+
+```vue
+<!-- ✅ ĐÚNG: app/form/gpa/index.vue -->
+<script setup lang="ts">
+import GpaCalculator from './ui/GpaCalculator.vue'
+import TargetCalculator from './ui/TargetCalculator.vue'
+import GraduationInfo from './common/GraduationInfo.vue'
+</script>
+```
+
+### Form Organization Pattern
+```
+app/form/
+└── {feature}/              # Feature form directory
+    ├── index.vue           # Main form page (tabs, layout)
+    ├── ui/                 # Form UI components
+    │   ├── FormComponent1.vue
+    │   ├── FormComponent2.vue
+    │   └── FormComponent3.vue
+    └── common/             # Shared components for this feature
+        └── SharedComponent.vue
+```
+
+**Ví dụ thực tế**:
+```
+app/form/gpa/
+├── index.vue               # Main GPA form với tabs (target, gpa, pe, pass, ai)
+├── ui/
+│   ├── GpaCalculator.vue
+│   ├── TargetCalculator.vue
+│   ├── PeCalculator.vue
+│   └── PassCalculator.vue
+└── common/
+    └── GraduationInfo.vue
+```
+
+---
+
+## Naming Conventions (Folder Structure)
+
+### Files & Folders
+- **Components**: PascalCase (`UserProfile.vue`, `GpaCalculator.vue`)
+- **Files**: kebab-case (`user-profile.vue`, `gpa-calculator.ts`)
+- **Folders**: kebab-case (`marketplace/`, `gpa-calculator/`)
+- **Composables**: `use` + PascalCase (`useGpaCalculator.ts`, `useAuth.ts`)
+- **Constants**: UPPER_SNAKE_CASE files (`MARKETPLACE_API`, `USER_API`)
+- **Types**: kebab-case files (`marketplace.ts`, `user.ts`)
+
+---
+
+## Plugin System
+
+### Plugin Rules
+- Auto-register: Chỉ file top-level trong `app/plugins/` được tự động nạp
+- Order: Dùng tiền tố số (`01.`, `02.`, `03.`) để kiểm soát phụ thuộc
+- Environment: `.client.ts` cho client-only; `.server.ts` cho server-only
+- Subfolder: Không auto; muốn nạp phải khai báo trong `nuxt.config.ts > plugins`
+
+---
+
+**Last Updated**: 2025-01-XX
+**Maintained By**: DTU Support FE Team

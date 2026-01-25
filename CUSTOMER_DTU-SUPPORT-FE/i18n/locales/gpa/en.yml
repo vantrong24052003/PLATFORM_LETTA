@@ -1,0 +1,78 @@
+title: "Smart GPA Calculator"
+subtitle: "Calculate GPA & Predict Results"
+description: "Predict academic results, calculate detailed GPA or ask AI for smart study advice"
+
+tabs:
+  target: "Target Calculation"
+  gpa: "GPA Calculation"
+  pe: "PE GPA"
+  pass: "Pass Grade Calculation"
+  ai: "Ask AI"
+
+target:
+  title: "Target Calculation"
+  description: "Calculate the minimum GPA needed to achieve your target"
+  form:
+    completedCredits:
+      label: "Credits Completed"
+      placeholder: "Enter completed credits"
+      unit: "credits"
+    currentGpa:
+      label: "Current GPA"
+      placeholder: "Enter current GPA"
+      unit: "points"
+    targetGpa:
+      label: "Target GPA"
+      placeholder: "Enter target GPA"
+      unit: "points"
+    remainingCredits:
+      label: "Remaining Credits"
+      placeholder: "Enter remaining credits"
+      unit: "credits"
+  button:
+    calculate: "Calculate Target Feasibility"
+    reset: "Reset"
+  result:
+    title: "Results"
+    maxGpaIfAllA: "Maximum GPA if all A:"
+    isFeasible: "Feasible with all A:"
+    yes: "Yes"
+    no: "No"
+  ready:
+    title: "Ready to Calculate"
+    description: "Enter information or ask questions to see prediction results"
+  classification:
+    title: "DTU Graduation Classification"
+    excellent: "Excellent"
+    good: "Good"
+    fair: "Fair"
+    average: "Average"
+  results:
+    title: "Results"
+    subtitle: "Maximum achievable GPA"
+    scale: "Scale 4.0"
+    success:
+      title: "Target achievable"
+      message: "You can achieve GPA {gpa} if you get all A's for remaining credits."
+    warning:
+      title: "Target difficult"
+      message: "Your maximum GPA is {gpa}, may not be enough to reach target."
+  simulation:
+    distribution:
+      title: "Grade Distribution"
+  pe:
+    results:
+      headline:
+        pass: "Passed the PE program"
+        fail: "Failed the PE program"
+      scale: "on a 4.0 scale"
+      pass: "Pass"
+      fail: "Fail"
+      courses:
+        c1: "Course 1"
+        c2: "Course 2"
+        c3: "Course 3"
+      analysis:
+        title: "Analysis:"
+        pass: "Pass! You completed the PE program with GPA {gpa}."
+        fail: "Fail. Your average PE GPA is {gpa}. Keep trying."

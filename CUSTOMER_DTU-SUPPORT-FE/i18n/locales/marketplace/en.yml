@@ -1,0 +1,39 @@
+marketplace:
+  header:
+    title: "DTU Student Marketplace"
+    subtitle: "Search, share and buy/sell study materials and exam prep easily."
+  search:
+    placeholder: "Search documents, courses, textbooks..."
+  filters:
+    subject: "Subject/Major"
+    type: "Document Type"
+    format: "Format"
+    sort: "Sort by"
+  list:
+    title: "Latest Documents"
+  items:
+    - category: "Computer Networks"
+      title: "Complete Final Exam Collection - Computer Networks 2023"
+      author: "Jane Doe"
+      badge: "Best Seller"
+    - category: "Software Engineering"
+      title: "Complete Lecture Slides - Software Engineering"
+      author: "John Smith"
+      price: "Free"
+    - category: "Marketing Management"
+      title: "Case Study: Vinamilk Strategy Analysis"
+      author: "Emily Clark"
+    - category: "Database Management Systems"
+      title: "SQL Practice Guide from Basic to Advanced"
+      author: "Michael Brown"
+  cta:
+    title: "Become a Knowledge Sharer"
+    description: "Upload your study materials and earn commission on each sale. Help the community and create passive income today!"
+    button: "Get Started"
+    steps:
+      - title: "Upload Documents"
+        description: "Share your slides, exams, and assignments on the marketplace"
+      - title: "Review & Approval"
+        description: "Our team will review and approve your materials"
+      - title: "Earn Commission"
+        description: "Receive commission on every purchase of your documents"
