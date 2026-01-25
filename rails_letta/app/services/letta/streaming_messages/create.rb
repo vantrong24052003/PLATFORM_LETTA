@@ -43,7 +43,7 @@ class Letta::StreamingMessages::Create < ApplicationService
   private
 
   def handle_event(event, &block)
-    event_type = event[:type]   
+    event_type = event[:type]
     data = event[:data]
 
     # Phase1: if event_type is error or data["message_type"] is error, return error
@@ -118,8 +118,10 @@ class Letta::StreamingMessages::Create < ApplicationService
   end
 
   def extract_text_content(data)
+    # Direct content
     return data["content"] if data["content"]
 
+    # OpenAI-style delta
     choice = data.dig("choices", 0)
     choice&.dig("delta", "content") || choice&.dig("message", "content")
   end
