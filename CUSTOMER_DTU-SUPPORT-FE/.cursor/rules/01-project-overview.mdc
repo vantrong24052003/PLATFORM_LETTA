@@ -1,0 +1,149 @@
+---
+description: RULE 1 - Tổng quan dự án, tech stack, mục tiêu, workflow phát triển
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+  - "**/*.mdc"
+  - "**/*.yml"
+alwaysApply: true
+---
+
+# RULE 1 - Project Overview
+
+## Mục đích
+Rule "meta" bao quát toàn hệ thống, giải thích tổng quan dự án, tech stack, mục tiêu, cách giao tiếp, và workflow phát triển.
+
+---
+
+## Project Overview
+
+### Thông tin dự án
+- **Project**: DTU Student Helper Website (DTU Help Center)
+- **Purpose**: Hỗ trợ sinh viên tính điểm, dự đoán loại bằng, và marketplace chia sẻ tài liệu
+- **Tech Stack**: Nuxt 4, Tailwind CSS 4, shadcn-vue, Radix Vue, Vue I18n
+- **Target**: Sinh viên Đại học Duy Tân
+
+### Tính năng chính
+1. **Công cụ miễn phí**:
+   - Tính điểm từng môn, GPA, và dự đoán xếp loại bằng (giỏi, khá, trung bình)
+   - Tư vấn lộ trình tín chỉ để qua môn hoặc đạt mục tiêu bằng
+
+2. **Dịch vụ nâng cao (tốn phí)**:
+   - Marketplace mua/bán tài liệu học tập, tài liệu ôn thi (user upload → nhận hoa hồng)
+   - Hỗ trợ đăng ký tín chỉ, đăng ký học hộ, và các tiện ích hỗ trợ khác
+
+---
+
+## Tech Stack & Dependencies
+
+```json
+{
+  "core": ["nuxt@4.1.2", "vue@3.5.22", "vue-router@4.5.1"],
+  "styling": ["tailwindcss@4.1.14", "@nuxtjs/tailwindcss@7.0.0-beta.0"],
+  "ui": ["shadcn-nuxt@2.2.0", "radix-vue@1.9.17", "reka-ui@2.5.1"],
+  "i18n": ["@nuxtjs/i18n@10.1.0"],
+  "validation": ["@vee-validate/nuxt@4.15.1", "@vee-validate/zod@4.15.1", "zod@4.1.12"],
+  "state": ["@pinia/nuxt@0.11.2", "pinia@3.0.3"],
+  "utils": ["@vueuse/core@13.9.0", "class-variance-authority@0.7.1", "clsx@2.1.1", "tailwind-merge@3.3.1"]
+}
+```
+
+---
+
+## Communication Rules
+
+- Tham chiếu **RULE 5 - LLM Usage** để biết yêu cầu giao tiếp chi tiết (lời chào, ngôn ngữ, quy tắc viết code).
+
+---
+
+## Development Workflow
+
+- Hệ thống sử dụng quy trình 5 bước: Discovery → Proposal → Implement → Self-Review → Documentation.
+- Toàn bộ yêu cầu chi tiết (dùng MCP tools, checklist discovery, cách đề xuất files, quy tắc test) vui lòng xem **RULE 5 - LLM Usage**.
+- Rule này chỉ giữ vai trò nhắc nhớ high-level để mọi thành viên nắm được flow tổng thể.
+
+---
+
+- Thông tin cụ thể về cách sử dụng MCP tools, quản lý memory, và quy trình làm việc với LLM đều tập trung ở **RULE 5** để tránh trùng lặp.
+
+---
+
+## Code Rules Summary
+
+### Naming Conventions
+- **Components**: PascalCase (`UserProfile.vue`, `GpaCalculator.vue`)
+- **Files**: kebab-case (`user-profile.vue`, `gpa-calculator.ts`)
+- **Types/Interfaces**: PascalCase (`User`, `GpaResult`, `CourseGrade`)
+- **Composables**: `use` + PascalCase (`useGpaCalculator`, `useAuth`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_CREDITS`, `API_BASE_URL`)
+- **Functions/vars**: camelCase (`calculateGpa`, `isUserLoggedIn`)
+
+### TypeScript Rules
+- Strict mode enabled (no implicit any)
+- Không dùng `any`, dùng `unknown` nếu thực sự cần
+- Interfaces cho object shapes, Type cho unions/intersections
+- Annotate function returns khi không rõ ràng
+
+### Vue Component Structure
+1. Imports
+2. Props & Emits
+3. Composables
+4. Reactive state
+5. Computed properties
+6. Methods
+7. Lifecycle hooks
+
+---
+
+## Color System
+
+### Brand Colors (HSL tokens)
+- **Primary (DTU Red)**: `350 85% 42%` (`#C8102E`)
+- **Primary Foreground**: `210 40% 98%`
+- **Accent**: `352 77% 57%` (`#E63946`)
+- **Accent Foreground**: `210 40% 98%`
+
+### Color Rules
+- ❌ Không hardcode màu trực tiếp trong component (vd: `text-[#ff0000]`)
+- ✅ Luôn sử dụng token Tailwind đã map (vd: `text-primary`, `bg-accent`, `text-muted-foreground`)
+- Khi đổi màu chủ đạo, chỉ cần sửa biến HSL → toàn bộ UI tự động cập nhật
+
+---
+
+## Internationalization (i18n)
+
+### Languages
+- Vietnamese (vi) - Default
+- English (en)
+- Japanese (ja)
+
+### i18n Structure
+```
+i18n/locales/
+├── common/               # Common translations
+├── home/                 # Homepage translations
+├── tools/                # Tools page translations
+└── {feature}/            # Feature-specific translations
+```
+
+### i18n Usage
+```typescript
+const { t } = useI18n()
+const SCOPE = 'feature'
+t(`${SCOPE}.title`)
+```
+
+---
+
+## Notes
+
+- **Living Document**: Update rules này khi có thay đổi architecture
+- **AI Convention**: Rules này áp dụng cho cả Cursor và AI assistants khác
+- **Breaking Changes**: Discuss với team trước khi thay đổi core rules
+- **Color System Priority**: Khi conflict giữa design và color system, ưu tiên maintainability (dùng tokens)
+
+---
+
+**Last Updated**: 2025-01-XX
+**Maintained By**: DTU Support FE Team

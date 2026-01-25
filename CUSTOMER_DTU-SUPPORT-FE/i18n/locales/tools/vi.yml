@@ -1,0 +1,436 @@
+tools:
+  hero:
+    title: "Công cụ hỗ trợ học tập"
+    subtitle: "Bộ sưu tập công cụ được thiết kế cho sinh viên DTU"
+  gpa:
+    badge: "Công cụ tính GPA thông minh"
+    title: "Công cụ tính GPA"
+    titleHighlight: "thông minh"
+    subtitle: "Tính toán GPA & dự đoán kết quả. Hỏi AI để nhận gợi ý học tập thông minh."
+    tabs:
+      target: "Tính toán mục tiêu"
+      targetShort: "Mục tiêu"
+      gpa: "Tính toán GPA"
+      gpaShort: "GPA"
+      pe: "GPA thể dục"
+      peShort: "Thể dục"
+      pass: "Tính điểm qua môn"
+      passShort: "Qua môn"
+      ai: "Hỏi AI"
+      aiShort: "AI"
+    target:
+      inputTitle: "Thông tin đầu vào"
+      inputSubtitle: "Nhập thông tin GPA để tính toán kết quả dự đoán"
+      info:
+        title: "Cách sử dụng công cụ"
+        description: "Nhập thông tin GPA hiện tại và mục tiêu của bạn. Hệ thống sẽ tính toán GPA tối đa có thể đạt được nếu bạn đạt điểm A (4.0) ở tất cả các môn còn lại."
+      fields:
+        completedCredits: "Số tín đã học"
+        currentGpa: "GPA hiện tại"
+        targetGpa: "GPA mục tiêu"
+        remainingCredits: "Số tín còn lại"
+      helpers:
+        completedCredits: "Ví dụ: Nếu bạn đã học 60 tín chỉ, nhập 60"
+        currentGpa: "Ví dụ: GPA hiện tại của bạn là 3.2, nhập 3.2"
+        targetGpa: "Ví dụ: Bạn muốn đạt GPA 3.5, nhập 3.5"
+        remainingCredits: "Ví dụ: Bạn còn 40 tín chỉ chưa học, nhập 40"
+      placeholders:
+        completedCredits: "Nhập số tín đã học"
+        currentGpa: "Nhập GPA hiện tại (0–4.00)"
+        targetGpa: "Nhập GPA mục tiêu (0–4.00)"
+        remainingCredits: "Nhập số tín còn lại"
+      buttons:
+        calculate: "Tính toán"
+        calculating: "Đang tính..."
+        reset: "Đặt lại"
+      empty:
+        title: "Sẵn sàng tính toán"
+        description: "Nhập thông tin ở form bên trái và nhấn \"Tính toán\" để xem kết quả dự đoán GPA của bạn"
+      results:
+        title: "Kết quả tính toán"
+        subtitle: "GPA tối đa có thể đạt được"
+        scale: "trên thang điểm 4.0"
+        success:
+          title: "Có thể đạt mục tiêu!"
+          message: "Nếu đạt điểm A (4.0) ở tất cả các môn còn lại, bạn sẽ đạt GPA {gpa}, cao hơn mục tiêu của bạn."
+        warning:
+          title: "Khó đạt mục tiêu"
+          message: "Ngay cả khi đạt điểm A (4.0) ở tất cả các môn còn lại, GPA tối đa chỉ là {gpa}, thấp hơn mục tiêu."
+      classifications:
+        excellent: "Xuất sắc"
+        good: "Giỏi"
+        fair: "Khá"
+        average: "Trung bình"
+        poor: "Yếu"
+      validation:
+        required: "Trường này là bắt buộc"
+        completedCredits:
+          invalid: "Số tín đã học phải là số nguyên dương (≥ 0)"
+        currentGpa:
+          invalid: "GPA hiện tại phải là số từ 0 đến 4.00"
+          min: "GPA hiện tại không thể nhỏ hơn 0"
+          max: "GPA hiện tại không thể lớn hơn 4.00"
+        targetGpa:
+          invalid: "GPA mục tiêu phải là số từ 0.01 đến 4.00"
+          min: "GPA mục tiêu phải lớn hơn 0"
+          max: "GPA mục tiêu không thể lớn hơn 4.00"
+        remainingCredits:
+          invalid: "Số tín còn lại phải là số nguyên dương (≥ 1)"
+          min: "Số tín còn lại phải lớn hơn hoặc bằng 1"
+    gpa:
+      title: "Tính toán GPA"
+      description: "Tính GPA hiện tại hoặc GPA tích lũy theo số tín đã/đang học. Tính năng này sẽ sớm có sẵn."
+    simulation:
+      inputTitle: "Tính toán GPA chi tiết"
+      inputSubtitle: "Giả lập phân bố điểm để xem GPA cuối cùng sau toàn khóa học"
+      help: "Hướng dẫn sử dụng"
+      fields:
+        completedCredits: "Số tín chỉ đã học"
+        currentGpa: "GPA hiện tại"
+        remainingCredits: "Số tín chỉ còn lại"
+      placeholders:
+        completedCredits: "Nhập số tín chỉ đã học"
+        currentGpa: "Nhập GPA hiện tại"
+        remainingCredits: "Nhập số tín chỉ còn lại"
+      distribution:
+        title: "Phân bổ tín chỉ"
+        credits: "tín chỉ"
+        creditsLabel: "Tín chỉ"
+        creditsPlaceholder: "Nhập số tín chỉ"
+        gradeLabel: "Điểm dự kiến"
+        addButton: "Thêm phân bổ"
+        removeButton: "Xóa"
+        successMessage: "Đã phân bố đúng {credits} tín chỉ. Sẵn sàng tính toán!"
+        empty: "Chưa có phân bổ điểm nào. Nhấn 'Thêm phân bổ' để bắt đầu."
+      grades:
+        "A+":
+          label: "A+ ({point})"
+          category: "Giỏi"
+        "A":
+          label: "A ({point})"
+          category: "Giỏi"
+        "A-":
+          label: "A− ({point})"
+          category: "Khá"
+        "B+":
+          label: "B+ ({point})"
+          category: "Khá"
+        "B":
+          label: "B ({point})"
+          category: "Khá"
+        "B-":
+          label: "B− ({point})"
+          category: "Trung bình"
+        "C+":
+          label: "C+ ({point})"
+          category: "Trung bình"
+        "C":
+          label: "C ({point})"
+          category: "Trung bình"
+        "C-":
+          label: "C− ({point})"
+          category: "Trung bình yếu"
+        "D":
+          label: "D ({point})"
+          category: "Đạt"
+      buttons:
+        calculate: "Tính toán GPA chi tiết"
+        calculating: "Đang tính toán..."
+        reset: "Đặt lại"
+      results:
+        title: "Kết quả GPA chi tiết"
+        subtitle: "GPA toàn khóa dự kiến"
+        scale: "Thang điểm 4"
+        summary: "Bạn giả định đạt {summary} → GPA toàn khóa {gpa} → Xếp loại {rank}."
+        empty:
+          title: "Chưa có kết quả"
+          description: "Nhập thông tin và tính toán để xem kết quả"
+        warning:
+          title: "Kết quả yếu - cần cải thiện ngay"
+          message: "GPA cuối cùng của bạn dưới 2.0. Hãy cố gắng cải thiện điểm số để đạt yêu cầu tốt nghiệp."
+        boxes:
+          currentGpa: "GPA hiện tại"
+          finalGpa: "GPA cuối cùng"
+          afterCompletion: "Sau khi hoàn thành"
+          additionalCredits: "Tín chỉ học thêm"
+          totalCredits: "Tổng tín chỉ"
+        analysis:
+          title: "Phân tích:"
+      validation:
+        completedCredits:
+          invalid: "Số tín chỉ đã học không hợp lệ"
+        currentGpa:
+          invalid: "GPA hiện tại không hợp lệ"
+          min: "GPA hiện tại phải >= 0"
+          max: "GPA hiện tại phải <= 4"
+        remainingCredits:
+          invalid: "Số tín chỉ còn lại không hợp lệ"
+          min: "Số tín chỉ còn lại phải >= 1"
+        creditDistributions:
+          min: "Cần ít nhất 1 phân bổ điểm"
+    pe:
+      title: "GPA thể dục"
+      description: "Công cụ tính GPA thể dục theo thang điểm DTU."
+      inputTitle: "Tính toán GPA thể dục"
+      inputSubtitle: "Đơn giản & nhanh"
+      info:
+        title: "Quy tắc tính điểm"
+      rules:
+        line1: "Nhập GPA (thang 4.0) của 3 môn thể dục"
+        line2: "Trung bình ≥ 2.0: Đậu"
+        line3: "Trung bình < 2.0: Rớt"
+      fields:
+        pe1: "Thể dục 1 (0–4.00)"
+        pe2: "Thể dục 2 (0–4.00)"
+        pe3: "Thể dục 3 (0–4.00)"
+      helpers:
+        pe1: "Ví dụ: Nếu bạn đạt 3.5 điểm ở Thể dục 1, nhập 3.5"
+        pe2: "Ví dụ: Nếu bạn đạt 3.0 điểm ở Thể dục 2, nhập 3.0"
+        pe3: "Ví dụ: Nếu bạn đạt 2.5 điểm ở Thể dục 3, nhập 2.5"
+      placeholders:
+        pe1: "Nhập GPA Thể dục 1"
+        pe2: "Nhập GPA Thể dục 2"
+        pe3: "Nhập GPA Thể dục 3"
+      buttons:
+        calculate: "Tính toán"
+        calculating: "Đang tính..."
+        reset: "Đặt lại"
+      empty:
+        title: "Sẵn sàng tính"
+        description: "Nhập 3 điểm GPA thể dục và nhấn Tính toán để xem kết quả"
+      results:
+        title: "Kết quả"
+        subtitle: "Điểm trung bình của 3 môn thể dục"
+        scale: "trên thang điểm 4.0"
+        pass: "Đậu"
+        fail: "Rớt"
+        headline:
+          pass: "Đậu chương trình thể dục"
+          fail: "Rớt chương trình thể dục"
+        courses:
+          c1: "Môn 1"
+          c2: "Môn 2"
+          c3: "Môn 3"
+        analysis:
+          title: "Phân tích:"
+          pass: "Đậu! Bạn đã hoàn thành chương trình thể dục với GPA {gpa}."
+          fail: "Rớt. GPA trung bình thể dục của bạn là {gpa}. Hãy cố gắng hơn."
+
+      validation:
+        pe1:
+          invalid: "GPA Thể dục 1 phải từ 0 đến 4.00"
+          min: "GPA Thể dục 1 không thể nhỏ hơn 0"
+          max: "GPA Thể dục 1 không thể lớn hơn 4.00"
+        pe2:
+          invalid: "GPA Thể dục 2 phải từ 0 đến 4.00"
+          min: "GPA Thể dục 2 không thể nhỏ hơn 0"
+          max: "GPA Thể dục 2 không thể lớn hơn 4.00"
+        pe3:
+          invalid: "GPA Thể dục 3 phải từ 0 đến 4.00"
+          min: "GPA Thể dục 3 không thể nhỏ hơn 0"
+          max: "GPA Thể dục 3 không thể lớn hơn 4.00"
+    pass:
+      title: "Tính điểm qua môn"
+      description: "Tính điểm cần ở bài thi cuối để qua môn theo trọng số. Tính năng này sẽ sớm có sẵn."
+    ai:
+      title: "Hỏi AI"
+      description: "Đặt câu hỏi cho AI để nhận lời khuyên học tập thông minh. Tính năng này sẽ sớm có sẵn."
+    graduation:
+      classification:
+        title: "Xếp Loại Tốt Nghiệp Duy Tân"
+        subtitle: "Bảng xếp loại tốt nghiệp chính thức của Đại học Duy Tân"
+        table:
+          rank: "Hạng"
+          gpaRange: "GPA Range (Thang 4)"
+          description: "Mô Tả"
+        ranks:
+          excellent:
+            name: "Xuất sắc"
+            gpaRange: "3.60 – 4.00"
+            description: "Hạng cao nhất, yêu cầu GPA ≥ 3.60"
+          good:
+            name: "Giỏi"
+            gpaRange: "3.20 – 3.59"
+            description: "Hạng tốt, yêu cầu GPA ≥ 3.20"
+          fair:
+            name: "Khá"
+            gpaRange: "2.50 – 3.19"
+            description: "Hạng khá, yêu cầu GPA ≥ 2.50"
+          average:
+            name: "Trung bình"
+            gpaRange: "2.00 – 2.49"
+            description: "Hạng trung bình, yêu cầu GPA ≥ 2.00"
+        notes:
+          title: "Lưu ý quan trọng"
+          note1: "Hạng tốt nghiệp có thể bị giảm nếu có >5% tín chỉ học lại hoặc bị kỷ luật"
+          note2: "Xếp loại dựa trên GPA tích lũy cuối cùng (thang điểm 4.0)"
+      gradingScale:
+        title: "Thang Điểm Duy Tân"
+        subtitle: "Bảng chuyển đổi điểm số giữa các thang điểm của Đại học Duy Tân"
+        table:
+          category: "Xếp Loại"
+          scale10: "Thang Điểm 10"
+          letter: "Điểm Chữ"
+          scale4: "Thang Điểm 4"
+          status: "Trạng Thái"
+        categories:
+          good: "Giỏi"
+          fair: "Khá"
+          average: "Trung bình"
+          averageWeak: "Trung bình yếu"
+          conditional: "Đạt"
+          fail: "Không đạt"
+          poor: "Kém"
+        status:
+          pass: "Đạt"
+          conditional: "Có điều kiện"
+          fail: "Không đạt"
+        notes:
+          title1: "Thang điểm 4 là thang điểm đánh giá chính thức để"
+          point1: "Xét học vụ"
+          point2: "Xét tốt nghiệp"
+          point3: "Xếp hạng sinh viên"
+          title3: "Điểm F (0.0)"
+          point6: "Không được tích lũy tín chỉ"
+          point7: "Bắt buộc phải học lại môn học đó"
+          point8: "Không tính vào GPA tích lũy"
+  pass:
+    inputTitle: "Tính điểm cuối kỳ để qua môn"
+    inputSubtitle: "Nhập thông tin các cột điểm và trọng số để tính điểm thi cuối kỳ cần thiết"
+    info:
+      title: "Cách sử dụng công cụ"
+      description: "Thêm các cột điểm (giữa kỳ, chuyên cần, bài tập...) với trọng số tương ứng. Tổng trọng số phải bằng 100%. Hệ thống sẽ tính điểm thi cuối kỳ tối thiểu cần đạt để qua môn."
+    progress:
+      total: "Tổng"
+      remaining: "Còn lại"
+    components:
+      title: "Các cột điểm"
+      addButton: "Thêm cột điểm"
+      empty: "Chưa có cột điểm nào. Nhấn 'Thêm cột điểm' để bắt đầu."
+      removeButton: "Xóa"
+      nameLabel: "Tên cột"
+      namePlaceholder: "Ví dụ: Điểm giữa kỳ"
+      weightLabel: "Tỷ lệ"
+      weightPlaceholder: "Nhập tỷ lệ (%)"
+      scoreLabel: "Điểm hiện có"
+      scorePlaceholder: "Nhập điểm (0-10)"
+    fields:
+      finalExamWeight: "Trọng số thi cuối kỳ (%)"
+      minPassingScore: "Điểm tối thiểu để qua môn"
+    helpers:
+      finalExamWeight: "Ví dụ: Nếu thi cuối kỳ chiếm 50% tổng điểm, nhập 50"
+      minPassingScore: "Ví dụ: Nếu điểm tối thiểu để qua môn là 4.0, nhập 4.0"
+    placeholders:
+      finalExamWeight: "Nhập trọng số thi cuối kỳ (%)"
+      minPassingScore: "Nhập điểm tối thiểu (0-10)"
+    buttons:
+      calculate: "Tính điểm cuối kỳ để qua môn"
+      calculating: "Đang tính..."
+      reset: "Đặt lại"
+    empty:
+      title: "Sẵn sàng tính toán"
+      description: "Nhập thông tin ở form bên trái và nhấn \"Tính toán\" để xem kết quả"
+    results:
+      title: "Kết quả tính toán"
+      cannotPass:
+        title: "Không thể qua môn"
+        message: "Ngay cả khi đạt điểm tối đa (10.0) ở thi cuối kỳ, bạn vẫn không thể đạt điểm tối thiểu để qua môn."
+      requiredMessage: "Bạn cần ít nhất {score} điểm cuối kỳ ({weight}%) để qua môn"
+      requiredSubMessage: "Điểm này dựa trên điểm hiện tại và trọng số thi cuối kỳ của bạn"
+      cards:
+        currentScore: "Điểm hiện tại"
+        finalExamContribution: "Đóng góp cuối kỳ"
+        requiredScore: "Điểm cần thiết"
+      details:
+        title: "Chi tiết các cột điểm"
+        table:
+          name: "Tên cột"
+          weight: "Tỷ lệ (%)"
+          score: "Điểm"
+          contribution: "Đóng góp (%)"
+          currentTotal: "Tổng hiện tại"
+          finalExam: "Thi cuối kỳ"
+          grandTotal: "Tổng cộng"
+    prediction:
+      title: "Dự đoán kết quả cuối kỳ"
+      placeholder: "Nhập điểm dự đoán thi cuối kỳ"
+      button: "Dự đoán"
+      finalScore: "Điểm tổng kết"
+      gpa4: "GPA (thang 4)"
+      letterGrade: "Điểm chữ"
+      status: "Trạng thái"
+      pass: "Đậu"
+      fail: "Rớt"
+    validation:
+      components:
+        min: "Cần ít nhất 1 cột điểm"
+      finalExamWeight:
+        invalid: "Trọng số thi cuối kỳ không hợp lệ"
+        min: "Trọng số thi cuối kỳ không thể nhỏ hơn 0"
+        max: "Trọng số thi cuối kỳ không thể lớn hơn 100"
+      minPassingScore:
+        invalid: "Điểm tối thiểu không hợp lệ"
+        min: "Điểm tối thiểu không thể nhỏ hơn 0"
+        max: "Điểm tối thiểu không thể lớn hơn 10"
+      finalExamScore:
+        invalid: "Điểm thi cuối kỳ không hợp lệ"
+        min: "Điểm thi cuối kỳ không thể nhỏ hơn 0"
+        max: "Điểm thi cuối kỳ không thể lớn hơn 10"
+  benefits:
+    titlePrefix: "Tại sao nên"
+    titlePrimary: "sử dụng?"
+    titleSuffix: ""
+    subtitle: "Những lợi ích thiết thực mà công cụ mang lại cho việc học tập của bạn"
+    items:
+      - { icon: "📈", title: "Tối ưu hóa kết quả", description: "Giúp bạn đạt GPA cao hơn thông qua lập kế hoạch học tập khoa học" }
+      - { icon: "⏰", title: "Tiết kiệm thời gian", description: "Tự động hóa các tính toán phức tạp, giảm thời gian làm việc thủ công" }
+      - { icon: "🧠", title: "Quyết định thông minh", description: "Dựa trên dữ liệu để đưa ra những lựa chọn học tập tốt nhất" }
+      - { icon: "🎯", title: "Mục tiêu rõ ràng", description: "Xác định mục tiêu cụ thể và lộ trình để đạt được chúng" }
+      - { icon: "🏆", title: "Kết quả xuất sắc", description: "Hỗ trợ đạt học bổng, bằng khen và các thành tích học tập" }
+      - { icon: "📖", title: "Học tập hiệu quả", description: "Tối ưu thời gian biểu, cân bằng giữa học tập và nghỉ ngơi" }
+  cta:
+    title: "Sẵn sàng bắt đầu học tập hiệu quả?"
+    subtitle: "Chọn công cụ phù hợp và bắt đầu hành trình học tập của bạn ngay hôm nay."
+  grid:
+    titlePrefix: "Chọn"
+    titlePrimary: "công cụ"
+    titleSuffix: "phù hợp"
+    subtitle: "Khám phá các công cụ hỗ trợ học tập được thiết kế riêng cho sinh viên DTU"
+    featuresHeading: "Tính năng chính:"
+    badgeComing: "Sắp ra mắt"
+    button:
+      useNow: "→ Sử dụng ngay"
+      coming: "Đang phát triển"
+    items:
+      - icon: "📊"
+        status: "available"
+        to: "/tools/gpa"
+        title: "Hỗ trợ học tập & tính toán GPA"
+        desc: "Công cụ toàn diện giúp bạn quản lý và tối ưu hóa kết quả học tập"
+        features:
+          - "Tính điểm trung bình tích lũy (GPA) chính xác"
+          - "Phân loại học lực: Giỏi/Khá/Trung bình/Yếu"
+          - "Dự đoán học lực với số tín chỉ còn lại"
+          - "Đưa ra lời khuyên học phần cần ưu tiên"
+          - "Theo dõi tiến độ học tập theo từng kỳ"
+      - icon: "📅"
+        status: "coming-soon"
+        to: "/schedule"
+        title: "Đăng ký tín chỉ & đề xuất lịch học"
+        desc: "Hỗ trợ thông minh trong việc lập kế hoạch học tập và sắp xếp thời khóa biểu"
+        features:
+          - "Gợi ý học phần phù hợp theo chuyên ngành"
+          - "Tự động xếp thời khóa biểu tối ưu"
+          - "Kiểm tra điều kiện tiên quyết"
+          - "Tránh xung đột lịch học và thi"
+          - "Dự báo khối lượng học tập mỗi kỳ"
+      - icon: "📚"
+        status: "coming-soon"
+        to: "/marketplace"
+        title: "Mua bán tài liệu học tập"
+        desc: "Marketplace chia sẻ tài liệu, đề thi, bài tập"
+        features:
+          - "Mua bán tài liệu học tập chất lượng"
+          - "Chia sẻ đề thi, bài tập mẫu"
+          - "Đánh giá và phản hồi tài liệu"
+          - "Tìm kiếm theo môn học, chuyên ngành"

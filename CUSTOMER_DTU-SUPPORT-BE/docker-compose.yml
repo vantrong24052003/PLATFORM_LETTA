@@ -1,0 +1,47 @@
+volumes:
+  postgresdata:
+  redisdata:
+  bundler:
+
+services:
+  postgres:
+    image: postgres:15
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    image: dtu-support-be
+    build: .
+    volumes:
+      - .:/rails
+      - bundler:/rails/.bundle
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      REDIS_HOST: redis
+    ports:
+      - "4001:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

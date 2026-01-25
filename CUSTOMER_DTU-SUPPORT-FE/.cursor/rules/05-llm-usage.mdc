@@ -1,0 +1,171 @@
+---
+description: RULE 5 - LLM Usage Rules: Quy định cách yêu cầu và làm việc với ChatGPT/LLM
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+  - "**/*.mdc"
+  - "**/*.yml"
+alwaysApply: true
+---
+
+# RULE 5 - LLM Usage Rules
+
+## Mục đích
+Quy định cách yêu cầu và làm việc với ChatGPT/LLM, đảm bảo LLM tuân thủ workflow, không tự ý thay đổi kiến trúc, và luôn thực hiện discovery trước khi implement.
+
+---
+
+## Communication Rules
+
+### Bắt buộc
+- **Mở đầu**: Mọi message luôn bắt đầu bằng **"Hi boss Trong"**
+- **Ngôn ngữ**: Tất cả báo cáo, câu hỏi, xác nhận phải bằng **Tiếng Việt**
+- **Code**: Khi tạo hoặc sửa file code — code phải viết bằng **tiếng Anh** và **không có comment** (trừ trường hợp bắt buộc theo ngôn ngữ)
+
+---
+
+## 5-Step Workflow (Bắt buộc)
+
+### Step 1: Discovery (Task 0)
+
+**Bắt buộc**: Phải thực hiện discovery trước khi trả lời hoặc implement.
+
+#### Tools ưu tiên
+1. **MCP Thinking**: Dùng `mcp_sequential-thinking_sequentialthinking` để phân tích vấn đề phức tạp
+2. **MCP Memory**: Dùng `mcp_memory_*` để lưu trữ và truy xuất thông tin về dự án
+3. **MCP Research**: Dùng `mcp_vibe-coder-mcp_research-manager` để research technical topics
+
+#### Fallback tools
+Nếu không có MCP tools, dùng Cursor tools:
+- `read_file` - Đọc file cụ thể
+- `codebase_search` - Tìm kiếm semantic trong codebase
+- `grep` - Tìm kiếm exact pattern
+
+#### Discovery checklist
+- [ ] Đọc config files (`nuxt.config.ts`, `tailwind.config.js`, `package.json`)
+- [ ] Tìm và đọc components liên quan
+- [ ] Tìm và đọc composables liên quan
+- [ ] Tìm và đọc types/interfaces liên quan
+- [ ] Tìm và đọc constants liên quan
+- [ ] Check i18n translations nếu cần
+
+#### Output bắt buộc
+1. Danh sách file đã đọc
+2. Tóm tắt ngắn cho từng file (tối đa 10–12 dòng/file)
+3. Danh sách các điểm mơ hồ (mỗi điểm kèm câu hỏi rõ ràng)
+4. Danh sách phần cần refactor/nguy cơ
+5. Performance & Security findings
+6. Gợi ý bước tiếp theo (thiết kế, scaffold, hoặc chỉnh config)
+
+### Step 2: Proposal
+
+#### Liệt kê files
+- **Bắt buộc**: Khi đề xuất sửa file → phải liệt kê file path trước
+- **Format**:
+  ```
+  Files sẽ được tạo/sửa:
+  - app/components/feature/FeatureList.vue (tạo mới)
+  - app/composables/feature/useFeatureApi.ts (sửa)
+  - app/pages/feature/index.vue (sửa)
+  ```
+
+#### Không tự ý thay đổi
+- **LLM không được tự ý thay đổi kiến trúc** mà không hỏi user trước
+- **Không assume**: Không tự ý assume requirements, phải hỏi user nếu mơ hồ
+- **Clarify edge cases**: Hỏi user về edge cases trước khi implement
+
+#### Hỏi lại nếu thiếu dữ liệu
+- **Bắt buộc**: Không được trả lời thiếu dữ liệu (phải hỏi lại user)
+- **Clarify**: Nếu requirements không rõ ràng, phải hỏi user để clarify
+
+### Step 3: Implement
+
+#### Code style
+- Tuân thủ naming conventions (tham chiếu RULE 1 > Code Rules Summary > Naming Conventions)
+- Tuân thủ component structure (tham chiếu RULE 4 > Component Pattern)
+- Tuân thủ API patterns (tham chiếu RULE 3 > API Structure & API Composable Pattern)
+
+#### File Operations
+- **Bắt buộc**: Khi user yêu cầu đổi tên hoặc move file → phải dùng tool `mv` (terminal command) để đổi tên/di chuyển
+- **Không được**: Tự ý define file mới bằng tay thay vì dùng `mv` command
+- **Lý do**: Đảm bảo git history được giữ nguyên, không mất track của file
+
+#### TypeScript
+- Strict mode enabled
+- Không dùng `any`, dùng `unknown` nếu thực sự cần
+- Interfaces cho object shapes, Type cho unions/intersections
+
+#### Error handling
+- Luôn check error trước khi sử dụng data
+- Throw error với message rõ ràng
+- Return `null` hoặc empty array nếu không có data
+
+### Step 4: Self-Review
+
+#### Test
+- **Bắt buộc**: Test phải được tạo cho mọi code mới
+- **Coverage**: Target 100% coverage cho logic phức tạp
+- **Unit tests**: Cho composables và utilities
+- **Integration tests**: Cho components phức tạp
+
+#### Linting
+- Check linter errors sau khi implement
+- Fix tất cả linter errors trước khi hoàn thành
+
+#### Type safety
+- Verify TypeScript types compile không có lỗi
+- Check type inference đúng
+
+### Step 5: Documentation
+
+#### Update docs
+- Cập nhật documentation khi có thay đổi architecture
+- Update README nếu cần
+- Update comments trong code nếu logic phức tạp
+
+#### Comments
+- Chỉ comment khi logic phức tạp hoặc bắt buộc
+- Không comment code self-explanatory
+
+---
+
+## MCP Tools Usage
+
+### Khi nào dùng MCP Thinking
+- Phân tích vấn đề phức tạp cần nhiều bước suy nghĩ
+- Planning và design với room for revision
+- Analysis có thể cần course correction
+- Problems where full scope might not be clear initially
+
+### Khi nào dùng MCP Memory
+- Lưu trữ thông tin về architecture decisions, project structure, coding patterns
+
+### Khi nào dùng MCP Research
+- Research về frameworks, libraries, best practices, technical topics
+
+---
+
+## Checklist
+
+### Trước khi trả lời user:
+- [ ] Đã bắt đầu với "Hi boss Trong"
+- [ ] Đã thực hiện discovery (Step 1)
+- [ ] Đã liệt kê files sẽ tạo/sửa (Step 2)
+- [ ] Đã hỏi user nếu requirements mơ hồ
+
+### Trước khi implement:
+- [ ] Đã có confirmation từ user
+- [ ] Đã hiểu rõ requirements
+- [ ] Đã check existing code patterns
+
+### Sau khi implement:
+- [ ] Đã tạo test cho code mới
+- [ ] Đã check linter errors
+- [ ] Đã verify TypeScript types
+- [ ] Đã update documentation nếu cần
+
+---
+
+**Last Updated**: 2025-01-XX
+**Maintained By**: DTU Support FE Team
