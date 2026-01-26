@@ -1,9 +1,0 @@
-node_modules/
-dist/
-*.log
-.DS_Store
-test*.html
-verify-build.js
-*.js
-*.js.map
-!webpack.config.js

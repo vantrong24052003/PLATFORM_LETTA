@@ -1,0 +1,39 @@
+marketplace:
+  header:
+    title: "Marketplace Tài liệu Sinh viên DTU"
+    subtitle: "Tìm kiếm, chia sẻ và mua bán tài liệu học tập, ôn thi một cách dễ dàng."
+  search:
+    placeholder: "Tìm kiếm tài liệu, môn học, giáo trình..."
+  filters:
+    subject: "Môn học/Ngành học"
+    type: "Loại tài liệu"
+    format: "Định dạng"
+    sort: "Sắp xếp theo"
+  list:
+    title: "Tài liệu mới nhất"
+  items:
+    - category: "Mạng máy tính"
+      title: "Tổng hợp đề thi cuối kỳ Mạng Máy Tính 2023"
+      author: "Jane Doe"
+      badge: "Bán chạy"
+    - category: "Công nghệ phần mềm"
+      title: "Slide bài giảng đầy đủ - Software Engineering"
+      author: "John Smith"
+      price: "Miễn phí"
+    - category: "Quản trị Marketing"
+      title: "Case Study phân tích chiến lược Vinamilk"
+      author: "Emily Clark"
+    - category: "Hệ quản trị CSDL"
+      title: "Hướng dẫn thực hành SQL từ cơ bản đến nâng cao"
+      author: "Michael Brown"
+  cta:
+    title: "Trở thành người chia sẻ kiến thức"
+    description: "Tải lên tài liệu học tập của bạn và nhận hoa hồng trên mỗi lượt bán. Giúp đỡ cộng đồng và tạo ra nguồn thu nhập thụ động ngay hôm nay!"
+    button: "Bắt đầu ngay"
+    steps:
+      - title: "Tải lên tài liệu"
+        description: "Chia sẻ slide, đề thi, bài tập của bạn lên marketplace"
+      - title: "Duyệt và phê duyệt"
+        description: "Đội ngũ sẽ kiểm tra chất lượng và phê duyệt tài liệu"
+      - title: "Nhận hoa hồng"
+        description: "Nhận hoa hồng trên mỗi lượt mua tài liệu của bạn"

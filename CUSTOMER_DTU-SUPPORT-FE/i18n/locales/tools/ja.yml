@@ -1,0 +1,436 @@
+tools:
+  hero:
+    title: "学習サポートツール"
+    subtitle: "DTU 学生のために設計されたツール集"
+  gpa:
+    badge: "スマート GPA 計算機"
+    title: "GPA 計算機"
+    titleHighlight: "スマート"
+    subtitle: "GPA を計算し、結果を予測。AI に質問して賢い学習アドバイスを受け取る。"
+    tabs:
+      target: "目標を計算"
+      targetShort: "目標"
+      gpa: "GPA を計算"
+      gpaShort: "GPA"
+      pe: "体育 GPA"
+      peShort: "体育"
+      pass: "合格点を計算"
+      passShort: "合格"
+      ai: "AI に質問"
+      aiShort: "AI"
+    target:
+      inputTitle: "入力情報"
+      inputSubtitle: "GPA 情報を入力して予測結果を計算"
+      info:
+        title: "このツールの使い方"
+        description: "現在の GPA と目標 GPA を入力してください。システムは、残りのすべての科目で A (4.0) を取得した場合に達成できる最大 GPA を計算します。"
+      fields:
+        completedCredits: "取得済み単位"
+        currentGpa: "現在の GPA"
+        targetGpa: "目標 GPA"
+        remainingCredits: "残り単位"
+      helpers:
+        completedCredits: "例: 60単位を取得済みの場合、60と入力"
+        currentGpa: "例: 現在の GPA が 3.2 の場合、3.2 と入力"
+        targetGpa: "例: GPA 3.5 を達成したい場合、3.5 と入力"
+        remainingCredits: "例: 残り40単位がある場合、40と入力"
+      placeholders:
+        completedCredits: "取得済み単位を入力"
+        currentGpa: "現在の GPA を入力 (0–4.00)"
+        targetGpa: "目標 GPA を入力 (0–4.00)"
+        remainingCredits: "残り単位を入力"
+      buttons:
+        calculate: "計算"
+        calculating: "計算中..."
+        reset: "リセット"
+      empty:
+        title: "計算の準備完了"
+        description: "左側のフォームに情報を入力し、「計算」をクリックして予測 GPA 結果を表示"
+      results:
+        title: "計算結果"
+        subtitle: "達成可能な最大 GPA"
+        scale: "4.0 スケールで"
+        success:
+          title: "目標達成可能！"
+          message: "残りのすべての科目で A (4.0) を取得すると、GPA {gpa} を達成し、目標を上回ります。"
+        warning:
+          title: "目標達成困難"
+          message: "残りのすべての科目で A (4.0) を取得しても、最大 GPA は {gpa} のみで、目標を下回ります。"
+      classifications:
+        excellent: "優秀"
+        good: "良"
+        fair: "可"
+        average: "平均"
+        poor: "不可"
+      validation:
+        required: "このフィールドは必須です"
+        completedCredits:
+          invalid: "取得済み単位は0以上の整数である必要があります"
+        currentGpa:
+          invalid: "現在の GPA は 0 から 4.00 の数値である必要があります"
+          min: "現在の GPA は 0 未満にすることはできません"
+          max: "現在の GPA は 4.00 を超えることはできません"
+        targetGpa:
+          invalid: "目標 GPA は 0.01 から 4.00 の数値である必要があります"
+          min: "目標 GPA は 0 より大きい必要があります"
+          max: "目標 GPA は 4.00 を超えることはできません"
+        remainingCredits:
+          invalid: "残り単位は1以上の整数である必要があります"
+          min: "残り単位は1以上である必要があります"
+    gpa:
+      title: "GPA を計算"
+      description: "現在の GPA または累積 GPA を取得済み/在籍中の単位に基づいて計算。この機能は近日公開予定です。"
+    simulation:
+      inputTitle: "詳細GPA計算"
+      inputSubtitle: "成績分布をシミュレートして、全コース終了後の最終GPAを確認"
+      help: "使用ガイド"
+      fields:
+        completedCredits: "修了単位数"
+        currentGpa: "現在のGPA"
+        remainingCredits: "残り単位数"
+      placeholders:
+        completedCredits: "修了単位数を入力"
+        currentGpa: "現在のGPAを入力"
+        remainingCredits: "残り単位数を入力"
+      distribution:
+        title: "単位数配分"
+        credits: "単位"
+        creditsLabel: "単位数"
+        creditsPlaceholder: "単位数を入力"
+        gradeLabel: "予想成績"
+        addButton: "配分を追加"
+        removeButton: "削除"
+        successMessage: "{credits}単位を正しく配分しました。計算準備完了！"
+        empty: "成績配分がまだありません。「配分を追加」をクリックして開始してください。"
+      grades:
+        "A+":
+          label: "A+ ({point})"
+          category: "優秀"
+        "A":
+          label: "A ({point})"
+          category: "優秀"
+        "A-":
+          label: "A− ({point})"
+          category: "良好"
+        "B+":
+          label: "B+ ({point})"
+          category: "良好"
+        "B":
+          label: "B ({point})"
+          category: "良好"
+        "B-":
+          label: "B− ({point})"
+          category: "普通"
+        "C+":
+          label: "C+ ({point})"
+          category: "普通"
+        "C":
+          label: "C ({point})"
+          category: "普通"
+        "C-":
+          label: "C− ({point})"
+          category: "やや劣る"
+        "D":
+          label: "D ({point})"
+          category: "合格"
+      buttons:
+        calculate: "詳細GPA計算"
+        calculating: "計算中..."
+        reset: "リセット"
+      results:
+        title: "詳細GPA結果"
+        subtitle: "予想最終GPA"
+        scale: "4.0スケール"
+        summary: "{summary}を達成すると仮定 → 最終GPA {gpa} → 分類 {rank}。"
+        empty:
+          title: "結果がまだありません"
+          description: "情報を入力して計算すると結果が表示されます"
+        warning:
+          title: "結果が弱い - 改善が必要"
+          message: "最終GPAが2.0未満です。卒業要件を満たすため、成績を改善してください。"
+        boxes:
+          currentGpa: "現在のGPA"
+          finalGpa: "最終GPA"
+          afterCompletion: "完了後"
+          additionalCredits: "追加単位数"
+          totalCredits: "総単位数"
+        analysis:
+          title: "分析:"
+      validation:
+        completedCredits:
+          invalid: "修了単位数が無効です"
+        currentGpa:
+          invalid: "現在のGPAが無効です"
+          min: "現在のGPAは0以上である必要があります"
+          max: "現在のGPAは4以下である必要があります"
+        remainingCredits:
+          invalid: "残り単位数が無効です"
+          min: "残り単位数は1以上である必要があります"
+        creditDistributions:
+          min: "少なくとも1つの成績配分が必要です"
+    pe:
+      title: "体育 GPA"
+      description: "DTU の評価基準に従って体育 GPA を計算。"
+      inputTitle: "体育 GPA を計算"
+      inputSubtitle: "シンプル＆高速"
+      info:
+        title: "評価ルール"
+      rules:
+        line1: "3つの体育科目の GPA（4.0 スケール）を入力"
+        line2: "平均 ≥ 2.0: 合格"
+        line3: "平均 < 2.0: 不合格"
+      fields:
+        pe1: "体育 1 (0–4.00)"
+        pe2: "体育 2 (0–4.00)"
+        pe3: "体育 3 (0–4.00)"
+      helpers:
+        pe1: "例: 体育 1 で 3.5 を取得した場合、3.5 と入力"
+        pe2: "例: 体育 2 で 3.0 を取得した場合、3.0 と入力"
+        pe3: "例: 体育 3 で 2.5 を取得した場合、2.5 と入力"
+      placeholders:
+        pe1: "体育 1 の GPA を入力"
+        pe2: "体育 2 の GPA を入力"
+        pe3: "体育 3 の GPA を入力"
+      buttons:
+        calculate: "計算"
+        calculating: "計算中..."
+        reset: "リセット"
+      empty:
+        title: "計算の準備完了"
+        description: "3つの体育 GPA を入力し、計算をクリックして結果を表示"
+      results:
+        title: "結果"
+        subtitle: "3つの体育科目の平均 GPA"
+        scale: "4.0 スケールで"
+        pass: "合格"
+        fail: "不合格"
+        headline:
+          pass: "体育プログラムに合格"
+          fail: "体育プログラムに不合格"
+        courses:
+          c1: "科目 1"
+          c2: "科目 2"
+          c3: "科目 3"
+        analysis:
+          title: "分析:"
+          pass: "合格！ 体育プログラムを GPA {gpa} で修了しました。"
+          fail: "不合格。 平均体育 GPA は {gpa} です。 もう少し頑張りましょう。"
+
+      validation:
+        pe1:
+          invalid: "体育1 は 0 から 4.00 の数値である必要があります"
+          min: "体育1 は 0 未満にできません"
+          max: "体育1 は 4.00 を超えることはできません"
+        pe2:
+          invalid: "体育2 は 0 から 4.00 の数値である必要があります"
+          min: "体育2 は 0 未満にできません"
+          max: "体育2 は 4.00 を超えることはできません"
+        pe3:
+          invalid: "体育3 は 0 から 4.00 の数値である必要があります"
+          min: "体育3 は 0 未満にできません"
+          max: "体育3 は 4.00 を超えることはできません"
+    pass:
+      title: "合格点を計算"
+      description: "重みに基づいてコースを通過するために必要な最終試験の点数を計算。この機能は近日公開予定です。"
+    ai:
+      title: "AI に質問"
+      description: "AI に質問して賢い学習アドバイスを受け取る。この機能は近日公開予定です。"
+    graduation:
+      classification:
+        title: "DTU 卒業区分"
+        subtitle: "DTU の公式卒業区分表"
+        table:
+          rank: "ランク"
+          gpaRange: "GPA 範囲 (4スケール)"
+          description: "説明"
+        ranks:
+          excellent:
+            name: "優秀"
+            gpaRange: "3.60 – 4.00"
+            description: "最高ランク、GPA ≥ 3.60 が必要"
+          good:
+            name: "良"
+            gpaRange: "3.20 – 3.59"
+            description: "良いランク、GPA ≥ 3.20 が必要"
+          fair:
+            name: "可"
+            gpaRange: "2.50 – 3.19"
+            description: "可ランク、GPA ≥ 2.50 が必要"
+          average:
+            name: "平均"
+            gpaRange: "2.00 – 2.49"
+            description: "平均ランク、GPA ≥ 2.00 が必要"
+        notes:
+          title: "重要な注意事項"
+          note1: "再履修単位が>5%ある場合、または処分を受けた場合、卒業ランクが下がる可能性があります"
+          note2: "区分は最終累積 GPA（4.0 スケール）に基づきます"
+      gradingScale:
+        title: "DTU 評価基準"
+        subtitle: "DTU の異なる評価基準間の換算表"
+        table:
+          category: "区分"
+          scale10: "10スケール"
+          letter: "レターグレード"
+          scale4: "4スケール"
+          status: "状態"
+        categories:
+          good: "良"
+          fair: "可"
+          average: "平均"
+          averageWeak: "平均未満"
+          conditional: "合格"
+          fail: "不可"
+          poor: "不良"
+        status:
+          pass: "合格"
+          conditional: "条件付き"
+          fail: "不合格"
+        notes:
+          title1: "4スケールは公式評価基準で"
+          point1: "学業評価"
+          point2: "卒業評価"
+          point3: "学生ランキング"
+          title3: "F (0.0)"
+          point6: "単位は累積されません"
+          point7: "コースを再履修する必要があります"
+          point8: "累積 GPA にカウントされません"
+  pass:
+    inputTitle: "合格するための期末試験の点数を計算"
+    inputSubtitle: "各評価項目と重みを入力して、必要な期末試験の点数を計算"
+    info:
+      title: "このツールの使い方"
+      description: "評価項目（中間試験、出席、課題など）を対応する重みとともに追加してください。合計の重みは100%である必要があります。システムは合格に必要な最低期末試験の点数を計算します。"
+    progress:
+      total: "合計"
+      remaining: "残り"
+    components:
+      title: "評価項目"
+      addButton: "項目を追加"
+      empty: "評価項目がありません。「項目を追加」をクリックして開始してください。"
+      removeButton: "削除"
+      nameLabel: "項目名"
+      namePlaceholder: "例: 中間試験"
+      weightLabel: "重み"
+      weightPlaceholder: "重みを入力 (%)"
+      scoreLabel: "現在の点数"
+      scorePlaceholder: "点数を入力 (0-10)"
+    fields:
+      finalExamWeight: "期末試験の重み (%)"
+      minPassingScore: "合格に必要な最低点数"
+    helpers:
+      finalExamWeight: "例: 期末試験が総点の50%を占める場合、50と入力"
+      minPassingScore: "例: 合格に必要な最低点数が4.0の場合、4.0と入力"
+    placeholders:
+      finalExamWeight: "期末試験の重みを入力 (%)"
+      minPassingScore: "最低点数を入力 (0-10)"
+    buttons:
+      calculate: "期末試験の点数を計算"
+      calculating: "計算中..."
+      reset: "リセット"
+    empty:
+      title: "計算の準備完了"
+      description: "左側のフォームに情報を入力し、「計算」をクリックして結果を表示"
+    results:
+      title: "計算結果"
+      cannotPass:
+        title: "合格不可"
+        message: "期末試験で満点（10.0）を取っても、合格に必要な最低点数に達することはできません。"
+      requiredMessage: "合格するには、期末試験で少なくとも {score} 点（{weight}%）が必要です"
+      requiredSubMessage: "この点数は、現在の点数と期末試験の重みに基づいています"
+      cards:
+        currentScore: "現在の点数"
+        finalExamContribution: "期末試験の貢献度"
+        requiredScore: "必要な点数"
+      details:
+        title: "評価項目の詳細"
+        table:
+          name: "項目名"
+          weight: "重み (%)"
+          score: "点数"
+          contribution: "貢献度 (%)"
+          currentTotal: "現在の合計"
+          finalExam: "期末試験"
+          grandTotal: "合計"
+    prediction:
+      title: "期末結果を予測"
+      placeholder: "予想される期末試験の点数を入力"
+      button: "予測"
+      finalScore: "最終点数"
+      gpa4: "GPA (4.0 スケール)"
+      letterGrade: "文字成績"
+      status: "状態"
+      pass: "合格"
+      fail: "不合格"
+    validation:
+      components:
+        min: "少なくとも 1 つの項目が必要です"
+      finalExamWeight:
+        invalid: "無効な期末試験の重み"
+        min: "期末試験の重みは 0 未満にできません"
+        max: "期末試験の重みは 100 を超えることはできません"
+      minPassingScore:
+        invalid: "無効な最低合格点数"
+        min: "最低合格点数は 0 未満にできません"
+        max: "最低合格点数は 10 を超えることはできません"
+      finalExamScore:
+        invalid: "無効な期末試験の点数"
+        min: "期末試験の点数は 0 未満にできません"
+        max: "期末試験の点数は 10 を超えることはできません"
+  benefits:
+    titlePrefix: "なぜ"
+    titlePrimary: "使うべき？"
+    titleSuffix: ""
+    subtitle: "学習成果を高める実用的なメリット"
+    items:
+      - { icon: "📈", title: "結果を最適化", description: "計画的な学習で GPA を向上" }
+      - { icon: "⏰", title: "時間を節約", description: "複雑な計算を自動化し手作業を削減" }
+      - { icon: "🧠", title: "賢い意思決定", description: "データに基づくより良い選択" }
+      - { icon: "🎯", title: "明確な目標", description: "具体的な目標と到達までのロードマップ" }
+      - { icon: "🏆", title: "優れた成果", description: "奨学金や学業実績をサポート" }
+      - { icon: "📖", title: "効果的な学習", description: "時間割を最適化し学習と休息のバランス" }
+  cta:
+    title: "効果的な学習を始めましょう"
+    subtitle: "最適なツールを選んで今すぐ学習をスタート"
+  grid:
+    titlePrefix: "最適な"
+    titlePrimary: "ツール"
+    titleSuffix: "を選ぶ"
+    subtitle: "DTU 学生向けに設計された学習ツールを探索"
+    featuresHeading: "主な機能:"
+    badgeComing: "近日公開"
+    button:
+      useNow: "→ 今すぐ使う"
+      coming: "開発中"
+    items:
+      - icon: "📊"
+        status: "available"
+        to: "/tools/gpa"
+        title: "学習サポート & GPA 計算"
+        desc: "学業成績を管理・最適化する総合ツール"
+        features:
+          - "正確な累積 GPA 計算"
+          - "成績区分: 優/良/可/不可"
+          - "残り単位で成績を予測"
+          - "優先すべき科目を提案"
+          - "学期ごとの進捗を追跡"
+      - icon: "📅"
+        status: "coming-soon"
+        to: "/schedule"
+        title: "単位登録 & 時間割プランナー"
+        desc: "賢い学習計画と時間割の自動作成"
+        features:
+          - "専攻に合わせた科目提案"
+          - "時間割を自動最適化"
+          - "履修条件をチェック"
+          - "時間割や試験の衝突回避"
+          - "各学期の学習負荷を予測"
+      - icon: "📚"
+        status: "coming-soon"
+        to: "/marketplace"
+        title: "学習資料マーケット"
+        desc: "資料・試験・課題の共有と取引"
+        features:
+          - "高品質な学習資料"
+          - "試験・課題のサンプル"
+          - "評価・フィードバック"
+          - "科目・専攻で検索"

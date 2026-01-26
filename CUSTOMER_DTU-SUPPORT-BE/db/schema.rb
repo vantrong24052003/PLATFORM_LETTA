@@ -1,0 +1,119 @@
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.0].define(version: 2026_01_25_152713) do
+  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "pgbouncer"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "vault"
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
+  create_table "ai_schedule_results", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "input_data", null: false
+    t.jsonb "ai_result"
+    t.text "ai_model_name"
+    t.string "status", limit: 20, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ai_schedule_results_on_created_at", order: :desc
+    t.index ["status"], name: "index_ai_schedule_results_on_status"
+    t.index ["user_id"], name: "index_ai_schedule_results_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "title"
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_conversations_on_created_at", order: :desc
+    t.index ["user_id", "created_at"], name: "index_conversations_on_user_id_and_created_at", order: { created_at: :desc }
+    t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.text "course_code", null: false
+    t.text "course_name", null: false
+    t.integer "credits", null: false
+    t.jsonb "schedule"
+    t.text "lecturer"
+    t.text "semester", null: false
+    t.bigint "crawl_course_config_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_code"], name: "index_courses_on_course_code"
+    t.index ["crawl_course_config_id"], name: "idx_courses_config_id"
+    t.index ["crawl_course_config_id"], name: "index_courses_on_crawl_course_config_id"
+    t.index ["semester"], name: "index_courses_on_semester"
+  end
+
+  create_table "crawl_course_configs", force: :cascade do |t|
+    t.text "config_name", null: false
+    t.text "url", null: false
+    t.bigint "user_id", null: false
+    t.boolean "is_active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["is_active"], name: "index_crawl_course_configs_on_is_active"
+    t.index ["user_id"], name: "idx_crawl_course_config_created_by"
+    t.index ["user_id"], name: "index_crawl_course_configs_on_user_id"
+  end
+
+  create_table "crawl_course_jobs", force: :cascade do |t|
+    t.bigint "crawl_course_config_id", null: false
+    t.string "status", limit: 20, null: false
+    t.jsonb "run_result"
+    t.timestamptz "started_at", default: -> { "now()" }
+    t.timestamptz "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["crawl_course_config_id"], name: "idx_crawl_course_job_config_id"
+    t.index ["crawl_course_config_id"], name: "index_crawl_course_jobs_on_crawl_course_config_id"
+    t.index ["started_at"], name: "index_crawl_course_jobs_on_started_at", order: :desc
+    t.index ["status"], name: "index_crawl_course_jobs_on_status"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "role", null: false
+    t.text "content", null: false
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["created_at"], name: "index_messages_on_created_at", order: :desc
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.text "email", null: false
+    t.text "name"
+    t.jsonb "tokens"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  add_foreign_key "ai_schedule_results", "users"
+  add_foreign_key "conversations", "users"
+  add_foreign_key "courses", "crawl_course_configs"
+  add_foreign_key "crawl_course_configs", "users"
+  add_foreign_key "crawl_course_jobs", "crawl_course_configs"
+  add_foreign_key "messages", "conversations"
+end

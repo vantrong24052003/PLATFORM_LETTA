@@ -1,0 +1,196 @@
+---
+description: RULE 4 - Example Patterns: Component, Composable, Page, Form validation, Error handling
+globs:
+  - "**/*.ts"
+  - "**/*.vue"
+  - "**/*.js"
+alwaysApply: true
+---
+
+# RULE 4 - Example Patterns
+
+## Mục đích
+Cung cấp các mẫu chuẩn dùng trong dự án: Component pattern, Composable pattern, Page pattern, Form validation pattern, Error handling pattern, Loading state pattern. Tất cả viết bằng code mẫu ngắn gọn, chuẩn, copy-paste được.
+
+---
+
+## Component Pattern
+
+**Location**: `app/components/{feature}/{ComponentName}.vue`
+
+```vue
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { Button } from '@/components/ui/button'
+import type { Feature } from '@/types/feature'
+
+interface Props { featureId: string }
+const props = defineProps<Props>()
+const emit = defineEmits<{ update: [feature: Feature] }>()
+
+const { t } = useI18n()
+const SCOPE = 'feature'
+const { data, isLoading } = useFeatureApi()
+
+const handleUpdate = () => emit('update', data.value)
+</script>
+
+<template>
+  <div class="rounded-xl border border-border/20 bg-card p-4">
+    <h2 class="text-lg font-bold text-foreground mb-2">{{ t(`${SCOPE}.title`) }}</h2>
+    <Button @click="handleUpdate" :disabled="isLoading">{{ t(`${SCOPE}.buttons.submit`) }}</Button>
+  </div>
+</template>
+```
+
+### Loading & Error States
+```vue
+<template>
+  <div v-if="isLoading">Loading...</div>
+  <div v-else-if="apiError" class="text-destructive">{{ apiError.message }}</div>
+  <div v-else><!-- Display data --></div>
+</template>
+```
+
+---
+
+## Composable Pattern
+
+### API Composable
+**Location**: `app/composables/{feature}/use{Feature}Api.ts`
+
+```typescript
+import { useApiFetch } from '@/lib/api'
+import { FEATURE_API } from '@/constants/api/feature.api'
+
+export const useFeatureApi = () => {
+  const requestPayload = ref<{ name: string } | null>(null)
+  const { pending: isLoading, error: apiError, data: response, execute: executeRequest } = useApiFetch<Feature>(FEATURE_API.create(), {
+    method: 'POST', immediate: false, body: requestPayload, watch: false,
+  })
+
+  const createFeature = async (name: string): Promise<Feature> => {
+    requestPayload.value = { name }
+    await executeRequest()
+    if (apiError.value) throw new Error(apiError.value.message || 'Failed to create feature')
+    return response.value?.data
+  }
+
+  return { isLoading, apiError, createFeature }
+}
+```
+
+### Business Logic Composable
+**Location**: `app/composables/{feature}/use{Feature}Logic.ts`
+
+```typescript
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { createFeatureSchema, type FeatureValues } from '@/schemas/feature/feature'
+
+export const useFeatureLogic = () => {
+  const { t } = useI18n()
+  const { handleSubmit, isSubmitting } = useForm<FeatureValues>({
+    validationSchema: toTypedSchema(createFeatureSchema(t)),
+    validateOnMount: false,
+    initialValues: { name: '' },
+  })
+
+  const onFeatureSubmit = handleSubmit((values: FeatureValues) => {
+    // Business logic
+  })
+
+  return { onFeatureSubmit, isSubmitting }
+}
+```
+
+---
+
+## Page Pattern
+
+### Simple Page
+**Location**: `app/pages/{feature}/index.vue`
+
+```vue
+<script setup lang="ts">
+import FeaturePage from '@/form/{feature}/index.vue'
+</script>
+
+<template>
+  <div><FeaturePage /></div>
+</template>
+```
+
+---
+
+## Form Validation Pattern
+
+```vue
+<script setup lang="ts">
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { createFeatureSchema, type FeatureValues } from '@/schemas/feature/feature'
+
+const { handleSubmit, isSubmitting } = useForm<FeatureValues>({
+  validationSchema: toTypedSchema(createFeatureSchema(t)),
+  validateOnMount: false,
+})
+
+const onSubmit = handleSubmit((values) => {
+  // Submit logic
+})
+</script>
+
+<template>
+  <form @submit="onSubmit">
+    <FieldControl name="name" :label="t('feature.form.fields.name')" required />
+    <Button type="submit" :disabled="isSubmitting">{{ t('feature.form.buttons.submit') }}</Button>
+  </form>
+</template>
+```
+
+### Zod Schema
+**Location**: `app/schemas/{feature}/{feature}.ts`
+
+```typescript
+import { z } from 'zod'
+export type FeatureValues = z.infer<ReturnType<typeof createFeatureSchema>>
+
+export const createFeatureSchema = (t: TFunction) => {
+  return z.object({
+    name: z.string().min(1, t('validation.required')),
+    description: z.string().optional(),
+  })
+}
+```
+
+---
+
+## Error Handling Pattern
+
+```typescript
+const fetchData = async (): Promise<FeatureType[]> => {
+  await executeRequest()
+  if (apiError.value) throw new Error(apiError.value.message || 'Failed to fetch data')
+  return response.value?.data || []
+}
+```
+
+---
+
+## Loading State Pattern
+
+```vue
+<template>
+  <div v-if="isLoading" class="space-y-4">
+    <div class="h-4 bg-muted animate-pulse rounded" />
+  </div>
+  <div v-else><!-- Content --></div>
+</template>
+```
+
+---
+
+**Last Updated**: 2025-01-XX
+**Maintained By**: DTU Support FE Team

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "🚀 Starting DTU Support BE..."
+
+# Build and start
+docker compose up --build

@@ -1,0 +1,289 @@
+{
+  "info": {
+    "name": "Letta Platform API",
+    "description": "Full API collection for Letta Platform including Agents, Messages, Streaming, and Bot Templates.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Agents",
+      "item": [
+        {
+          "name": "Create Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Agent\",\n  \"system\": \"You are a helpful AI assistant.\",\n  \"tools\": [],\n  \"memory_blocks\": [],\n  \"include_base_tool_rules\": true\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/letta/agents",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "agents"
+              ]
+            },
+            "description": "Create a new agent in Letta"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Create Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_id\": \"{{AGENT_ID}}\",\n  \"input\": \"Hello world\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/letta/messages",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "messages"
+              ]
+            },
+            "description": "Send a standard message to a Letta agent"
+          },
+          "response": []
+        },
+        {
+          "name": "Stream Message (SSE)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"input\": \"check weather in hanoi\",\n    \"agent_id\": \"{{AGENT_ID}}\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/letta/streaming_messages",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "streaming_messages"
+              ]
+            },
+            "description": "Stream messages from an agent using Server-Sent Events (SSE)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bot Templates",
+      "item": [
+        {
+          "name": "List Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/letta/bot_templates",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "bot_templates"
+              ]
+            },
+            "description": "List all bot templates"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Template",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/letta/bot_templates/{{TEMPLATE_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "bot_templates",
+                "{{TEMPLATE_ID}}"
+              ]
+            },
+            "description": "Get details of a specific bot template"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Customer Support\",\n  \"system_prompt\": \"You are a support agent.\",\n  \"greeting\": \"How can I help you?\",\n  \"customer_domain\": \"https://example.com\",\n  \"tools\": [],\n  \"organization_id\": \"org-123\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/letta/bot_templates",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "bot_templates"
+              ]
+            },
+            "description": "Create a new bot template"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Template",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Support Agent\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/letta/bot_templates/{{TEMPLATE_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "bot_templates",
+                "{{TEMPLATE_ID}}"
+              ]
+            },
+            "description": "Update an existing bot template"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Template",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/letta/bot_templates/{{TEMPLATE_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "letta",
+                "bot_templates",
+                "{{TEMPLATE_ID}}"
+              ]
+            },
+            "description": "Delete a bot template"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mock Customer Backend",
+      "item": [
+        {
+          "name": "Execute Tool Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Letta-Signature",
+                "value": "{{signature}}"
+              },
+              {
+                "key": "X-Organization-ID",
+                "value": "{{org_id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tool_name\": \"get_weather\",\n    \"arguments\": {\n        \"location\": \"Hanoi\"\n    },\n    \"context\": {\n        \"agent_id\": \"agent-123\",\n        \"user_id\": \"user-456\"\n    }\n}"
+            },
+            "url": {
+              "raw": "https://customer-api.example.com/letta/tools/execute",
+              "protocol": "https",
+              "host": [
+                "customer-api",
+                "example",
+                "com"
+              ],
+              "path": [
+                "letta",
+                "tools",
+                "execute"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "AGENT_ID",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "TEMPLATE_ID",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

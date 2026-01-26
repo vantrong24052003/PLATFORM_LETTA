@@ -1,0 +1,39 @@
+marketplace:
+  header:
+    title: "DTU学生マーケットプレイス"
+    subtitle: "学習資料や試験対策資料を簡単に検索、共有、売買できます。"
+  search:
+    placeholder: "資料、コース、教科書を検索..."
+  filters:
+    subject: "科目/専攻"
+    type: "資料タイプ"
+    format: "フォーマット"
+    sort: "並び替え"
+  list:
+    title: "最新資料"
+  items:
+    - category: "コンピュータネットワーク"
+      title: "期末試験問題集 - コンピュータネットワーク 2023"
+      author: "Jane Doe"
+      badge: "ベストセラー"
+    - category: "ソフトウェア工学"
+      title: "完全講義スライド - ソフトウェア工学"
+      author: "John Smith"
+      price: "無料"
+    - category: "マーケティング管理"
+      title: "ケーススタディ：Vinamilk戦略分析"
+      author: "Emily Clark"
+    - category: "データベース管理システム"
+      title: "基礎から上級までのSQL実践ガイド"
+      author: "Michael Brown"
+  cta:
+    title: "知識共有者になる"
+    description: "学習資料をアップロードして、各販売でコミッションを受け取ります。コミュニティを助け、今日から受動的収入を作りましょう！"
+    button: "今すぐ始める"
+    steps:
+      - title: "資料をアップロード"
+        description: "スライド、試験、課題をマーケットプレイスで共有"
+      - title: "レビューと承認"
+        description: "チームが品質を確認し、資料を承認します"
+      - title: "コミッションを受け取る"
+        description: "資料が購入されるたびにコミッションを受け取ります"

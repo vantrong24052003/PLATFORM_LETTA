@@ -1,0 +1,165 @@
+---
+description: DTU Support BE - Project Structure & Organization
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# DTU Support BE - Project Structure
+
+## Core Architecture
+- **Rails 8.0.2** API-only application
+- **Supabase (PostgreSQL)** database - configured via .env file
+- **Docker** deployment with Kamal + Thruster
+- **Environment Configuration**: All config loaded from `.env` file (dotenv-rails)
+
+## Recommended Folder Structure for Rails API
+
+### Core Application Structure
+```
+app/
+├── controllers/           # API endpoints
+│   ├── application_controller.rb
+│   ├── concerns/         # Shared controller logic
+│   │   └── renderable.rb
+│   └── api/             # API versioning (optional)
+│       └── v1/
+├── models/              # ActiveRecord models
+│   ├── application_record.rb
+│   └── concerns/        # Shared model logic
+├── services/            # Business logic layer
+│   ├── base_service.rb  # Base service class
+│   └── [domain]/        # Domain-specific services
+│       ├── create_service.rb
+│       ├── update_service.rb
+│       └── delete_service.rb
+├── serializers/         # JSON response formatting
+│   ├── base_serializer.rb
+│   └── [model]_serializer.rb
+├── forms/              # Form objects (validation)
+│   └── [domain]_form.rb
+├── policies/           # Authorization logic
+│   └── [model]_policy.rb
+├── validators/         # Custom validators
+│   └── [custom]_validator.rb
+├── jobs/              # Background processing
+│   ├── application_job.rb
+│   └── [domain]_job.rb
+├── mailers/           # Email handling
+│   └── application_mailer.rb
+└── concerns/          # Shared modules
+    └── [shared]_concern.rb
+```
+
+### Configuration Structure
+```
+config/
+├── application.rb      # App configuration
+├── database.yml        # DB configuration
+├── routes.rb          # API routes
+├── environments/      # Environment configs
+├── initializers/      # App initializers
+└── locales/          # Internationalization
+```
+
+### Database Structure
+```
+db/
+├── migrate/           # Database migrations
+├── schema.rb         # Current DB schema
+├── seeds.rb          # Seed data
+└── [cache|queue|cable]_schema.rb  # Solid gems schemas
+```
+
+## Layer Responsibilities
+
+### Controllers (Thin Layer)
+- Handle HTTP requests/responses
+- Parameter validation
+- Delegate to services
+- Use Renderable concern for responses
+
+### Services (Business Logic)
+- Core business operations
+- Data processing
+- External API calls
+- Complex validations
+- Transaction management
+
+### Models (Data Layer)
+- Database relationships
+- Basic validations
+- Scopes and queries
+- Business rules
+
+### Serializers (Presentation)
+- JSON response formatting
+- Field selection
+- Nested associations
+- API versioning
+
+### Forms (Validation)
+- Complex form validations
+- Parameter sanitization
+- Multi-model operations
+- Custom validation logic
+
+### Policies (Authorization)
+- Access control
+- Permission checks
+- Resource authorization
+- User role validation
+
+### Jobs (Background)
+- Async processing
+- Email sending
+- File processing
+- External integrations
+
+## Naming Conventions
+
+### Services
+- `[Domain]::[Action]Service` (e.g., `Users::CreateUserService`)
+- Single responsibility per service
+- Use `call` method as entry point
+
+### Serializers
+- `[Model]Serializer` (e.g., `UserSerializer`)
+- Extend `BaseSerializer`
+- Use jsonapi-serializer gem
+
+### Forms
+- `[Domain]Form` (e.g., `UserForm`)
+- Handle complex validations
+- Sanitize parameters
+
+### Policies
+- `[Model]Policy` (e.g., `UserPolicy`)
+- Use Pundit or similar gem
+- Check permissions
+
+## Response Format Standards
+- Success: `{ data: ... }`
+- Errors: `{ errors: [{ message: "...", details: "..." }] }`
+- HTTP status codes: 200, 400, 401, 403, 404, 422, 500
+
+## Database Configuration
+All configuration loaded from `.env` file (see `.env.example` for template):
+
+### Supabase Database Connection
+- `SUPABASE_DB_HOST` - Supabase database host (e.g., `db.xxxxx.supabase.co`)
+- `SUPABASE_DB_PORT` - Database port (default: `5432`)
+- `SUPABASE_DB_USERNAME` - Database username (default: `postgres`)
+- `SUPABASE_DB_PASSWORD` - Database password
+- `SUPABASE_DB_NAME` - Database name (default: `postgres`)
+- `SUPABASE_DB_NAME_TEST` - Test database name
+- `SUPABASE_DB_NAME_CACHE`, `SUPABASE_DB_NAME_QUEUE`, `SUPABASE_DB_NAME_CABLE` - Solid gems databases
+
+### Supabase API Configuration
+- `SUPABASE_URL` - Supabase project URL (e.g., `https://xxxxx.supabase.co`)
+- `SUPABASE_ANON_KEY` - Anonymous/public API key (for client-side operations with RLS)
+- `SUPABASE_SERVICE_ROLE_KEY` - Service role key (for admin/background operations, bypasses RLS)
+
+### Supabase Client Usage
+- `Supabase::AnonClient` - For operations that respect Row-Level Security (RLS)
+- `Supabase::ServiceClient` - For admin operations that bypass RLS (use carefully)
+- Both available in `Services::BaseService` via `supabase_client(use_service_role: false/true)`

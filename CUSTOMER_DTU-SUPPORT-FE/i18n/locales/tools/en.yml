@@ -1,0 +1,436 @@
+tools:
+  hero:
+    title: "Study Support Tools"
+    subtitle: "A collection of tools designed for DTU students"
+  gpa:
+    badge: "Smart GPA Calculator"
+    title: "GPA Calculator"
+    titleHighlight: "Smart"
+    subtitle: "Calculate GPA & predict results. Ask AI for smart study recommendations."
+    tabs:
+      target: "Calculate Target"
+      targetShort: "Target"
+      gpa: "Calculate GPA"
+      gpaShort: "GPA"
+      pe: "PE GPA"
+      peShort: "PE"
+      pass: "Calculate Pass Score"
+      passShort: "Pass"
+      ai: "Ask AI"
+      aiShort: "AI"
+    target:
+      inputTitle: "Input Information"
+      inputSubtitle: "Enter GPA information to calculate predicted results"
+      info:
+        title: "How to use this tool"
+        description: "Enter your current GPA and target GPA. The system will calculate the maximum GPA you can achieve if you get an A (4.0) in all remaining courses."
+      fields:
+        completedCredits: "Completed Credits"
+        currentGpa: "Current GPA"
+        targetGpa: "Target GPA"
+        remainingCredits: "Remaining Credits"
+      helpers:
+        completedCredits: "Example: If you have completed 60 credits, enter 60"
+        currentGpa: "Example: If your current GPA is 3.2, enter 3.2"
+        targetGpa: "Example: If you want to achieve a GPA of 3.5, enter 3.5"
+        remainingCredits: "Example: If you have 40 credits remaining, enter 40"
+      placeholders:
+        completedCredits: "Enter completed credits"
+        currentGpa: "Enter current GPA (0–4.00)"
+        targetGpa: "Enter target GPA (0–4.00)"
+        remainingCredits: "Enter remaining credits"
+      buttons:
+        calculate: "Calculate"
+        calculating: "Calculating..."
+        reset: "Reset"
+      empty:
+        title: "Ready to Calculate"
+        description: "Enter information in the form on the left and click \"Calculate\" to see your predicted GPA results"
+      results:
+        title: "Calculation Results"
+        subtitle: "Maximum GPA achievable"
+        scale: "on a 4.0 scale"
+        success:
+          title: "Can Achieve Target!"
+          message: "If you get an A (4.0) in all remaining courses, you will achieve a GPA of {gpa}, higher than your target."
+        warning:
+          title: "Difficult to Achieve Target"
+          message: "Even if you get an A (4.0) in all remaining courses, the maximum GPA is only {gpa}, lower than your target."
+      classifications:
+        excellent: "Excellent"
+        good: "Good"
+        fair: "Fair"
+        average: "Average"
+        poor: "Poor"
+      validation:
+        required: "This field is required"
+        completedCredits:
+          invalid: "Completed credits must be a non-negative integer (≥ 0)"
+        currentGpa:
+          invalid: "Current GPA must be a number from 0 to 4.00"
+          min: "Current GPA cannot be less than 0"
+          max: "Current GPA cannot be greater than 4.00"
+        targetGpa:
+          invalid: "Target GPA must be a number from 0.01 to 4.00"
+          min: "Target GPA must be greater than 0"
+          max: "Target GPA cannot be greater than 4.00"
+        remainingCredits:
+          invalid: "Remaining credits must be a positive integer (≥ 1)"
+          min: "Remaining credits must be greater than or equal to 1"
+    gpa:
+      title: "Calculate GPA"
+      description: "Calculate current GPA or cumulative GPA based on credits completed/currently enrolled. This feature will be available soon."
+    simulation:
+      inputTitle: "Detailed GPA Calculation"
+      inputSubtitle: "Simulate grade distribution to see final GPA after entire course"
+      help: "Usage guide"
+      fields:
+        completedCredits: "Credits Completed"
+        currentGpa: "Current GPA"
+        remainingCredits: "Remaining Credits"
+      placeholders:
+        completedCredits: "Enter completed credits"
+        currentGpa: "Enter current GPA"
+        remainingCredits: "Enter remaining credits"
+      distribution:
+        title: "Credit Distribution"
+        credits: "credits"
+        creditsLabel: "Credits"
+        creditsPlaceholder: "Enter credits"
+        gradeLabel: "Expected Grade"
+        addButton: "Add Distribution"
+        removeButton: "Remove"
+        successMessage: "Correctly distributed {credits} credits. Ready to calculate!"
+        empty: "No grade distribution yet. Click 'Add Distribution' to start."
+      grades:
+        "A+":
+          label: "A+ ({point})"
+          category: "Excellent"
+        "A":
+          label: "A ({point})"
+          category: "Excellent"
+        "A-":
+          label: "A− ({point})"
+          category: "Good"
+        "B+":
+          label: "B+ ({point})"
+          category: "Good"
+        "B":
+          label: "B ({point})"
+          category: "Good"
+        "B-":
+          label: "B− ({point})"
+          category: "Average"
+        "C+":
+          label: "C+ ({point})"
+          category: "Average"
+        "C":
+          label: "C ({point})"
+          category: "Average"
+        "C-":
+          label: "C− ({point})"
+          category: "Below Average"
+        "D":
+          label: "D ({point})"
+          category: "Pass"
+      buttons:
+        calculate: "Calculate Detailed GPA"
+        calculating: "Calculating..."
+        reset: "Reset"
+      results:
+        title: "Detailed GPA Results"
+        subtitle: "Expected Final GPA"
+        scale: "Scale 4.0"
+        summary: "You assumed to achieve {summary} → Final GPA {gpa} → Classification {rank}."
+        empty:
+          title: "No Results Yet"
+          description: "Enter information and calculate to see results"
+        warning:
+          title: "Weak Result - Need Improvement"
+          message: "Your final GPA is below 2.0. Please improve your grades to meet graduation requirements."
+        boxes:
+          currentGpa: "Current GPA"
+          finalGpa: "Final GPA"
+          afterCompletion: "After completion"
+          additionalCredits: "Additional Credits"
+          totalCredits: "Total Credits"
+        analysis:
+          title: "Analysis:"
+      validation:
+        completedCredits:
+          invalid: "Completed credits is invalid"
+        currentGpa:
+          invalid: "Current GPA is invalid"
+          min: "Current GPA must be >= 0"
+          max: "Current GPA must be <= 4"
+        remainingCredits:
+          invalid: "Remaining credits is invalid"
+          min: "Remaining credits must be >= 1"
+        creditDistributions:
+          min: "At least 1 grade distribution is required"
+    pe:
+      title: "PE GPA"
+      description: "Calculate PE GPA according to DTU grading scale."
+      inputTitle: "Physical Education GPA"
+      inputSubtitle: "Simple & fast"
+      info:
+        title: "Grading Rules"
+      rules:
+        line1: "Enter GPA (4.0 scale) for 3 PE courses"
+        line2: "Average ≥ 2.0: Pass"
+        line3: "Average < 2.0: Fail"
+      fields:
+        pe1: "PE 1 (0–4.00)"
+        pe2: "PE 2 (0–4.00)"
+        pe3: "PE 3 (0–4.00)"
+      helpers:
+        pe1: "Example: If you got 3.5 in PE 1, enter 3.5"
+        pe2: "Example: If you got 3.0 in PE 2, enter 3.0"
+        pe3: "Example: If you got 2.5 in PE 3, enter 2.5"
+      placeholders:
+        pe1: "Enter PE 1 GPA"
+        pe2: "Enter PE 2 GPA"
+        pe3: "Enter PE 3 GPA"
+      buttons:
+        calculate: "Calculate"
+        calculating: "Calculating..."
+        reset: "Reset"
+      empty:
+        title: "Ready to Calculate"
+        description: "Fill in the three PE GPAs and click Calculate to see the result"
+      results:
+        title: "Result"
+        subtitle: "Average GPA of three PE courses"
+        scale: "on a 4.0 scale"
+        pass: "Pass"
+        fail: "Fail"
+        headline:
+          pass: "Passed the PE program"
+          fail: "Failed the PE program"
+        courses:
+          c1: "Course 1"
+          c2: "Course 2"
+          c3: "Course 3"
+        analysis:
+          title: "Analysis:"
+          pass: "Pass! You completed the PE program with GPA {gpa}."
+          fail: "Fail. Your average PE GPA is {gpa}. Keep trying."
+
+      validation:
+        pe1:
+          invalid: "PE 1 must be a number from 0 to 4.00"
+          min: "PE 1 cannot be less than 0"
+          max: "PE 1 cannot be greater than 4.00"
+        pe2:
+          invalid: "PE 2 must be a number from 0 to 4.00"
+          min: "PE 2 cannot be less than 0"
+          max: "PE 2 cannot be greater than 4.00"
+        pe3:
+          invalid: "PE 3 must be a number from 0 to 4.00"
+          min: "PE 3 cannot be less than 0"
+          max: "PE 3 cannot be greater than 4.00"
+    pass:
+      title: "Calculate Pass Score"
+      description: "Calculate required final exam score to pass the course based on weights. This feature will be available soon."
+    ai:
+      title: "Ask AI"
+      description: "Ask AI questions to receive smart study advice. This feature will be available soon."
+    graduation:
+      classification:
+        title: "Duy Tan Graduation Classification"
+        subtitle: "Official graduation classification table of Duy Tan University"
+        table:
+          rank: "Rank"
+          gpaRange: "GPA Range (Scale 4)"
+          description: "Description"
+        ranks:
+          excellent:
+            name: "Excellent"
+            gpaRange: "3.60 – 4.00"
+            description: "Highest rank, requires GPA ≥ 3.60"
+          good:
+            name: "Good"
+            gpaRange: "3.20 – 3.59"
+            description: "Good rank, requires GPA ≥ 3.20"
+          fair:
+            name: "Fair"
+            gpaRange: "2.50 – 3.19"
+            description: "Fair rank, requires GPA ≥ 2.50"
+          average:
+            name: "Average"
+            gpaRange: "2.00 – 2.49"
+            description: "Average rank, requires GPA ≥ 2.00"
+        notes:
+          title: "Important Notes"
+          note1: "Graduation rank may be reduced if >5% credits are retaken or disciplinary action is taken"
+          note2: "Classification is based on final cumulative GPA (4.0 scale)"
+      gradingScale:
+        title: "Duy Tan Grading Scale"
+        subtitle: "Grade conversion table between different grading scales of Duy Tan University"
+        table:
+          category: "Category"
+          scale10: "Scale 10"
+          letter: "Letter Grade"
+          scale4: "Scale 4"
+          status: "Status"
+        categories:
+          good: "Good"
+          fair: "Fair"
+          average: "Average"
+          averageWeak: "Below Average"
+          conditional: "Pass"
+          fail: "Fail"
+          poor: "Poor"
+        status:
+          pass: "Pass"
+          conditional: "Conditional"
+          fail: "Fail"
+        notes:
+          title1: "Scale 4 is the official evaluation scale for"
+          point1: "Academic evaluation"
+          point2: "Graduation evaluation"
+          point3: "Student ranking"
+          title3: "Grade F (0.0)"
+          point6: "Credits are not accumulated"
+          point7: "Course must be retaken"
+          point8: "Not counted in cumulative GPA"
+  pass:
+    inputTitle: "Calculate Final Exam Score to Pass"
+    inputSubtitle: "Enter score components and weights to calculate required final exam score"
+    info:
+      title: "How to use this tool"
+      description: "Add score components (midterm, attendance, assignments...) with their corresponding weights. Total weight must equal 100%. The system will calculate the minimum final exam score needed to pass."
+    progress:
+      total: "Total"
+      remaining: "Remaining"
+    components:
+      title: "Score Components"
+      addButton: "Add Component"
+      empty: "No score components yet. Click 'Add Component' to start."
+      removeButton: "Remove"
+      nameLabel: "Component Name"
+      namePlaceholder: "e.g., Midterm Score"
+      weightLabel: "Weight"
+      weightPlaceholder: "Enter weight (%)"
+      scoreLabel: "Current Score"
+      scorePlaceholder: "Enter score (0-10)"
+    fields:
+      finalExamWeight: "Final Exam Weight (%)"
+      minPassingScore: "Minimum Passing Score"
+    helpers:
+      finalExamWeight: "Example: If final exam is 50% of total score, enter 50"
+      minPassingScore: "Example: If minimum passing score is 4.0, enter 4.0"
+    placeholders:
+      finalExamWeight: "Enter final exam weight (%)"
+      minPassingScore: "Enter minimum score (0-10)"
+    buttons:
+      calculate: "Calculate Final Exam Score"
+      calculating: "Calculating..."
+      reset: "Reset"
+    empty:
+      title: "Ready to Calculate"
+      description: "Enter information in the form on the left and click \"Calculate\" to see results"
+    results:
+      title: "Calculation Results"
+      cannotPass:
+        title: "Cannot Pass"
+        message: "Even if you get the maximum score (10.0) on the final exam, you still cannot reach the minimum passing score."
+      requiredMessage: "You need at least {score} points on the final exam ({weight}%) to pass"
+      requiredSubMessage: "This score is based on your current score and final exam weight"
+      cards:
+        currentScore: "Current Score"
+        finalExamContribution: "Final Exam Contribution"
+        requiredScore: "Required Score"
+      details:
+        title: "Score Component Details"
+        table:
+          name: "Component Name"
+          weight: "Weight (%)"
+          score: "Score"
+          contribution: "Contribution (%)"
+          currentTotal: "Current Total"
+          finalExam: "Final Exam"
+          grandTotal: "Grand Total"
+    prediction:
+      title: "Predict Final Result"
+      placeholder: "Enter predicted final exam score"
+      button: "Predict"
+      finalScore: "Final Score"
+      gpa4: "GPA (4.0 scale)"
+      letterGrade: "Letter Grade"
+      status: "Status"
+      pass: "Pass"
+      fail: "Fail"
+    validation:
+      components:
+        min: "At least 1 component is required"
+      finalExamWeight:
+        invalid: "Invalid final exam weight"
+        min: "Final exam weight cannot be less than 0"
+        max: "Final exam weight cannot be greater than 100"
+      minPassingScore:
+        invalid: "Invalid minimum passing score"
+        min: "Minimum passing score cannot be less than 0"
+        max: "Minimum passing score cannot be greater than 10"
+      finalExamScore:
+        invalid: "Invalid final exam score"
+        min: "Final exam score cannot be less than 0"
+        max: "Final exam score cannot be greater than 10"
+  benefits:
+    titlePrefix: "Why"
+    titlePrimary: "use it?"
+    titleSuffix: ""
+    subtitle: "Practical benefits to improve your learning outcomes"
+    items:
+      - { icon: "📈", title: "Optimize Results", description: "Achieve higher GPA with scientific study planning" }
+      - { icon: "⏰", title: "Save Time", description: "Automate complex calculations, reduce manual work" }
+      - { icon: "🧠", title: "Smart Decisions", description: "Data-driven insights for better study choices" }
+      - { icon: "🎯", title: "Clear Goals", description: "Set concrete goals and roadmaps to reach them" }
+      - { icon: "🏆", title: "Excellent Outcomes", description: "Support scholarships and academic achievements" }
+      - { icon: "📖", title: "Effective Learning", description: "Optimize schedule, balance study and rest" }
+  cta:
+    title: "Ready to study more effectively?"
+    subtitle: "Pick a tool and start your learning journey today."
+  grid:
+    titlePrefix: "Choose the right"
+    titlePrimary: "tool"
+    titleSuffix: ""
+    subtitle: "Explore study tools tailored for DTU students"
+    featuresHeading: "Key features:"
+    badgeComing: "Coming Soon"
+    button:
+      useNow: "→ Use Now"
+      coming: "In Development"
+    items:
+      - icon: "📊"
+        status: "available"
+        to: "/tools/gpa"
+        title: "Study Support & GPA Calculator"
+        desc: "Comprehensive tool to manage and optimize academic results"
+        features:
+          - "Accurate cumulative GPA calculation"
+          - "Classify performance: Excellent/Good/Average/Below"
+          - "Predict performance with remaining credits"
+          - "Recommend prioritized courses"
+          - "Track progress by semester"
+      - icon: "📅"
+        status: "coming-soon"
+        to: "/schedule"
+        title: "Credit Registration & Schedule Planner"
+        desc: "Smart planning and timetable arrangement"
+        features:
+          - "Suggest courses by major"
+          - "Auto-optimize timetable"
+          - "Check prerequisites"
+          - "Avoid schedule conflicts"
+          - "Forecast workload per semester"
+      - icon: "📚"
+        status: "coming-soon"
+        to: "/marketplace"
+        title: "Study Materials Marketplace"
+        desc: "Share and trade materials, exams, assignments"
+        features:
+          - "Quality study materials"
+          - "Sample exams and assignments"
+          - "Ratings and feedback"
+          - "Search by subject and major"

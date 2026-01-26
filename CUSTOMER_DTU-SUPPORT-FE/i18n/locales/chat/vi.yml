@@ -1,0 +1,16 @@
+chat:
+  placeholder: "Nhập câu hỏi..."
+  send: "Gửi"
+  sending: "Đang gửi..."
+  empty:
+    title: "Chào bạn! 👋"
+    description: "Tôi có thể giúp bạn tính điểm, dự đoán GPA hoặc trả lời câu hỏi về quy chế học tập. Hãy bắt đầu cuộc trò chuyện!"
+  error:
+    message: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại."
+  tones:
+    button: "Giọng"
+    default: "Mặc định"
+    anime: "Anime/Wibu"
+    banter: "Bố láo"
+    formal: "Trang trọng"
+    friendly: "Thân thiện"
