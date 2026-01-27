@@ -1,41 +1,71 @@
-# Feature: Streaming API Integration
+# Streaming API - Overview
 
-**Feature**: `BE-streaming`
-**Status**: ✅ **RESOLVED**
-**Priority**: High
+This document defines the implementation plan for Server-Sent Events (SSE) streaming for real-time chat responses.
 
-## Overview
+---
+
+## 1. Overview
 
 This feature implements robust Server-Sent Events (SSE) streaming for the Letta Chatbot Platform. It enables real-time token streaming from the Letta Engine to the Rails API, and then to the frontend client.
 
-## Context
+**Context**: The current implementation provides basic streaming. We need to harden this for production use.
 
-The current `StreamingMessagesController` provides a basic implementation. We need to harden this for production use by:
-1.  **Standardizing SSE Format**: Ensuring all chunks are wrapped in valid `data: ...\n\n` blocks.
-2.  **Error Handling**: Gracefully handling upstream errors and sending `event: error` down the stream.
-3.  **Connection Management**: Properly closing streams and handling client disconnects.
-4.  **Logging**: detailed logs for debugging stream lifecycle.
-5.  **Agent Validation**: (Optional but recommended) Validating the agent exists and matches the request.
+**Status**: ✅ **RESOLVED** (Completed 2026-01-24)
 
-## Dependencies
+---
 
+## 2. Business Goals
+
+1. **Real-Time Responses**: Enable instant streaming of AI responses to users
+2. **Better UX**: Show typing indicators and progressive text rendering
+3. **Connection Reliability**: Handle network issues gracefully
+
+---
+
+## 3. Technical Goals
+
+1. **Standardized SSE Format**: Ensure all chunks are wrapped in valid `data: ...\n\n` blocks
+2. **Error Handling**: Gracefully handle upstream errors with `event: error`
+3. **Connection Management**: Properly close streams and handle client disconnects
+4. **Logging**: Detailed logs for debugging stream lifecycle
+5. **Agent Validation**: Validate agent exists and matches the request
+
+---
+
+## 4. Scope
+
+### In Scope
+- SSE streaming endpoint at `/letta/agents/:agent_id/stream`
+- Event types: `message_start`, `content_block_delta`, `message_stop`, `error`
+- Client disconnect handling
+- Timeout handling (30 seconds)
+- Error event propagation
+
+### Out of Scope
+- WebSocket implementation (SSE is sufficient)
+- Message persistence (handled by Letta Engine)
+- Stream metrics tracking (future consideration)
+
+---
+
+## 5. Dependencies
+
+**Infrastructure**:
 - `ActionController::Live` (Rails built-in)
 - `Integration::Letta::Util::HttpClient` (for upstream streaming)
-- `AgentMapping` (for future authorization checks)
+- `AgentMapping` (for authorization checks)
 
-## Goals
+**External Services**:
+- Letta Engine SSE endpoint
 
-1.  **Reliable Streaming**: Zero dropped packets, correct ordering.
-2.  **Structured Events**: Differentiate between `content` chunks, `usage` stats, and `done` signals.
-3.  **Error Resilience**: Recover from minor network blips if possible, or fail fast with clear error messages.
+---
 
-## ✅ Completion Summary (2026-01-24)
+## 6. Completion Summary
 
-### What Was Accomplished
+### What Was Accomplished (2026-01-24)
 
 1. **Streaming Service Refactored** (`Letta::StreamingMessages::Create`)
    - Extracted methods: `buffer_and_yield_events`, `parse_sse_line`, `parse_json_and_yield_events`, `extract_text_content`
-   - Removed redundant helper methods from `call`
    - Clean, readable code structure
 
 2. **Controller Simplified** (`Letta::StreamingMessagesController`)
@@ -45,23 +75,25 @@ The current `StreamingMessagesController` provides a basic implementation. We ne
 
 3. **Agent Config Refactoring**
    - `Agent` model: Accept full `llm_config` and `embedding_config` hash objects
-   - `Letta::Agents::Create` service: Direct fallback to defaults without merging
+   - `Letta::Agents::Create` service: Direct fallback to defaults
    - `AgentsController`: Permit nested hash configs
-   - Database: Renamed `letta_agent_id` → `agent_id` (Rails ERD standard)
+   - Database: Renamed `letta_agent_id` → `agent_id`
 
-4. **Error Handling Consistency**
-   - All services return `{ success: true/false, data/errors: ... }`
-   - `Messages::Create` service: Added rescue block
-   - `BotTemplates::Update` service: Simplified (no duplicate param filtering)
-
-5. **RSpec Tests Complete**
-   - `agents_spec.rb`: 4 examples (full config, defaults, validation, errors)
-   - `messages_spec.rb`: 3 examples (create, payload verification, errors)
-   - `streaming_messages_spec.rb`: 1 example (SSE format)
-   - All tests match actual response format from `Renderable` concern
+4. **RSpec Tests Complete**
+   - `agents_spec.rb`: 4 examples
+   - `messages_spec.rb`: 3 examples
+   - `streaming_messages_spec.rb`: 1 example
 
 ### Test Results
 ✅ **19 examples, 0 failures**
 
-### Next Steps
-As per master plan, next feature is **Tool Approval Workflow**.
+---
+
+## Related
+
+- [01-database-schema.md](./01-database-schema.md) - No database changes needed
+- [02-api-design.md](./02-api-design.md) - SSE endpoint specification
+- [03-implementation.md](./03-implementation.md) - Streaming service code
+- [04-testing.md](./04-testing.md) - Test coverage
+
+- [07-sse-specification.md](../../../docs/letta/07-sse-specification.md) - SSE protocol reference

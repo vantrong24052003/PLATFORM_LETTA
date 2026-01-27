@@ -1,39 +1,45 @@
-# Tool Forwarding - Database Schema
+# Tool Approval - Database Schema
 
-**Status**: ✅ **COMPLETED** (Migrations Applied)
-**Convention**: Rails Migration & ActiveRecord
-
----
-
-## 1. Platform Schema Extensions (Public Schema)
-
-We extend existing platform tables to support automated tool forwarding. These fields are essential for routing and security.
-
-### 1.1. `BotTemplate` Extension ✅
-- **Field**: `customer_domain` (`string`)
-- **Index**: Yes
-- **Rationale**: This defines the "WHERE" for tool forwarding. Since LeTTa Engine is agnostic of customer infrastructure, each template must specify where to route external tool requests.
-- **Migration**: `20260124150011_add_customer_domain_to_bot_templates.rb`
-
-### 1.2. `Organization` Extension ✅
-- **Field**: `secret_key` (`string`)
-- **Rationale**: This defines the "HOW" for security. Each organization requires a unique shared secret to sign (HMAC SHA-256) outbound requests. This allows the customer's backend to verify that the execution request is authentic and originated from our platform.
-- **Migration**: `20260124150022_add_secret_key_to_organizations.rb`
+This document defines the database schema for tool approval workflow.
 
 ---
 
-## 2. Migrations (Ruby)
+## 1. Schema Overview
+
+**Status**: ✅ **COMPLETED** - Existing tables extended for tool forwarding.
+
+**Pending**: Approval state table for tracking pending tool approvals.
+
+---
+
+## 2. Completed Extensions
+
+### 2.1. BotTemplate Extension ✅
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `customer_domain` | string | Nullable, Index | Customer backend domain for tool forwarding |
+
+**Migration**: `20260124150011_add_customer_domain_to_bot_templates.rb`
 
 ```ruby
-# Migration 1: Routing Support
 class AddCustomerDomainToBotTemplates < ActiveRecord::Migration[8.1]
   def change
-    add_column :bot_templates, :customer_domain, :string
-    add_index :bot_templates, :customer_domain
+    add_column :letta_bot_templates, :customer_domain, :string
+    add_index :letta_bot_templates, :customer_domain
   end
 end
+```
 
-# Migration 2: Security Support
+### 2.2. Organization Extension ✅
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `secret_key` | string | Nullable | HMAC SHA-256 shared secret for signing requests |
+
+**Migration**: `20260124150022_add_secret_key_to_organizations.rb`
+
+```ruby
 class AddSecretKeyToOrganizations < ActiveRecord::Migration[8.1]
   def change
     add_column :organizations, :secret_key, :string
@@ -43,30 +49,26 @@ end
 
 ---
 
-## 3. LeTTa System Tables (Internal Reference)
+## 3. Pending: Tool Approvals Table
 
-We interact with Letta's native tables using ActiveRecord models mapped to the existing schema. No new tables are created in the `letta` schema.
+**Purpose**: Track pending tool execution approvals from users.
 
-### 3.1. `Message` Model
-Used to identify and intercept tool call events during orchestration.
-
-```ruby
-class Message < ApplicationRecord
-  # Mapping to existing table in the 'letta' schema
-  # self.table_name = "letta.messages"
-
-  belongs_to :agent
-
-  # Scope to find tool calls from the assistant
-  scope :pending_tools, -> { where(role: 'assistant').where.not(tool_calls: nil) }
-end
-```
+| # | Column | Type | Constraints | Description |
+|---|--------|------|-------------|-------------|
+| 1 | `id` | uuid | PK | Primary key |
+| 2 | `organization_id` | string | Not Null, Index | Multi-tenant isolation |
+| 3 | `agent_id` | string | Not Null, Index | Letta agent UUID |
+| 4 | `user_id` | string | Not Null | User requesting approval |
+| 5 | `tool_name` | string | Not Null | Tool being executed |
+| 6 | `tool_arguments` | jsonb | | Tool arguments (JSON) |
+| 7 | `status` | string | Default `'pending'` | `pending`, `approved`, `denied` |
+| 8 | `resolved_at` | timestamp | | When approval was resolved |
+| 9 | `created_at` | timestamp | Not Null | Auto |
+| 10 | `updated_at` | timestamp | Not Null | Auto |
 
 ---
 
 ## 4. Data Flow & Lookup Logic
-
-When a tool call is detected, Rails must resolve both the **Destination** and the **Signature**:
 
 ```ruby
 # Resolve Routing Context
@@ -79,3 +81,10 @@ organization = Organization.find(template.organization_id)
 target_url = "https://#{template.customer_domain}/letta/tools/execute"
 signature_key = organization.secret_key
 ```
+
+---
+
+## Related
+
+- [00-overview.md](./00-overview.md) - Feature overview
+- [03-implementation.md](./03-implementation.md) - Model implementation

@@ -1,21 +1,30 @@
-# Tool Forwarding Hub - API Design
+# Tool Approval - API Design
 
-**Status**: ✅ **COMPLETED** (Outbound API Implemented)
-**Convention**: Server-to-Server Contract
+This document defines the API endpoints for tool approval workflow.
 
 ---
 
-## 1. Outbound Interface (Rails -> Customer Backend)
+## 1. Endpoint Overview
 
-The "Bidirectional Hub" outbound request specification. This is an internal execution contract and is invisible to the end user.
+| Method | Path | Description | Status |
+|--------|------|-------------|--------|
+| POST | `/letta/approvals/:id/approve` | Approve tool execution | 🟡 Pending |
+| POST | `/letta/approvals/:id/deny` | Deny tool execution | 🟡 Pending |
 
-### 1.1. Tool Execution Forwarding
-`POST https://{customer_domain}/letta/tools/execute`
+---
+
+## 2. Outbound Interface (Rails → Customer Backend)
+
+**Status**: ✅ **COMPLETED** (Outbound API Implemented)
+
+### POST https://{customer_domain}/letta/tools/execute
 
 **Request Headers**:
-- `X-Letta-Signature`: HMAC SHA-256 signature calculated from the request body using a shared secret.
-- `X-Organization-ID`: Source identifier for the tenant.
-- `Content-Type`: `application/json`
+```
+X-Letta-Signature: HMAC SHA-256 signature
+X-Organization-ID: Source tenant identifier
+Content-Type: application/json
+```
 
 **Payload**:
 ```json
@@ -32,7 +41,7 @@ The "Bidirectional Hub" outbound request specification. This is an internal exec
 }
 ```
 
-**Expected Response (200 OK)**:
+**Response** (200 OK):
 ```json
 {
   "status": "success",
@@ -45,28 +54,65 @@ The "Bidirectional Hub" outbound request specification. This is an internal exec
 
 ---
 
-## 2. Error Protocol
+## 3. Approve Tool
 
-| Failure Type | Handling Strategy |
-| :--- | :--- |
-| **Network Timeout** | Rails terminates the wait after 10 seconds and returns a "System Error" to the Letta Engine. |
-| **Invalid Signature** | Customer Backend should return 401 Unauthorized. Rails reports "Access Denied" to the Letta Engine. |
-| **Malformed Response** | If the Customer Backend returns non-JSON data, Rails treats it as a Generic Failure. |
+### POST /letta/approvals/:id/approve
 
----
+**Description**: Approve a tool execution request and resume stream
 
-## 3. Configuration Interface (Admin)
-
-### 3.1. Register Customer Domain
-`PATCH /letta/bot_templates/:id`
-
-**Request Body**:
+**Response** (200 OK):
 ```json
 {
-  "bot_template": {
-    "customer_domain": "api.letta-client.vn"
+  "data": {
+    "id": "approval-uuid",
+    "status": "approved",
+    "resolved_at": "2026-01-24T12:00:00Z"
   }
 }
 ```
 
-**Outcome**: This value is persisted to the `bot_templates` table and used during the "Forwarding" step of the runtime orchestration.
+**Errors**:
+- 403 Forbidden: Wrong organization
+- 422 Unprocessable Entity: Already processed
+
+---
+
+## 4. Deny Tool
+
+### POST /letta/approvals/:id/deny
+
+**Request Body**:
+```json
+{
+  "reason": "User does not have permission"
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "data": {
+    "id": "approval-uuid",
+    "status": "denied",
+    "reason": "User does not have permission",
+    "resolved_at": "2026-01-24T12:00:00Z"
+  }
+}
+```
+
+---
+
+## 5. Error Protocol
+
+| Failure Type | Handling Strategy |
+|--------------|-------------------|
+| Network Timeout | Terminate after 10s, return "System Error" |
+| Invalid Signature | Customer returns 401, report "Access Denied" |
+| Malformed Response | Treat as Generic Failure |
+
+---
+
+## Related
+
+- [00-overview.md](./00-overview.md) - Feature overview
+- [03-implementation.md](./03-implementation.md) - Controller implementation

@@ -526,7 +526,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_150022) do
     t.string "role", null: false
     t.string "run_id"
     t.string "sender_id"
-    t.bigint "sequence_id", default: -> { "nextval('message_seq_id'::regclass)" }, null: false
+    t.bigint "sequence_id", null: false
     t.string "step_id"
     t.string "text"
     t.string "tool_call_id"

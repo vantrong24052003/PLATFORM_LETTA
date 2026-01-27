@@ -1,8 +1,6 @@
 # Agent Search - Overview
 
-**Feature**: Agent Search & Listing
-**Status**: 🟡 **PLANNED**
-**Parent**: [../00-implementation-plan.md](../00-implementation-plan.md)
+This document defines the implementation plan for agent search and listing functionality.
 
 ---
 
@@ -10,32 +8,34 @@
 
 Implement search and listing functionality for Agents within an organization. Users can find agents by name, description, and filter by creation date.
 
+**Status**: 🟡 **PLANNED**
+
 ---
 
 ## 2. Business Goals
 
-1. **Discoverability**: Users can easily find agents they created.
-2. **Organization Scope**: Each organization sees only their own agents.
-3. **Performance**: Paginated results to handle large agent lists.
-4. **Flexibility**: Simple keyword search + date filters.
+1. **Discoverability**: Users can easily find agents they created
+2. **Organization Scope**: Each organization sees only their own agents
+3. **Performance**: Paginated results to handle large agent lists
+4. **Flexibility**: Simple keyword search + date filters
 
 ---
 
 ## 3. Technical Goals
 
-### A. Query Letta API
-- Agents are stored in **Letta Engine**, not our DB.
-- Use Letta API endpoint: `GET /api/agents` (or equivalent)
-- Cache results locally if needed (future enhancement).
+### Query Letta API
+- Agents are stored in **Letta Engine**, not our DB
+- Use Letta API endpoint: `GET /api/agents`
+- Cache results locally if needed (future)
 
-### B. Organization Isolation
-- Filter results by `organization_id` using `AgentMapping` table.
-- Never expose agents from other organizations.
+### Organization Isolation
+- Filter results by `organization_id` using `AgentMapping` table
+- Never expose agents from other organizations
 
-### C. Pagination
-- Use Kaminari gem (already in project).
-- Default: 20 per page.
-- Max: 100 per page (configurable).
+### Pagination
+- Use Kaminari gem (already in project)
+- Default: 20 per page
+- Max: 100 per page
 
 ---
 
@@ -48,7 +48,7 @@ User → Dashboard → Agent List
                 ↓
          Paginated Agent Cards
                 ↓
-         Click Agent → View Details (show)
+         Click Agent → View Details
 ```
 
 ---
@@ -72,22 +72,21 @@ sequenceDiagram
 
 ---
 
-## 6. Acceptance Criteria
+## 6. Scope
 
-### Must Have ✅
-- [ ] GET `/letta/agents` returns paginated list
-- [ ] Results scoped to `organization_id`
-- [ ] Search by `name` (partial match, case-insensitive)
-- [ ] Search by `description` (partial match, case-insensitive)
-- [ ] Filter by `created_at` date range (from/to)
-- [ ] Pagination: default 20, max 100 per page
-- [ ] GET `/letta/agents/:id` returns single agent details
-- [ ] 404 if agent not found or not in organization
+### In Scope
+- GET `/letta/agents` with pagination
+- Search by `name` (partial match, case-insensitive)
+- Search by `description` (partial match, case-insensitive)
+- Filter by `created_at` date range
+- GET `/letta/agents/:id` for details
+- Multi-org isolation
 
-### Nice to Have 💡
-- [ ] Sort by name, created_at
-- [ ] Filter by tool types
-- [ ] Response caching (Redis)
+### Out of Scope
+- Full-text search (use PostgreSQL full-text or ElasticSearch later)
+- Agent creation/update/delete (already implemented)
+- Agent analytics/stats
+- Cross-organization search (admin only - future)
 
 ---
 
@@ -102,9 +101,28 @@ sequenceDiagram
 
 ---
 
-## 8. Out of Scope
+## 8. Acceptance Criteria
 
-- Full-text search (use PostgreSQL full-text or ElasticSearch later)
-- Agent creation/update/delete (already implemented)
-- Agent analytics/stats
-- Cross-organization search (admin only - future)
+### Must Have
+- [ ] GET `/letta/agents` returns paginated list
+- [ ] Results scoped to `organization_id`
+- [ ] Search by `name` (partial match, case-insensitive)
+- [ ] Search by `description` (partial match, case-insensitive)
+- [ ] Filter by `created_at` date range
+- [ ] Pagination: default 20, max 100 per page
+- [ ] GET `/letta/agents/:id` returns single agent details
+- [ ] 404 if agent not found or not in organization
+
+### Nice to Have
+- [ ] Sort by name, created_at
+- [ ] Filter by tool types
+- [ ] Response caching (Redis)
+
+---
+
+## Related
+
+- [01-database-schema.md](./01-database-schema.md) - No DB changes needed
+- [02-api-design.md](./02-api-design.md) - Search endpoints
+- [03-implementation.md](./03-implementation.md) - Search logic
+- [04-testing.md](./04-testing.md) - Test coverage

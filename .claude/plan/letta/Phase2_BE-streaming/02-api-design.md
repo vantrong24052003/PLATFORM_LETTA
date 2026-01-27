@@ -1,18 +1,18 @@
-# Streaming - API Design
-
-**Feature**: Server-Sent Events for Real-Time Chat Streaming  
-**Status**: 🔴 Not Started  
-**Parent**: [00-overview.md](./00-overview.md)
-
----
-
-## Overview
+# Streaming API - API Design
 
 This document defines the SSE endpoint for streaming Letta responses.
 
 ---
 
-## Endpoint
+## 1. Endpoint Overview
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/letta/agents/:agent_id/stream` | Stream real-time responses |
+
+---
+
+## 2. Stream Endpoint
 
 ### POST /letta/agents/:agent_id/stream
 
@@ -38,27 +38,29 @@ Cache-Control: no-cache
 Connection: keep-alive
 
 event: message_start
-data: {"agent_id": "agent_123", "message_id": "msg_456"}
+data: {"agent_id":"agent_123","message_id":"msg_456"}
 
 event: content_block_delta
-data: {"text": "The"}
+data: {"text":"The"}
 
 event: content_block_delta
-data: {"text": " weather"}
+data: {"text":" weather"}
 
 event: content_block_delta
-data: {" text": " today"}
+data: {"text":" today"}
 
 event: message_stop
-data: {"finish_reason": "end_turn"}
+data: {"finish_reason":"end_turn"}
 ```
 
 ---
 
-## Event Types
+## 3. Event Types
 
-### 1. message_start
+### 3.1. message_start
+
 **When**: Stream begins
+
 **Data**:
 ```json
 {
@@ -68,8 +70,10 @@ data: {"finish_reason": "end_turn"}
 }
 ```
 
-### 2. content_block_delta
+### 3.2. content_block_delta
+
 **When**: Each chunk of text arrives
+
 **Data**:
 ```json
 {
@@ -77,8 +81,10 @@ data: {"finish_reason": "end_turn"}
 }
 ```
 
-### 3. message_stop
+### 3.3. message_stop
+
 **When**: Stream completes
+
 **Data**:
 ```json
 {
@@ -87,8 +93,10 @@ data: {"finish_reason": "end_turn"}
 }
 ```
 
-### 4. error
+### 3.4. error
+
 **When**: Error occurs
+
 **Data**:
 ```json
 {
@@ -99,24 +107,24 @@ data: {"finish_reason": "end_turn"}
 
 ---
 
-## Error Handling
+## 4. Error Handling
 
-**Client Disconnects**:
+### Client Disconnects
 - Server detects disconnect via `stream.closed?`
 - Stops sending events
 - Cleans up resources
 
-**Letta API Error**:
+### Letta API Error
 - Send `error` event
 - Close stream with status 200 (SSE convention)
 
-**Timeout** (30 seconds):
+### Timeout (30 seconds)
 - Send `message_stop` with `finish_reason: "timeout"`
 - Close stream
 
 ---
 
-## Client Usage (JavaScript)
+## 5. Client Usage (JavaScript)
 
 ```javascript
 const eventSource = new EventSource('/letta/agents/agent_123/stream', {
@@ -145,12 +153,8 @@ eventSource.addEventListener('error', (event) => {
 
 ---
 
-## Testing Checklist
+## Related
 
-- [ ] POST /letta/agents/:id/stream returns `text/event-stream`
-- [ ] Stream sends `message_start` event first
-- [ ] Stream sends multiple `content_block_delta` events
-- [ ] Stream sends `message_stop` event last
-- [ ] Client disconnect is handled gracefully
-- [ ] Timeout after 30 seconds works
-- [ ] Error events are sent when Letta API fails
+- [00-overview.md](./00-overview.md) - Feature overview
+- [03-implementation.md](./03-implementation.md) - Controller implementation
+- [07-sse-specification.md](../../../docs/letta/07-sse-specification.md) - SSE protocol reference

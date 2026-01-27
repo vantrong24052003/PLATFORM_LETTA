@@ -1,18 +1,18 @@
 # RAG Sources - Overview
 
-**Feature**: Retrieval-Augmented Generation (RAG) Data Source Management  
-**Status**: 🔴 Not Started  
-**Parent**: [../00-implementation-plan.md](../00-implementation-plan.md)
+This document defines the implementation plan for Retrieval-Augmented Generation (RAG) data source management.
 
 ---
 
-## Overview
+## 1. Overview
 
 Enable organizations to upload and manage data sources (documents, URLs, knowledge bases) that Letta agents can reference during conversations using RAG. This allows agents to provide more accurate, context-aware responses based on organization-specific data.
 
+**Status**: 🔴 **PLANNED**
+
 ---
 
-## Business Goals
+## 2. Business Goals
 
 1. **Knowledge Management**: Centralize organizational knowledge for AI agents
 2. **Accurate Responses**: Agents reference actual data instead of hallucinating
@@ -21,7 +21,7 @@ Enable organizations to upload and manage data sources (documents, URLs, knowled
 
 ---
 
-## Technical Goals
+## 3. Technical Goals
 
 1. **Database Schema**: Tables for sources, documents, and chunks
 2. **Document Processing**: Parse and chunk documents into embeddings
@@ -31,7 +31,24 @@ Enable organizations to upload and manage data sources (documents, URLs, knowled
 
 ---
 
-## Dependencies
+## 4. Scope
+
+### In Scope
+- Document upload via API (PDF, TXT, DOCX, MD)
+- Document parsing and chunking
+- Embedding generation via Letta API
+- Link sources to bot templates
+- Multi-org isolation
+
+### Out of Scope
+- Web scraping (manual URL input only)
+- Real-time document sync
+- Custom embedding models
+- Vector database management UI
+
+---
+
+## 5. Dependencies
 
 **Infrastructure**:
 - PostgreSQL (existing)
@@ -43,18 +60,9 @@ Enable organizations to upload and manage data sources (documents, URLs, knowled
 
 ---
 
-## Out of Scope
+## 6. Acceptance Criteria
 
-- Web scraping (manual URL input only)
-- Real-time document sync
-- Custom embedding models
-- Vector database management UI
-
----
-
-## Acceptance Criteria
-
-- [ ] Users can upload documents via UI
+- [ ] Users can upload documents via API
 - [ ] Documents are parsed and chunked correctly
 - [ ] Chunks are embedded and stored in Letta vector DB
 - [ ] Agents can retrieve relevant context during conversations
@@ -64,31 +72,11 @@ Enable organizations to upload and manage data sources (documents, URLs, knowled
 
 ---
 
-## Timeline Estimate
+## Related
 
-**Duration**: 5-7 days
+- [01-database-schema.md](./01-database-schema.md) - RAG tables
+- [02-api-design.md](./02-api-design.md) - Source endpoints
+- [03-implementation.md](./03-implementation.md) - Processing logic
+- [04-testing.md](./04-testing.md) - Test coverage
 
-**Breakdown**:
-- Day 1-2: Database schema & Active Storage setup
-- Day 3-4: Document parsing & chunking service
-- Day 5: Letta vector DB integration
-- Day 6: API endpoints
-- Day 7: Testing & bug fixes
-
----
-
-## Tasks
-
-See individual task files:
-- [01-database-schema.md](./01-database-schema.md) - Tables for RAG sources
-- [02-api-design.md](./02-api-design.md) - API endpoints
-- [03-implementation.md](./03-implementation.md) - Processing & service logic
-- [04-testing.md](./04-testing.md) - Testing strategy
-
----
-
-## References
-
-- [Letta RAG API Docs](http://localhost:8283/docs#rag)
-- [ActiveStorage Guide](https://edgeguides.rubyonrails.org/active_storage_overview.html)
-- Skill: [../../../skills/07-research/](../../../skills/07-research/) (Document parsing libraries)
+- [09-rag-guide.md](../../../docs/letta/09-rag-guide.md) - RAG reference

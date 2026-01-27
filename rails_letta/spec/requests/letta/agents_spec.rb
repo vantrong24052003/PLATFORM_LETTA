@@ -1,8 +1,135 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Letta::Agents", type: :request do
+  describe "GET /letta/agents" do
+    let(:organization) { create(:organization, secret_key: "test_key_123456789012345") }
+    let!(:agents) { create_list(:agent, 3, organization:, is_deleted: false) }
+    let(:headers) { { "X-Organization-Key" => organization.secret_key } }
+
+    context "with valid authentication" do
+      it "returns list of agents" do
+        get "/letta/agents", headers:
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(3)
+      end
+
+      it "returns pagination info" do
+        get "/letta/agents", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["pagination"]).to include("current_page", "total_count", "total_pages", "per_page")
+      end
+
+      it "returns agents with correct structure" do
+        get "/letta/agents", headers:
+
+        json = JSON.parse(response.body)
+        agent = json["data"]["agents"].first
+
+        expect(agent).to have_key("id")
+        expect(agent).to have_key("name")
+        expect(agent).to have_key("description")
+        expect(agent).to have_key("system")
+        expect(agent).to have_key("organization_id")
+        expect(agent).to have_key("created_at")
+        expect(agent).to have_key("updated_at")
+        expect(agent).to have_key("status")
+      end
+    end
+
+    context "without authentication" do
+      it "returns 401" do
+        get "/letta/agents"
+
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body)
+        expect(json["error"]).to eq("Unauthorized")
+        expect(json["data"]).to eq("Missing X-Organization-Key header")
+      end
+    end
+
+    context "with invalid API key" do
+      it "returns 401" do
+        headers = { "X-Organization-Key" => "invalid_key" }
+        get "/letta/agents", headers:
+
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body)
+        expect(json["error"]).to eq("Unauthorized")
+        expect(json["data"]).to eq("Invalid API key")
+      end
+    end
+
+    context "filtering" do
+      let!(:special_agent) { create(:agent, organization:, name: "Special Bot", is_deleted: false) }
+
+      it "filters by name" do
+        get "/letta/agents?name=Special", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(1)
+        expect(json["data"]["agents"][0]["name"]).to eq("Special Bot")
+      end
+
+      it "filters by status active" do
+        create(:agent, organization:, name: "Deleted", is_deleted: true)
+
+        get "/letta/agents?status=active", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(4)
+        expect(json["data"]["agents"].all? { |a| a["status"] == "active" }).to be true
+      end
+
+      it "filters by status inactive" do
+        deleted_agent = create(:agent, organization:, name: "Deleted", is_deleted: true)
+
+        get "/letta/agents?status=inactive", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(1)
+        expect(json["data"]["agents"][0]["id"]).to eq(deleted_agent.id)
+      end
+    end
+
+    context "pagination" do
+      before { create_list(:agent, 25, organization:, is_deleted: false) }
+
+      it "paginates results" do
+        get "/letta/agents?per=10", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(10)
+        expect(json["data"]["pagination"]["total_pages"]).to eq(3)
+        expect(json["data"]["pagination"]["current_page"]).to eq(1)
+      end
+
+      it "returns page 2" do
+        get "/letta/agents?page=2&per=10", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(10)
+        expect(json["data"]["pagination"]["current_page"]).to eq(2)
+      end
+    end
+
+    context "organization scoping" do
+      let(:other_org) { create(:organization, secret_key: "other_key_123456789012345") }
+      let!(:other_agents) { create_list(:agent, 5, organization: other_org, is_deleted: false) }
+
+      it "only returns agents for current organization" do
+        get "/letta/agents", headers:
+
+        json = JSON.parse(response.body)
+        expect(json["data"]["agents"].count).to eq(3)
+      end
+    end
+  end
+
   describe "POST /letta/agents" do
     let(:valid_params) do
       {

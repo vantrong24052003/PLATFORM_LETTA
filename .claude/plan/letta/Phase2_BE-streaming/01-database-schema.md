@@ -1,20 +1,18 @@
-# Streaming - Database Schema
+# Streaming API - Database Schema
 
-**Feature**: Server-Sent Events for Real-Time Chat Streaming  
-**Status**: 🔴 Not Started  
-**Parent**: [00-overview.md](./00-overview.md)
+This document defines the database schema for streaming functionality.
 
 ---
 
-## N/A
+## 1. Schema Overview
 
-This feature does not require database changes.
+**No database changes required.**
 
-Streaming is handled in-memory via ActionController::Live and does not require persistent storage.
+Streaming is handled in-memory via `ActionController::Live` and does not require persistent storage.
 
 ---
 
-## Rationale
+## 2. Rationale
 
 - SSE connections are stateless and ephemeral
 - Message content is already stored in Letta Engine
@@ -23,7 +21,7 @@ Streaming is handled in-memory via ActionController::Live and does not require p
 
 ---
 
-## Future Consideration
+## 3. Future Consideration
 
 If we need to track streaming metrics (e.g., stream duration, disconnect rate), we could add:
 
@@ -38,4 +36,11 @@ create_table :letta_stream_metrics do |t|
 end
 ```
 
-But this is NOT required for Phase 1.
+**This is NOT required for Phase 2.**
+
+---
+
+## Related
+
+- [00-overview.md](./00-overview.md) - Feature overview
+- [03-implementation.md](./03-implementation.md) - In-memory streaming implementation

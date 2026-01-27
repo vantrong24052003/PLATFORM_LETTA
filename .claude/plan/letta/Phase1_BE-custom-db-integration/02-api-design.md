@@ -1,41 +1,45 @@
 # Custom DB Integration - API Design
 
-**Feature**: Custom Database Schema for Letta Bot Templates  
-**Status**: 🔴 Not Started  
-**Parent**: [00-overview.md](./00-overview.md)
-
----
-
-## Overview
-
 This document defines the RESTful API endpoints for managing Letta bot templates.
 
 ---
 
-## Endpoints
+## 1. Endpoint Overview
 
-### 1. List Bot Templates
-```
-GET /letta/bot_templates
-```
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/letta/bot_templates` | List all bot templates |
+| GET | `/letta/bot_templates/:id` | Get a specific bot template |
+| POST | `/letta/bot_templates` | Create a new bot template |
+| PATCH | `/letta/bot_templates/:id` | Update a bot template |
+| DELETE | `/letta/bot_templates/:id` | Delete a bot template |
+
+---
+
+## 2. List Bot Templates
+
+### GET /letta/bot_templates
 
 **Description**: Get all bot templates for the current organization
 
 **Query Parameters**:
-- `page` (integer, optional): Page number (default: 1)
-- `per_page` (integer, optional): Items per page (default: 20, max: 100)
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `page` | integer | No | 1 | Page number |
+| `per_page` | integer | No | 20 | Items per page (max: 100) |
 
 **Response** (200 OK):
 ```json
 {
   "data": [
     {
-      "id": 1,
+      "id": "uuid-123",
       "name": "Customer Support Bot",
-      "description": "Handles customer inquiries",
+      "greeting": "Hello! How can I help?",
+      "status": "active",
       "system_prompt": "You are a helpful customer support agent...",
-      "human_name": "User",
-      "persona_name": "Assistant",
+      "tools": ["search_order", "check_status"],
+      "source_ids": [],
       "theme_config": {
         "primaryColor": "#3B82F6",
         "botAvatarUrl": "https://...",
@@ -57,10 +61,9 @@ GET /letta/bot_templates
 
 ---
 
-### 2. Get Bot Template
-```
-GET /letta/bot_templates/:id
-```
+## 3. Get Bot Template
+
+### GET /letta/bot_templates/:id
 
 **Description**: Get a specific bot template by ID
 
@@ -68,12 +71,13 @@ GET /letta/bot_templates/:id
 ```json
 {
   "data": {
-    "id": 1,
+    "id": "uuid-123",
     "name": "Customer Support Bot",
-    "description": "Handles customer inquiries",
+    "greeting": "Hello! How can I help?",
+    "status": "active",
     "system_prompt": "You are a helpful...",
-    "human_name": "User",
-    "persona_name": "Assistant",
+    "tools": ["search_order"],
+    "source_ids": [],
     "theme_config": { ... },
     "created_at": "2026-01-24T12:00:00Z",
     "updated_at": "2026-01-24T12:00:00Z"
@@ -86,20 +90,19 @@ GET /letta/bot_templates/:id
 
 ---
 
-### 3. Create Bot Template
-```
-POST /letta/bot_templates
-```
+## 4. Create Bot Template
+
+### POST /letta/bot_templates
 
 **Request Body**:
 ```json
 {
   "bot_template": {
     "name": "Sales Assistant",
-    "description": "Helps with sales inquiries",
+    "greeting": "Hi there! Need help with sales?",
     "system_prompt": "You are a sales expert...",
-    "human_name": "Customer",
-    "persona_name": "Sales Assistant",
+    "tools": ["search_product", "check_stock"],
+    "source_ids": [],
     "theme_config": {
       "primaryColor": "#10B981",
       "botAvatarUrl": null,
@@ -114,30 +117,32 @@ POST /letta/bot_templates
 ```json
 {
   "data": {
-    "id": 2,
+    "id": "uuid-456",
     "name": "Sales Assistant",
     ...
   }
 }
 ```
 
-**Errors**:
-- 422 Unprocessable Entity: Validation failed
-  ```json
-  {
-    "errors": {
+**Errors** (422 Unprocessable Entity):
+```json
+{
+  "error": {
+    "code": "validation_failed",
+    "message": "Validation failed",
+    "details": {
       "name": ["can't be blank"],
       "system_prompt": ["can't be blank"]
     }
   }
-  ```
+}
+```
 
 ---
 
-### 4. Update Bot Template
-```
-PATCH/PUT /letta/bot_templates/:id
-```
+## 5. Update Bot Template
+
+### PATCH /letta/bot_templates/:id
 
 **Request Body**: Same as Create (partial updates allowed)
 
@@ -154,10 +159,9 @@ PATCH/PUT /letta/bot_templates/:id
 
 ---
 
-### 5. Delete Bot Template
-```
-DELETE /letta/bot_templates/:id
-```
+## 6. Delete Bot Template
+
+### DELETE /letta/bot_templates/:id
 
 **Response** (204 No Content): Empty body
 
@@ -167,9 +171,9 @@ DELETE /letta/bot_templates/:id
 
 ---
 
-## Authentication
+## 7. Authentication
 
-All endpoints require authentication via session or token (TBD).
+All endpoints require authentication via session or token.
 
 **Headers**:
 ```
@@ -180,50 +184,32 @@ Organization is determined from the authenticated user's context.
 
 ---
 
-## Error Response Format
+## 8. Error Response Format
 
 All errors follow this format:
 
 ```json
 {
   "error": {
-    "code": "record_not_found",
-    "message": "Bot template not found",
+    "code": "error_code",
+    "message": "Human-readable description",
     "details": { ... }
   }
 }
 ```
 
 **Common Error Codes**:
-- `record_not_found` (404)
-- `validation_failed` (422)
-- `unauthorized` (401)
-- `forbidden` (403)
-- `internal_server_error` (500)
+| Code | HTTP | Description |
+|------|------|-------------|
+| `record_not_found` | 404 | Resource not found |
+| `validation_failed` | 422 | Invalid input data |
+| `unauthorized` | 401 | Not authenticated |
+| `forbidden` | 403 | Not authorized for this resource |
+| `internal_server_error` | 500 | Server error |
 
 ---
 
-## Rate Limiting
+## Related
 
-N/A - Not implemented in Phase 1
-
----
-
-## Versioning
-
-API version is included in URL path: `/letta/...`
-
-Future versions will use: `/v2/letta/...`
-
----
-
-## Testing Checklist
-
-- [ ] GET /letta/bot_templates returns 200 with array
-- [ ] GET /letta/bot_templates/:id returns 200 with single object
-- [ ] GET /letta/bot_templates/:invalid_id returns 404
-- [ ] POST /letta/bot_templates with valid data returns 201
-- [ ] POST /letta/bot_templates with invalid data returns 422
-- [ ] PATCH /letta/bot_templates/:id updates record
-- [ ] DELETE /letta/bot_templates/:id removes record
-- [ ] Multi-org isolation: User A cannot access User B's templates
+- [00-overview.md](./00-overview.md) - Feature overview
+- [03-implementation.md](./03-implementation.md) - Controller implementation
