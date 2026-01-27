@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Agent < ApplicationRecord
+  belongs_to :organization
   has_many :agent_mappings
 
   attribute :name, :string

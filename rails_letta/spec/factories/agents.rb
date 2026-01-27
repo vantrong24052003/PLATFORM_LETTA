@@ -7,6 +7,7 @@ FactoryBot.define do
     system { "You are a helpful assistant" }
     organization
     is_deleted { false }
+    message_buffer_autoclear { true }
     created_at { Time.current }
     updated_at { Time.current }
   end

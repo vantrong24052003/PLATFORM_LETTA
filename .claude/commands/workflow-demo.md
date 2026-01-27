@@ -692,11 +692,77 @@ AI MUST say: "Tests now passing. Ready for review."
 ```
 
 ### What AI does:
-1. Review all code files
-2. Check against checklist
-3. Report issues found
+1. Run Rubocop for code style check
+2. Test functionality directly using MCP Playwright
+3. Review all code files against checklist
+4. Report issues found
+
+### Commands AI MUST RUN:
+```bash
+# Step 1: Code style check
+bundle exec rubocop -a
+
+# Step 2: Ensure Rails server is running on port 4000
+# If not running, start with:
+rails server -p 4000
+
+# Step 3: Test using MCP Playwright
+# Test page location: /home/vantrong/Documents/PLATFORM_LETTA/rails_letta/public/test_streaming.html
+# Rails URL: http://localhost:4000
+```
+
+### MCP Playwright Testing (NEW - CRITICAL):
+
+#### Test Page Location:
+```
+/home/vantrong/Documents/PLATFORM_LETTA/rails_letta/public/test_streaming.html
+```
+
+#### Rails Server Port:
+```
+Port: 4000
+URL: http://localhost:4000
+```
+
+#### Playwright Test Commands:
+```ruby
+# Use mcp__zai-mcp-server__analyze_video or Playwright MCP to:
+# 1. Navigate to test page
+# 2. Fill in test data (organization key, agent data)
+# 3. Submit DELETE request
+# 4. Verify response
+# 5. Check database for deletion
+```
+
+#### Example Playwright Test Flow:
+```javascript
+// 1. Open test page
+await page.goto('file:///home/vantrong/Documents/PLATFORM_LETTA/rails_letta/public/test_streaming.html');
+
+// 2. Set Rails API URL
+await page.fill('#api-url', 'http://localhost:4000');
+
+// 3. Set organization key
+await page.fill('#org-key', 'test_key_123456789012345');
+
+// 4. Create test agent first (if needed)
+await page.click('#create-agent');
+
+// 5. Get agent ID from response
+const agentId = await page.textContent('#agent-id');
+
+// 6. Submit DELETE request
+await page.fill('#delete-agent-id', agentId);
+await page.click('#delete-agent');
+
+// 7. Verify response
+const response = await page.textContent('#response');
+expect(response).toContain('Agent successfully deleted');
+```
 
 ### Constraints:
+- YES MUST run rubocop -a before review
+- YES MUST test with Playwright on real server (port 4000)
 - YES MUST check security (organization scoping!)
 - YES MUST check code style
 - YES MUST check test coverage
@@ -838,8 +904,10 @@ Notice that:
 3. I followed exact implementation order
 4. I wrote tests with full coverage
 5. I fixed issues systematically
-6. I reviewed against checklist
-7. I pushed only when approved
+6. I ran rubocop for code style
+7. I tested with Playwright on real server (port 4000)
+8. I reviewed against checklist
+9. I pushed only when approved
 
 This is not AI magic - this is AI following a well-designed process."
 ```
@@ -853,6 +921,8 @@ This is not AI magic - this is AI following a well-designed process."
 - [OK] Each checkpoint was confirmed
 - [OK] Code runs without errors
 - [OK] Tests pass with 100% coverage
+- [OK] Rubocop passes (code style check)
+- [OK] Playwright test passes on real server (port 4000)
 - [OK] Code review passes all checks
 - [OK] Feature branch pushed
 
@@ -861,6 +931,8 @@ This is not AI magic - this is AI following a well-designed process."
 - [X] Assumptions were made without asking
 - [X] Code doesn't follow patterns
 - [X] Tests are missing or failing
+- [X] Rubocop has uncorrected errors
+- [X] Playwright test fails
 - [X] Security issues found in review
 
 ---
@@ -869,6 +941,18 @@ This is not AI magic - this is AI following a well-designed process."
 
 ### If tests fail in Step 4:
 Go to Step 5 (Debug) -> Fix -> Return to Step 4
+
+### If rubocop fails in Step 6:
+1. Run `bundle exec rubocop -a` to auto-fix
+2. Manual fix any remaining issues
+3. Re-run rubocop until clean
+
+### If Playwright test fails in Step 6:
+1. Check Rails server is running on port 4000: `rails server -p 4000`
+2. Check test page exists: `/home/vantrong/Documents/PLATFORM_LETTA/rails_letta/public/test_streaming.html`
+3. Check API endpoint is reachable: `curl http://localhost:4000/letta/agents`
+4. Check organization key is valid in test database
+5. Review Playwright error logs
 
 ### If review fails in Step 6:
 Fix issues -> Re-run Step 6

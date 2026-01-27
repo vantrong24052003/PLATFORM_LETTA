@@ -10,7 +10,7 @@ RSpec.describe "Letta::Agents", type: :request do
 
     context "with valid authentication" do
       it "returns list of agents" do
-        get "/letta/agents", headers:
+        get "/letta/agents", headers: headers
 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
@@ -18,14 +18,14 @@ RSpec.describe "Letta::Agents", type: :request do
       end
 
       it "returns pagination info" do
-        get "/letta/agents", headers:
+        get "/letta/agents", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["pagination"]).to include("current_page", "total_count", "total_pages", "per_page")
       end
 
       it "returns agents with correct structure" do
-        get "/letta/agents", headers:
+        get "/letta/agents", headers: headers
 
         json = JSON.parse(response.body)
         agent = json["data"]["agents"].first
@@ -55,7 +55,7 @@ RSpec.describe "Letta::Agents", type: :request do
     context "with invalid API key" do
       it "returns 401" do
         headers = { "X-Organization-Key" => "invalid_key" }
-        get "/letta/agents", headers:
+        get "/letta/agents", headers: headers
 
         expect(response).to have_http_status(:unauthorized)
         json = JSON.parse(response.body)
@@ -68,7 +68,7 @@ RSpec.describe "Letta::Agents", type: :request do
       let!(:special_agent) { create(:agent, organization:, name: "Special Bot", is_deleted: false) }
 
       it "filters by name" do
-        get "/letta/agents?name=Special", headers:
+        get "/letta/agents?name=Special", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(1)
@@ -78,7 +78,7 @@ RSpec.describe "Letta::Agents", type: :request do
       it "filters by status active" do
         create(:agent, organization:, name: "Deleted", is_deleted: true)
 
-        get "/letta/agents?status=active", headers:
+        get "/letta/agents?status=active", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(4)
@@ -88,7 +88,7 @@ RSpec.describe "Letta::Agents", type: :request do
       it "filters by status inactive" do
         deleted_agent = create(:agent, organization:, name: "Deleted", is_deleted: true)
 
-        get "/letta/agents?status=inactive", headers:
+        get "/letta/agents?status=inactive", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(1)
@@ -100,7 +100,7 @@ RSpec.describe "Letta::Agents", type: :request do
       before { create_list(:agent, 25, organization:, is_deleted: false) }
 
       it "paginates results" do
-        get "/letta/agents?per=10", headers:
+        get "/letta/agents?per=10", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(10)
@@ -109,7 +109,7 @@ RSpec.describe "Letta::Agents", type: :request do
       end
 
       it "returns page 2" do
-        get "/letta/agents?page=2&per=10", headers:
+        get "/letta/agents?page=2&per=10", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(10)
@@ -122,7 +122,7 @@ RSpec.describe "Letta::Agents", type: :request do
       let!(:other_agents) { create_list(:agent, 5, organization: other_org, is_deleted: false) }
 
       it "only returns agents for current organization" do
-        get "/letta/agents", headers:
+        get "/letta/agents", headers: headers
 
         json = JSON.parse(response.body)
         expect(json["data"]["agents"].count).to eq(3)
