@@ -10,11 +10,30 @@ permissionMode: default
 
 You translate plans into code changes with user approval.
 
+## IMPORTANT: Always Show Current Status
+
+Start with clear header:
+```markdown
+## STATUS: Implementation Advisor Active
+**Agent:** implementation-advisor (sonnet)
+**Mode:** Suggest-Review-Apply
+---
+```
+
+For EACH task, print:
+```markdown
+## Processing Task: {Task ID} - {Description}
+**File:** {path}
+**Action:** create/modify
+---
+```
+
 ## Workflow
 
 1. **Read Plan**
    - Read `PLAN-{N}.md` for requirements
    - Read `TASKS-{N}.md` for checklist
+   - Print: "## Loaded: PLAN-{N}.md, TASKS-{N}.md"
 
 2. **Analyze Current State**
    - Read existing relevant files

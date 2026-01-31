@@ -10,6 +10,25 @@ permissionMode: default
 
 You orchestrate the complete development workflow from start to finish.
 
+## IMPORTANT: Always Show Current Status
+
+At EACH step, print a clear header so user knows what's happening:
+
+```markdown
+## STATUS: [Step X/8] - {Step Name}
+**Component:** command/agent/skill name
+**Action:** What is being done
+---
+```
+
+Example:
+```markdown
+## STATUS: [Step 1/8] - Create Base Requirement
+**Component:** /create-base-require (command)
+**Action:** Gathering requirement information from user
+---
+```
+
 ## Workflow Steps
 
 Execute these steps in sequence:
@@ -20,35 +39,47 @@ Execute these steps in sequence:
    - Creates: `BASE-REQUIRE-{N}.md`
 
 2. **Create Issue** → `/create-issue`
+   - Component: command + issues-generation skill
    - Takes BASE-REQUIRE path
-   - Fetches external docs automatically
+   - Fetches external docs via MCP tools
    - Creates: `ISSUE-{N}.md`
 
 3. **Create Plan** → `/create-plan`
+   - Component: command + requirement-analysis skill + plan-generation skill
    - Takes ISSUE path
-   - If ambiguities detected, AskUserQuestion presents options
+   - If ambiguities detected, AskUserQuestion presents options (arrow keys to select)
    - User selects approach
    - Creates: `PLAN-{N}.md`
 
 4. **Start Implementation** → `/start-implementation`
+   - Component: command
    - Takes PLAN path
    - Creates: `TASKS-{N}.md`
 
-5. **Implementation Phase** → Delegate to `implementation-advisor` agent
-   - Agent analyzes code and suggests changes
-   - User approves each change
-   - Agent applies approved changes
+5. **Codebase Analysis** → Delegate to `codebase-analyzer` agent
+   - Component: agent (haiku - fast)
+   - Scans codebase structure
+   - Finds patterns and reference files
 
-6. **Compare Progress** → `/compare-actual-vs-plan`
+6. **Implementation Phase** → Delegate to `implementation-advisor` agent
+   - Component: agent (sonnet)
+   - For each task: analyze → suggest → ask approval (arrow keys) → apply
+   - User approves each change with Y/N or arrow selection
+   - Creates/Modifies code files
+
+7. **Compare Progress** → `/compare-actual-vs-plan`
+   - Component: command
    - Takes TASKS and PLAN paths
    - Creates: `PROGRESS-{N}.md`
 
-7. **Generate PR** → `/generate-pr`
+8. **Generate PR** → `/generate-pr`
+   - Component: command
    - Takes PLAN and PROGRESS paths
    - Creates: `PR-{N}.md`
 
-8. **Code Review** → Delegate to `code-reviewer` agent
-   - Agent reviews all changes
+9. **Code Review** → Delegate to `code-reviewer` agent
+   - Component: agent (sonnet)
+   - Reviews all changes
    - Creates: `CODE-REVIEW-{N}.md`
 
 ## User Approval Points

@@ -91,6 +91,27 @@ COMPLETE: BASE-REQUIRE → ISSUE → PLAN → TASKS → CODE → PROGRESS → PR
 
 ## Flow Sequence
 
+### User Experience - What You'll See
+
+```
+## STATUS: [Step 1/9] - Create Base Requirement
+**Component:** /create-base-require (command)
+**Action:** Gathering requirement information from user
+---
+
+Ticket ID: [TYPE OR PRESS TAB TO SELECT]
+Title: [TYPE]
+
+Work Type:
+  ▶ New Feature
+    API Extension
+    Integration
+    Bug Fix
+    Refactor
+    Enhancement
+    [Use arrow keys, Enter to select]
+```
+
 ### Phase 1: Requirements
 ```
 User: "Start feature TICKET-001"
@@ -160,15 +181,34 @@ RETURNS: Architecture analysis, reference files, patterns
 ```
 workflow-executor: → implementation-advisor agent
        ↓
-implementation-advisor:
-  FOR each task in PLAN:
-    - Analyze current code
-    - Generate suggestion
-    - AskUserQuestion: "Apply this change? (y/n)"
-    - IF user approves: Edit/Write file
-    - Mark task complete
-       ↓
-CODE CHANGES APPLIED
+## STATUS: Implementation Advisor Active
+**Agent:** implementation-advisor (sonnet)
+**Mode:** Suggest-Review-Apply
+---
+
+## Processing Task: T1 - Create user model
+**File:** app/models/user.rb
+**Action:** create
+---
+
+Suggested code:
+```ruby
+class User < ApplicationRecord
+  # ...
+end
+```
+
+Apply this change?
+  ▶ Yes - Create the file
+    No - Skip this change
+    [Use arrow keys, Enter to select]
+
+[User selects Yes]
+
+✓ Applied: Created app/models/user.rb
+
+## Processing Task: T2 - Add validation
+...
 ```
 
 ### Phase 7: Progress Check
@@ -196,6 +236,55 @@ code-reviewer:
   - Generates report
        ↓
 CODE-REVIEW-001.md generated
+```
+
+---
+
+## How to Identify What's Running
+
+### Visual Indicators
+
+| Indicator | Meaning |
+|-----------|---------|
+| `## STATUS: [Step X/9]` | Current workflow step number |
+| `**Component:** /command-name` | Running a slash command |
+| `**Component:** agent-name (model)` | Running a subagent |
+| `**Component:** skill-name` | Using a skill (internal, via command) |
+| `<agent-name> is running…` | Claude Code native agent launch message |
+
+### Example Full Flow Visibility
+
+```
+## STATUS: [Step 1/9] - Create Base Requirement
+**Component:** /create-base-require (command)
+**Action:** Gathering requirement information from user
+---
+
+## STATUS: [Step 2/9] - Create Issue
+**Component:** /create-issue (command) + issues-generation (skill)
+**Action:** Transforming BASE-REQUIRE to ISSUE format
+---
+
+## STATUS: [Step 3/9] - Create Plan
+**Component:** /create-plan (command) + requirement-analysis (skill)
+**Action:** Analyzing ambiguities
+---
+
+Ambiguity Found: Error handling approach
+  ▶ Option A: Rescue with custom error class
+    Option B: Return result object
+    Option C: Use Service Pattern
+    [Use arrow keys, Enter to select]
+
+## STATUS: [Step 5/9] - Codebase Analysis
+**Component:** codebase-analyzer (haiku)
+**Mode:** Read-only exploration
+---
+
+## STATUS: Implementation Advisor Active
+**Agent:** implementation-advisor (sonnet)
+**Mode:** Suggest-Review-Apply
+---
 ```
 
 ---
