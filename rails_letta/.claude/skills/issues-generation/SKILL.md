@@ -1,110 +1,55 @@
 ---
 name: issues-generation
-description: Transforms a base require file into a structured issue format.
+description: Find and resolve ALL requirement ambiguities (clarification specialist)
 ---
 
-# Issues Generation Skill
+# Issues Generation
 
-## Input
-```
-.claude/workflow/base-require/BASE-REQUIRE-XXX.md
-```
+**Purpose**: Transform BASE-REQUIRE → ISSUE + Resolve ALL unclear points
 
-## Output
-```json
-{
-  "title": "string",
-  "summary": "string",
-  "work_type": "New Feature / API Extension / Integration / Bug Fix / Refactor / Enhancement",
-  "architecture_context": {
-    "type": "new_feature / api_extension / integration / bug_fix / refactor / enhancement",
-    "description": "string",
-    "reference_files": ["string"]
-  },
-  "requirements": [
-    {
-      "id": "FR-1",
-      "description": "string",
-      "priority": "High/Medium/Low",
-      "status": "Pending"
-    }
-  ],
-  "non_functional_requirements": [
-    {
-      "id": "NFR-1",
-      "description": "string",
-      "priority": "High/Medium/Low",
-      "status": "Pending"
-    }
-  ],
-  "external_references": {
-    "documentation_links": [
-      {
-        "name": "string",
-        "url": "string",
-        "notes": "string"
-      }
-    ],
-    "assets": [
-      {
-        "type": "string",
-        "link": "string",
-        "notes": "string"
-      }
-    ]
-  },
-  "api_mapping": {
-    "request_mapping": [
-      {
-        "external_field": "string",
-        "internal_field": "string",
-        "type": "string",
-        "required": "Yes/No",
-        "notes": "string"
-      }
-    ],
-    "response_mapping": [
-      {
-        "internal_field": "string",
-        "external_field": "string",
-        "type": "string",
-        "notes": "string"
-      }
-    ]
-  },
-  "acceptance_criteria": ["string"]
-}
+## Task Flow
+
+```
+Read BASE-REQUIRE → Find Ambiguities → Ask User → Record Choices → Write ISSUE
 ```
 
-## Behavior
-1. Extract title from `## Title` section
-2. Extract summary from `## Description` section
-3. Extract work_type from `## Work Type` section
-   - Find the selected type after "**Selected Type:**"
-4. Extract architecture_context from `## Architecture Context` section
-   - Read based on work type (New Feature, API Extension, Integration, etc.)
-   - Extract reference file paths if mentioned
-5. Extract functional requirements from `### Functional Requirements` table
-   - Read columns: ID, Description, Priority
-   - Set status to "Pending" for all
-6. Extract non-functional requirements from `### Non-Functional Requirements` table
-   - Read columns: ID, Description, Priority
-   - Set status to "Pending" for all
-7. Extract external references from `## External References` section
-   - Read `### Documentation Links` table: Name, URL, Notes
-   - Read `### Assets` table: Type, Link, Notes
-8. Extract API mapping from `## API / Data Mapping` section
-   - Read `### Request Mapping` table: External Field, Internal Field, Type, Required, Notes
-   - Read `### Response Mapping` table: Internal Field, External Field, Type, Notes
-9. Extract acceptance criteria from `## Acceptance Criteria` section
+### Step 1: Transform Format
+- Copy: title, description, work_type
+- Add Status column to FR/NFR tables
+- Copy: api_mapping, acceptance_criteria
+- Add placeholder: "## Clarification Chosen"
+
+### Step 2: Find Ambiguities (call requirement-analysis)
+For EACH FR/NFR, check:
+- Data source (DB/API/hybrid?)
+- Response format (raw/wrapped?)
+- Pagination (cursor/offset?)
+- Nested resources (always/opt-in/never?)
+- Error handling (return error/throw?)
+- Auth (required/optional/public?)
+- Filtering (server-side/client-side?)
+- Sorting, rate limiting, caching, validation...
+
+### Step 3: Ask User (for EACH ambiguity)
+```
+Ambiguity: {question}
+Context: FR-1: {requirement text}
+
+A) {option A simple}
+   → {option A technical}
+
+B) {option B simple}
+   → {option B technical}
+
+Select: _
+```
+
+### Step 4: Record & Write
+- Append all selections to "Clarification Chosen" section
+- Write to `.claude/workflow/issues/ISSUE-{N}.md`
 
 ## Constraints
-1. Output only exists if input exists
-2. Missing input field returns empty string
-3. Missing table section returns empty array
-4. No fallback to natural language
+- MUST resolve ALL ambiguities before completing
+- MUST NOT skip "obvious" ones
+- MUST NOT proceed without user selection
 
-## Exit Codes
-- `0`: Success
-- `1`: Input file missing
-- `2`: Input file invalid format

@@ -1,17 +1,19 @@
 ---
-description: Create TASKS checklist from PLAN for implementation tracking
+description: Generate code from PLAN
 argument-hint: <path-to-plan>
-tools: Read, Write, Glob
+tools: Read, Write, Edit, Glob, Grep
 ---
 
 # Start Implementation from Plan
 
-Create TASKS execution checklist from PLAN file for tracking implementation progress.
+Generate code skeleton from PLAN file.
 
 ## Allowed Tools
-- **Read**: Read PLAN file
-- **Write**: Create TASKS file
-- **Glob**: Find existing TASKS files for numbering
+- **Read**: Read PLAN file, reference files
+- **Write**: Create new files
+- **Edit**: Modify existing files
+- **Glob**: Find existing files
+- **Grep**: Search for patterns
 
 ## Instructions
 
@@ -19,30 +21,21 @@ Create TASKS execution checklist from PLAN file for tracking implementation prog
    - Extract path from: `$ARGUMENTS`
    - IF path is empty: RETURN "ERROR: Path required" and EXIT
    - IF file does not exist: RETURN "ERROR: File not found" and EXIT
-   - IF file path not in `.claude/workflow/plans/`: RETURN "ERROR: Invalid directory" and EXIT
 
-2. **Process Plan**
+2. **Read Plan**
    - Use **Read** tool to read PLAN file
-   - Extract tasks array with: id, description, depends_on
-   - Extract N from PLAN-{N}.md
+   - Extract: tasks, files to change, technical approach
 
-3. **Generate TASKS**
-   - Create checklist for each task with sub-items
-   - Identify affected files for each task
-   - Track blockers
+3. **Generate Code**
+   - For each task in PLAN:
+     - Read reference file (if specified)
+     - Create/modify file according to task
+     - Follow existing patterns
+   - Use **Write** for new files
+   - Use **Edit** for existing files
 
-4. **Write Output**
-   - Use **Write** tool to create: `.claude/workflow/implementation/TASKS-{N}.md`
-   - Format includes:
-     - Progress Summary table (Task, Status, Notes)
-     - Execution Checklist with:
-       - Task ID and description
-       - Checkbox items for each task
-       - Affected files
-     - Blockers section
-
-5. **Return Result**
-   - RETURN: "Created: .claude/workflow/implementation/TASKS-{N}.md"
+4. **Return Result**
+   - List files created/modified
    - EXIT 0
 
 ## Usage

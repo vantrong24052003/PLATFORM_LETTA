@@ -1,44 +1,72 @@
 ---
 name: requirement-analysis
-description: Analyzes an issue to identify clear requirements, ambiguities, and provides interpretation options.
+description: Detect unclear points in requirements (analysis specialist)
 ---
 
-# Requirement Analysis Skill
+# Requirement Analysis
 
-## Input
+**Purpose**: Find ALL ambiguous/missing information in requirements
+
+## Task Flow
+
 ```
-.claude/workflow/issues/ISSUE-XXX.md
+Read Requirements → Check Categories → Generate Options → Return JSON
 ```
 
-## Output
+### Step 1: Parse Requirements
+- Extract all FR (FR-1, FR-2...)
+- Extract all NFR (NFR-1, NFR-2...)
+- Note context from acceptance criteria
+
+### Step 2: Check Categories (for EACH requirement)
+
+For API work:
+- Data Source: Local DB / External API / Hybrid?
+- Response Format: Raw array / Wrapped object / Custom?
+- Pagination: Cursor / Offset / None?
+- Nested: Always include / Opt-in param / Never?
+- Errors: Return error object / Throw exception / Result wrapper?
+- Timeout: What value? Retry on timeout?
+- API Key: Env var / Per-user / Shared?
+
+For DB work:
+- Table: Existing / New? Schema?
+- Indexes: Which columns?
+- Transaction: Yes / No?
+- Soft Delete: Yes / No?
+- Timestamps: Yes / No?
+
+General:
+- Auth: Required / Optional / Public?
+- Filtering: Server-side / Client-side?
+- Sorting: Default field / User override?
+- Rate Limiting: Yes / No?
+- Caching: TTL / No cache?
+- Validation: Which fields required?
+
+### Step 3: Generate Options
+For EACH ambiguity found:
+- Create 2-3 distinct options (A, B, C)
+- Each option: simple + technical view
+- Mark first as recommended
+
+### Step 4: Return JSON
 ```json
 {
-  "summary": "string (max 2 sentences)",
-  "clear_requirements": ["string"],
-  "ambiguities": ["string"],
-  "clarification_options": [
+  "ambiguities": [
     {
-      "option_id": "A",
-      "developer_view": "string",
-      "non_technical_view": "string"
+      "question": "Data source for FR-1?",
+      "options": [
+        {"id": "A", "simple": "...", "technical": "...", "recommended": true},
+        {"id": "B", "simple": "...", "technical": "...", "recommended": false}
+      ]
     }
   ]
 }
 ```
 
-## Behavior
-1. Read entire issue content
-2. Extract explicitly stated requirements to `clear_requirements`
-3. Extract missing information to `ambiguities`
-4. If `ambiguities.length > 0`: generate 3 options
-5. If `ambiguities.length = 0`: return `clarification_options: []`
-
 ## Constraints
-1. Each option describes meaning only
-2. No implementation details in options
-3. No fallback to natural language
+- Check EVERY category (don't skip)
+- Generate 2-3 options only
+- No overlap between options
 
-## Exit Codes
-- `0`: Success
-- `1`: Input file missing
-- `2`: Input file invalid format

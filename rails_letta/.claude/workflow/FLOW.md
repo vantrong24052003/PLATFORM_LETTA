@@ -1,370 +1,148 @@
-# Development Workflow System
+# Workflow
 
-Complete flow-driven development system using agents, skills, and commands.
-
----
-
-## Overview
+Flow: **BASE-REQUIRE → ISSUE → PLAN → IMPLEMENT → REVIEW**
 
 ```
-USER INPUT (ticket-id + title)
-       ↓
-┌─────────────────────────────────────────────────────────────┐
-│  workflow-executor (agent)                                  │
-│  - Orchestrates entire flow                                   │
-│  - Delegates to specialized agents                            │
-│  - Calls commands sequentially                                │
-│  - Gets user approvals at key points                          │
-└─────────────────────────────────────────────────────────────┘
-       ↓                    ↓                    ↓
-┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│ requirement- │   │ codebase-    │   │ code-        │
-│ scout (agent)│   │ analyzer     │   │ reviewer      │
-│              │   │ (agent)      │   │ (agent)      │
-└──────────────┘   └──────────────┘   └──────────────┘
-       ↓                    ↓                    ↓
-┌─────────────────────────────────────────────────────────────┐
-│  COMMANDS + SKILLS                                            │
-├─────────────────────────────────────────────────────────────┤
-│  1. /create-base-require → base-require-generation skill    │
-│  2. /create-issue          → issues-generation skill         │
-│  3. /create-plan           → requirement-analysis +           │
-│                             → plan-generation skills          │
-│  4. /start-implementation  → (no skill, direct logic)        │
-│  5. /compare-actual-vs-plan → (no skill, comparison logic)   │
-│  6. /generate-pr           → (no skill, formatting)           │
-│  7. /code-review           → (code-reviewer agent)            │
-└─────────────────────────────────────────────────────────────┘
-       ↓
-┌─────────────────────────────────────────────────────────────┐
-│  implementation-advisor (agent)                              │
-│  - Reads PLAN and TASKS                                        │
-│  - Suggests code changes                                       │
-│  - Gets user approval per change                              │
-│  - Applies changes with Write/Edit tools                      │
-└─────────────────────────────────────────────────────────────┘
-       ↓
-COMPLETE: BASE-REQUIRE → ISSUE → PLAN → TASKS → CODE → PROGRESS → PR → CODE-REVIEW
+User Input  →  Standardize #1  →  Standardize #2  →  Design  →  Code  →  Review
+(raw)          (format)          (clarify)        (plan)   (gen)   (check)
+   ↓               ↓                  ↓               ↓        ↓        ↓
+BASE-REQUIRE  →  ISSUE  →  PLAN  →  IMPLEMENT  →  CODE-REVIEW
 ```
 
 ---
 
-## File Structure
+## 1. BASE-REQUIRE (Standardize #1 - Format)
 
+**Command:** `/create-base-require <ticket> "<title>"`
+
+**Purpose:** Gather raw user input → standard format
+
+**Input:** JIRA ticket, email, verbal... (any format)
+**Output:** `base-require/BASE-REQUIRE-{N}.md`
+
+**What it does:**
+- Interactive prompts ask user for information
+- Fill into 9-section template:
+  1. TITLE
+  2. DESCRIPTION (Background, why, value)
+  3. WORK TYPE (checkbox)
+  4. FR (Functional requirements)
+  5. NFR (Non-functional)
+  6. API MAPPING
+  7. REFERENCES
+  8. ACCEPTANCE CRITERIA
+  9. OUT OF SCOPE
+
+**NOT:** Interpret, analyze, clarify
+**ONLY:** Format into template
+
+---
+
+## 2. ISSUE (Standardize #2 + Resolve Ambiguities)
+
+**Command:** `/create-issue <path-to-base-require>`
+
+**Purpose:** Find ALL unclear points → ask user to choose → MUST clarify before planning
+
+**Input:** `BASE-REQUIRE-{N}.md`
+**Output:** `issues/ISSUE-{N}.md` with "Clarification Chosen"
+
+**What it does:**
+
+1. **Analyze** BASE-REQUIRE deeply
+2. **Find ALL ambiguities** - any unclear point:
+   - "Filter agents" → Query local DB or call Letta API?
+   - "Include related data" → Which fields? Array format?
+   - "Pagination" → Cursor-based or offset-based?
+   - "Response format" → JSON or wrapped?
+3. **Ask user to select option** for EACH ambiguity (A/B/C)
+4. **Append** "Clarification Chosen" to file
+
+**IMPORTANT:** Plan CANNOT proceed without clarifications. MUST resolve ALL stuck points.
+
+**Example:**
 ```
-.claude/
-├── commands/                   # Slash commands (7)
-│   ├── create-base-require.md
-│   ├── create-issue.md
-│   ├── create-plan.md
-│   ├── start-implementation.md
-│   ├── compare-actual-vs-plan.md
-│   ├── generate-pr.md
-│   └── code-review.md
-│
-├── skills/                     # Skills (4)
-│   ├── base-require-generation/SKILL.md
-│   ├── issues-generation/SKILL.md
-│   ├── requirement-analysis/SKILL.md
-│   └── plan-generation/SKILL.md
-│
-├── agents/                     # Subagents (5)
-│   ├── workflow-executor.md
-│   ├── codebase-analyzer.md
-│   ├── implementation-advisor.md
-│   ├── code-reviewer.md
-│   └── requirement-scout.md
-│
-└── workflow/                   # Workflow files
-    ├── base-require/.template.md
-    ├── base-require/.keep
-    ├── issues/.keep
-    ├── plans/.keep
-    ├── implementation/.keep
-    ├── progress/.keep
-    ├── reviews/pr/.keep
-    ├── reviews/code-review/.keep
-    └── README.md
+Ambiguity 1: Query from local DB or proxy to Letta API?
+A: Query local database only
+B: Proxy to Letta API (recommended)
+C: Hybrid (both)
+
+User selects B
+
+Ambiguity 2: Include nested resources (tools, blocks)?
+A: Always include all
+B: User selects via include param
+C: Never include
+
+User selects B
 ```
 
 ---
 
-## Flow Sequence
+## 3. PLAN (Design from Clear Requirements)
 
-### User Experience - What You'll See
+**Command:** `/create-plan <path-to-issue>`
 
-```
-## STATUS: [Step 1/9] - Create Base Requirement
-**Component:** /create-base-require (command)
-**Action:** Gathering requirement information from user
----
+**Purpose:** Break down requirements into implementable tasks
 
-Ticket ID: [TYPE OR PRESS TAB TO SELECT]
-Title: [TYPE]
+**Input:** `ISSUE-{N}.md` (with Clarification Chosen)
+**Output:** `plans/PLAN-{N}.md`
 
-Work Type:
-  ▶ New Feature
-    API Extension
-    Integration
-    Bug Fix
-    Refactor
-    Enhancement
-    [Use arrow keys, Enter to select]
-```
+**What it does:**
+- Read CLEAR requirements
+- Break down into tasks T1, T2, T3...
+- Identify files to create/modify
+- Design approach, test strategy, risks
 
-### Phase 1: Requirements
-```
-User: "Start feature TICKET-001"
-       ↓
-workflow-executor: Collects ticket-id, title
-       ↓
-workflow-executor: → /create-base-require
-       ↓
-base-require-generation skill: Creates BASE-REQUIRE with user inputs
-       ↓
-OUTPUT: BASE-REQUIRE-001.md
-```
-
-### Phase 2: Issue Generation
-```
-workflow-executor: → /create-issue BASE-REQUIRE-001.md
-       ↓
-issues-generation skill:
-  - Extract all sections from BASE-REQUIRE
-  - Generate FR/NFR IDs
-  - Fetch external docs via MCP (web-reader, web-search)
-       ↓
-OUTPUT: ISSUE-001.md (with Work Type, Architecture Context, Requirements, etc.)
-```
-
-### Phase 3: Planning
-```
-workflow-executor: → /create-plan ISSUE-001.md
-       ↓
-requirement-analysis skill:
-  - Detects ambiguities
-  - Returns clarification options (A/B/C)
-       ↓
-IF ambiguities exist:
-  - workflow-executor: AskUserQuestion presents options
-  - User selects option
-  - Appends "Clarification Chosen" to ISSUE-001.md
-       ↓
-plan-generation skill:
-  - Generates technical approach
-  - Breaks down into tasks (T1, T2, T3...)
-  - Identifies risks
-       ↓
-OUTPUT: PLAN-001.md
-```
-
-### Phase 4: Implementation Preparation
-```
-workflow-executor: → /start-implementation PLAN-001.md
-       ↓
-TASKS-001.md created with checklist
-```
-
-### Phase 5: Code Analysis
-```
-workflow-executor: → codebase-analyzer agent
-       ↓
-codebase-analyzer:
-  - Scans current codebase structure
-  - Finds patterns and conventions
-  - Locates reference files
-       ↓
-RETURNS: Architecture analysis, reference files, patterns
-```
-
-### Phase 6: Implementation
-```
-workflow-executor: → implementation-advisor agent
-       ↓
-## STATUS: Implementation Advisor Active
-**Agent:** implementation-advisor (sonnet)
-**Mode:** Suggest-Review-Apply
----
-
-## Processing Task: T1 - Create user model
-**File:** app/models/user.rb
-**Action:** create
----
-
-Suggested code:
-```ruby
-class User < ApplicationRecord
-  # ...
-end
-```
-
-Apply this change?
-  ▶ Yes - Create the file
-    No - Skip this change
-    [Use arrow keys, Enter to select]
-
-[User selects Yes]
-
-✓ Applied: Created app/models/user.rb
-
-## Processing Task: T2 - Add validation
-...
-```
-
-### Phase 7: Progress Check
-```
-workflow-executor: → /compare-actual-vs-plan TASKS PLAN
-       ↓
-PROGRESS-001.md generated (progress %, deviations, blockers)
-```
-
-### Phase 8: PR Generation
-```
-workflow-executor: → /generate-pr PLAN PROGRESS
-       ↓
-PR-001.md generated (summary, changes, testing checklist)
-```
-
-### Phase 9: Code Review
-```
-workflow-executor: → code-reviewer agent
-       ↓
-code-reviewer:
-  - Reviews all modified files
-  - Checks security vulnerabilities
-  - Assesses test coverage
-  - Generates report
-       ↓
-CODE-REVIEW-001.md generated
-```
+**Format:**
+| Task | File | Description |
+|------|------|-------------|
+| T1 | endpoints.rb | Add LIST_AGENTS constant |
+| T2 | list.rb | Create List service |
+| T3 | controller.rb | Create controller with index/show |
 
 ---
 
-## How to Identify What's Running
+## 4. IMPLEMENT (Generate Code)
 
-### Visual Indicators
+**Command:** `/start-implementation <path-to-plan>`
 
-| Indicator | Meaning |
-|-----------|---------|
-| `## STATUS: [Step X/9]` | Current workflow step number |
-| `**Component:** /command-name` | Running a slash command |
-| `**Component:** agent-name (model)` | Running a subagent |
-| `**Component:** skill-name` | Using a skill (internal, via command) |
-| `<agent-name> is running…` | Claude Code native agent launch message |
+**Purpose:** Generate code from tasks
 
-### Example Full Flow Visibility
+**Input:** `PLAN-{N}.md`
+**Output:** Code files in `src/`
 
-```
-## STATUS: [Step 1/9] - Create Base Requirement
-**Component:** /create-base-require (command)
-**Action:** Gathering requirement information from user
----
-
-## STATUS: [Step 2/9] - Create Issue
-**Component:** /create-issue (command) + issues-generation (skill)
-**Action:** Transforming BASE-REQUIRE to ISSUE format
----
-
-## STATUS: [Step 3/9] - Create Plan
-**Component:** /create-plan (command) + requirement-analysis (skill)
-**Action:** Analyzing ambiguities
----
-
-Ambiguity Found: Error handling approach
-  ▶ Option A: Rescue with custom error class
-    Option B: Return result object
-    Option C: Use Service Pattern
-    [Use arrow keys, Enter to select]
-
-## STATUS: [Step 5/9] - Codebase Analysis
-**Component:** codebase-analyzer (haiku)
-**Mode:** Read-only exploration
----
-
-## STATUS: Implementation Advisor Active
-**Agent:** implementation-advisor (sonnet)
-**Mode:** Suggest-Review-Apply
----
-```
+**What it does:**
+- Read tasks T1, T2, T3...
+- Generate code skeleton
+- Follow existing patterns
+- Create/modify files
 
 ---
 
-## Auto-Delegation Triggers
+## 5. REVIEW (Verify Code)
 
-Claude automatically delegates to agents based on task description:
+**Command:** `/code-review <plan> <src-dir>`
 
-| Trigger | Agent |
-|---------|-------|
-| "Starting new feature" / "Process ticket" | workflow-executor |
-| "Explore codebase" / "Understand structure" | codebase-analyzer |
-| "Suggest code changes" / "How to implement" | implementation-advisor |
-| "Review my code" / "Check for issues" | code-reviewer |
-| "Gather requirements" / "Analyze ticket" | requirement-scout |
+**Purpose:** Check code before merge
 
----
+**Input:** `PLAN-{N}.md` + `src/`
+**Output:** `CODE-REVIEW-{N}.md`
 
-## Command → Skill Mapping
-
-| Command | Skill(s) Used |
-|---------|---------------|
-| /create-base-require | base-require-generation |
-| /create-issue | issues-generation |
-| /create-plan | requirement-analysis → plan-generation |
-| /start-implementation | (none) |
-| /compare-actual-vs-plan | (none) |
-| /generate-pr | (none) |
-| /code-review | (delegates to code-reviewer agent) |
+**What it does:**
+- Scan code files
+- Check security (SQLi, XSS, auth)
+- Check test coverage
+- Report issues + verdict
 
 ---
 
-## Tool Permissions by Component
+## Commands Summary
 
-| Component | Write | Edit | Read | Bash | MCP |
-|-----------|-------|------|------|------|-----|
-| **Commands** |
-| create-base-require | ✓ | - | ✓ | - | - |
-| create-issue | ✓ | - | ✓ | - | ✓ |
-| create-plan | ✓ | ✓ | ✓ | - | ✓ |
-| start-implementation | ✓ | - | ✓ | - | - |
-| compare-actual-vs-plan | ✓ | - | ✓ | - | - |
-| generate-pr | ✓ | - | ✓ | - | - |
-| code-review | ✓ | - | ✓ | ✓ | - |
-| **Agents** |
-| workflow-executor | ✓ | - | ✓ | - | - |
-| codebase-analyzer | - | - | ✓ | ✓ | - |
-| implementation-advisor | ✓ | ✓ | ✓ | - | - |
-| code-reviewer | - | - | ✓ | ✓ | - |
-| requirement-scout | - | - | ✓ | - | ✓ |
-
----
-
-## Quick Reference
-
-### Start a New Feature
-```
-Use workflow-executor agent to process ticket TICKET-001
-```
-
-### Explore Codebase
-```
-Use codebase-analyzer agent to understand the project structure
-```
-
-### Get Implementation Suggestions
-```
-Use implementation-advisor agent with PLAN-001.md
-```
-
-### Review Code
-```
-Use code-reviewer agent to check recent changes
-```
-
----
-
-## Exit Codes
-
-All commands and agents use standard exit codes:
-- `0`: Success
-- `1`: Validation failed
-- `2`: Warning (ambiguities, need user input)
+| Step | Command | Input → Output | Purpose |
+|------|---------|---------------|---------|
+| 1 | `/create-base-require <ticket> "<title>"` | User input → BASE-REQUIRE | Format raw input |
+| 2 | `/create-issue <path>` | BASE-REQUIRE → ISSUE (clarified) | Standardize + resolve ambiguities |
+| 3 | `/create-plan <path>` | ISSUE → PLAN (tasks) | Design + break down tasks |
+| 4 | `/start-implementation <path>` | PLAN → Code files | Generate code |
+| 5 | `/code-review <plan> <src>` | Code → CODE-REVIEW | Check code |

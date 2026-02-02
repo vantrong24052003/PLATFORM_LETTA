@@ -1,45 +1,52 @@
 ---
 name: plan-generation
-description: Generates a technical implementation plan from a clarified issue.
+description: Break down requirements into implementable tasks (design specialist)
 ---
 
-# Plan Generation Skill
+# Plan Generation
 
-## Input
-```
-.claude/workflow/issues/ISSUE-XXX.md
-```
+**Purpose**: Convert clarified requirements → task breakdown
 
-## Output
-```json
-{
-  "technical_approach": "string",
-  "tasks": [
-    {
-      "id": "T1",
-      "description": "string",
-      "depends_on": []
-    }
-  ],
-  "risks": ["string"],
-  "test_strategy": ["string"]
-}
+## Task Flow
+
+```
+Validate ISSUE → Extract Requirements → Generate Tasks → Find Files → Write PLAN
 ```
 
-## Behavior
-1. Check if section `## Clarification Chosen` exists
-2. If section missing: return error
-3. If section exists: generate plan
-4. Generate task IDs: T1, T2, T3 in order
-5. Map each task to one requirement
-6. Generate 3 test strategies
+### Step 1: Validate Prerequisite
+```bash
+grep "## Clarification Chosen" {ISSUE} | grep "Selected:"
+```
+If missing: ERROR "Run /create-issue first"
+
+### Step 2: Extract Requirements
+- Read all FR from ISSUE
+- Read "Clarification Chosen" for technical decisions
+- Note: NFR affects approach but doesn't become tasks
+
+### Step 3: Generate Tasks
+For EACH FR:
+- Create 1 task (T1, T2, T3...)
+- Description: "Verb + object + detail"
+  - "Add LIST_AGENTS endpoint constant"
+  - "Create List service for agent listing"
+  - "Add routes for external agents"
+- Map to file: which file to modify/create
+
+### Step 4: Find Files
+- Use Glob to find similar existing code
+- Identify: services, controllers, routes, endpoints
+- Note reference files for patterns
+
+### Step 5: Complete PLAN
+- Approach: 2-3 sentences (pattern + key decisions)
+- Files to Change: table with File | Action | Reference
+- Tasks: table with ID | Task | File | Status
+- Test Strategy: 3+ bullets
+- Risks: table with Risk | Mitigation
 
 ## Constraints
-1. Task count equals requirement count
-2. No new tasks beyond requirements
-3. No fallback to natural language
+- Task count = FR count (one task per FR)
+- Each task maps to exactly one file
+- No vague descriptions ("implement feature" ✗)
 
-## Exit Codes
-- `0`: Success
-- `1`: Input file missing
-- `2`: Clarification Chosen section missing
