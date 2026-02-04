@@ -23,7 +23,6 @@ class Letta::StreamingMessages::Create < ApplicationService
   CONTENT_TYPE = "application/json"
 
   def call(&block)
-
     parser = Letta::StreamingMessages::Utils::StreamParser.new
 
     Integration::Letta::Util::HttpClient.post_stream(
@@ -92,14 +91,14 @@ class Letta::StreamingMessages::Create < ApplicationService
   def build_request_body
     {
       messages: [
-        { role: "user", content: params[:input] }
+        { role: "user", content: params[:input] },
       ],
-      stream: true
+      stream: true,
     }
   end
 
   def build_error_payload(message)
-    { type: :error, payload: { message: message } }
+    { type: :error, payload: { message: } }
   end
 
   def send_tool_return(tool_call_data, tool_result)
@@ -107,7 +106,7 @@ class Letta::StreamingMessages::Create < ApplicationService
       role: "tool",
       name: tool_call_data.dig("function", "name"),
       tool_call_id: tool_call_data["tool_call_id"],
-      content: tool_result.to_json
+      content: tool_result.to_json,
     }
 
     Integration::Letta::Util::HttpClient.post(

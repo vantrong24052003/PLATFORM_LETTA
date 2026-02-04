@@ -8,7 +8,7 @@ module Integration
       }.freeze
 
       TOOLS = {
-        EXECUTE: "/letta/tools/execute"
+        EXECUTE: "/letta/tools/execute",
       }.freeze
 
       MESSAGES = {
